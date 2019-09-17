@@ -74,6 +74,19 @@ https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.ht
 }]
 ```
 
+## pricetemplates
+```
+[{
+	"script": ObjectId(\"5d7db0ac381bf6655915fd9c\"),
+    "shop": ObjectId(\"5d7db0ac381bf6655915fd9c\"),
+    "price": {
+    	"weekdayDayPrice": 100,
+	    "weekdayNightPrice": 100,
+	    "weekendPrice": 200
+	}
+}]
+```
+
 ## events
 ```
 [{
@@ -89,11 +102,7 @@ https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.ht
     },
     "hostUser": ObjectId(\"5d7db0ac381bf6655915fd9c\"),
     "hostComment": "test",
-    "price": {
-    	"weekdayDayPrice": 100,
-	    "weekdayNightPrice": 100,
-	    "weekendPrice": 200
-	},
+    price: 100,
 	"status": "active",
 	"createdAt": { 
       "$date":{ 
