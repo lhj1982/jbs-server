@@ -39,6 +39,7 @@ https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.ht
 ```
 [{
 	"name": "test",
+	"key": "key1",
 	"address": "test",
 	"mobile": "test",
 	"phone": "",
@@ -60,6 +61,7 @@ https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.ht
 ```
 [{
 	"name": "test",
+	"key": "key1",
 	"description": "test",
 	"minNumberOfPersons": 6,
 	"maxNumberOfPersons": 10,

@@ -8,6 +8,9 @@ export const ScriptSchema = new Schema({
   name: {
     type: String
   },
+  key: {
+    type: String
+  },
   description: {
     type: String
   },

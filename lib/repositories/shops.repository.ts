@@ -8,17 +8,29 @@ class ShopsRepo {
     return Shop.findAll(options);
   }
 
+  async findById(id: string) {
+    // console.log(mongoose.Types.ObjectId.isValid(id));
+    return await Shop.findById(mongoose.Types.ObjectId(id)).exec();
+  }
+
   async find(params) {
     return await Shop.find(params).exec();
   }
 
-  async saveOrUpdateShop(shop) {
+  async findOne(params) {
+    return await Shop.where(params)
+      .findOne()
+      .exec();
+  }
+
+  async saveOrUpdate(shop) {
     const options = {
       new: true,
       upsert: true,
-      setDefaultsOnInsert: true
+      setDefaultsOnInsert: true,
+      returnNewDocument: true
     };
-    return await Shop.findOneAndUpdate({ _id: shop.id }, shop, options).exec();
+    return await Shop.findOneAndUpdate({ key: shop.key }, shop, options).exec();
   }
 }
 export default new ShopsRepo();

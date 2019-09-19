@@ -8,6 +8,10 @@ export const ShopSchema = new Schema({
   name: {
     type: String
   },
+  key: {
+    type: String,
+    required: 'shop key is required!'
+  },
   address: {
     type: String
   },

@@ -2,25 +2,34 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';
+import { ScriptsRoutes } from './routes/scripts.routes';
 import { AuthRoutes } from './routes/auth.routes';
+import errorMiddleware from './middleware/error.middleare';
 import * as mongoose from 'mongoose';
 const config = require('./config');
+const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./config/swagger.json');
 
 class App {
   app: express.Application = express();
   usersRoutes: UsersRoutes = new UsersRoutes();
   authRoutes: AuthRoutes = new AuthRoutes();
   shopsRoutes: ShopsRoutes = new ShopsRoutes();
+  scriptsRoutes: ScriptsRoutes = new ScriptsRoutes();
   // mongoUrl: string = 'mongodb://localhost/CRMdb';
   mongoUrl: string = config.dbUri;
 
   // cors - must be before app use routes
   constructor() {
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.config();
     this.mongoSetup();
     this.usersRoutes.routes(this.app);
     this.authRoutes.routes(this.app);
     this.shopsRoutes.routes(this.app);
+    this.scriptsRoutes.routes(this.app);
+    this.app.use(errorMiddleware);
   }
 
   allowCrossDomain(req, res, next) {

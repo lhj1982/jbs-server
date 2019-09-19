@@ -188,7 +188,7 @@ paths:
         405:
           description: "Invalid input"
           
-  "events":
+  "/events":
     get:
       tags:
       - "event"

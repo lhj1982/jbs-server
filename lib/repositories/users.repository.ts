@@ -12,6 +12,12 @@ class UsersRepo {
     return await User.find(params).exec();
   }
 
+  async findOne(params) {
+    return await User.where(params)
+      .findOne()
+      .exec();
+  }
+
   async saveAccessToken(user) {
     await User.save(user).exec();
   }
@@ -20,7 +26,8 @@ class UsersRepo {
     const options = {
       new: true,
       upsert: true,
-      setDefaultsOnInsert: true
+      setDefaultsOnInsert: true,
+      returnNewDocument: true
     };
     return await User.findOneAndUpdate({ openId: user.openId }, user, options).exec();
   }
