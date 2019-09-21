@@ -12,16 +12,15 @@ export class ScriptsRoutes {
 
   routes(app): void {
     // Scripts
-    app.route('/scripts').get((req: Request, res: Response, next: NextFunction) => {
-      // middleware
-      console.log(`Request from: ${req.originalUrl}`);
-      console.log(`Request type: ${req.method}`);
-      next();
-    }, this.scriptsController.getScripts);
-
     app
-      .use(verifyToken)
       .route('/scripts')
-      .post(this.scriptsController.addScript);
+      .get((req: Request, res: Response, next: NextFunction) => {
+        // middleware
+        console.log(`Request from: ${req.originalUrl}`);
+        console.log(`Request type: ${req.method}`);
+        next();
+      }, this.scriptsController.getScripts)
+
+      .post(verifyToken, this.scriptsController.addScript);
   }
 }

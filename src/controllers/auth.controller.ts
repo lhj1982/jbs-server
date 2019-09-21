@@ -3,7 +3,7 @@ import AuthApi from '../api/auth';
 import UsersRepo from '../repositories/users.repository';
 import * as moment from 'moment';
 import * as jwt from 'jsonwebtoken';
-const config = require('../config');
+import config from '../config';
 
 export class AuthController {
   login = async (req: Request, res: Response) => {

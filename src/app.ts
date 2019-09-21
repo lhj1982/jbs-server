@@ -7,7 +7,7 @@ import { AuthRoutes } from './routes/auth.routes';
 import { EventsRoutes } from './routes/events.routes';
 import errorMiddleware from './middleware/error.middleare';
 import * as mongoose from 'mongoose';
-const config = require('./config');
+import config from './config';
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
@@ -38,7 +38,7 @@ class App {
   }
 
   allowCrossDomain(req, res, next) {
-    res.header('Access-Control-Allow-Origin', `http://localhost:${config.port}`);
+    res.header('Access-Control-Allow-Origin', `http://localhost:${config.server.port}`);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Credentials');
     res.header('Access-Control-Allow-Credentials', 'true');

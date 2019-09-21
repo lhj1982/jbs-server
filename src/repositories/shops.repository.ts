@@ -14,7 +14,14 @@ class ShopsRepo {
   }
 
   async find(params) {
-    return await Shop.find(params).exec();
+    const { offset, limit, keyword } = params;
+    const total = await Shop.countDocuments({}).exec();
+    const pagination = { offset, limit, total };
+    const pagedShops = await Shop.find({})
+      .skip(offset)
+      .limit(limit)
+      .exec();
+    return { pagination, data: pagedShops };
   }
 
   async findOne(params) {

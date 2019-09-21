@@ -6,12 +6,25 @@ import UsersRepo from '../repositories/users.repository';
 import ShopsRepo from '../repositories/shops.repository';
 import * as moment from 'moment';
 import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException } from '../exceptions/custom.exceptions';
+import { BaseController } from './base.controller';
+import config from '../config';
 
-export class EventsController {
+export class EventsController extends BaseController {
   getEvents = async (req: Request, res: Response) => {
     try {
-      const event = await EventsRepo.find({});
-      res.json(event);
+      let offset = parseInt(req.query.offset);
+      let limit = parseInt(req.query.limit);
+      const { keyword } = req.query;
+      if (!offset) {
+        offset = config.query.offset;
+      }
+      if (!limit) {
+        limit = config.query.limit;
+      }
+      let result = await EventsRepo.find({ keyword, offset, limit });
+      const links = this.generateLinks(result.pagination, req.route.path, '');
+      result = Object.assign({}, result, links);
+      res.json(result);
     } catch (err) {
       res.send(err);
     }
@@ -76,4 +89,8 @@ export class EventsController {
     });
     res.json({ code: 'SUCCESS', data: newEvent });
   };
+
+  joinEvent = async(req: Request, res: Response, next: NextFunction) => {
+  	
+  }
 }

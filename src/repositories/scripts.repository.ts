@@ -10,7 +10,14 @@ class ScriptsRepo {
   }
 
   async find(params) {
-    return await Script.find(params).exec();
+    const { offset, limit, keyword } = params;
+    const total = await Script.countDocuments({}).exec();
+    const pagination = { offset, limit, total };
+    const pagedScripts = await Script.find({})
+      .skip(offset)
+      .limit(limit)
+      .exec();
+    return { pagination, data: pagedScripts };
   }
 
   async findOne(params) {

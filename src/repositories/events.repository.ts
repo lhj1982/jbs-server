@@ -13,7 +13,14 @@ class EventsRepo {
   }
 
   async find(params) {
-    return await Event.find(params).exec();
+    const { offset, limit, keyword } = params;
+    const total = await Event.countDocuments({}).exec();
+    const pagination = { offset, limit, total };
+    const pagedEvents = await Event.find({})
+      .skip(offset)
+      .limit(limit)
+      .exec();
+    return { pagination, data: pagedEvents };
   }
 
   async findOne(params) {
