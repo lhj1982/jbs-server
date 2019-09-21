@@ -1,34 +1,36 @@
 import * as mongoose from 'mongoose';
 import { ScriptSchema } from '../models/script.model';
-const Script = mongoose.model('Script', ScriptSchema);
+import { EventSchema } from '../models/event.model';
+const Event = mongoose.model('Event', EventSchema);
 mongoose.set('useFindAndModify', false);
 
-class ScriptsRepo {
+class EventsRepo {
   async findById(id: string) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
-    return await Script.where({ _id: id })
+    return await Event.where({ _id: id })
       .findOne()
       .exec();
   }
 
   async find(params) {
-    return await Script.find(params).exec();
+    return await Event.find(params).exec();
   }
 
   async findOne(params) {
-    return await Script.where(params)
+    return await Event.where(params)
       .findOne()
       .exec();
   }
 
-  async saveOrUpdate(script) {
+  async saveOrUpdate(event) {
     const options = {
       new: true,
       upsert: true,
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    return await Script.findOneAndUpdate({ key: script.key }, script, options).exec();
+    const { shop, script, startTime, endTime } = event;
+    return await Event.findOneAndUpdate({ shop, script, startTime, endTime }, event, options).exec();
   }
 }
-export default new ScriptsRepo();
+export default new EventsRepo();

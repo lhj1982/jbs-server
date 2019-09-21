@@ -4,6 +4,7 @@ import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';
 import { ScriptsRoutes } from './routes/scripts.routes';
 import { AuthRoutes } from './routes/auth.routes';
+import { EventsRoutes } from './routes/events.routes';
 import errorMiddleware from './middleware/error.middleare';
 import * as mongoose from 'mongoose';
 const config = require('./config');
@@ -19,6 +20,7 @@ class App {
   authRoutes: AuthRoutes = new AuthRoutes();
   shopsRoutes: ShopsRoutes = new ShopsRoutes();
   scriptsRoutes: ScriptsRoutes = new ScriptsRoutes();
+  eventsRoutes: EventsRoutes = new EventsRoutes();
   // mongoUrl: string = 'mongodb://localhost/CRMdb';
   mongoUrl: string = config.dbUri;
 
@@ -31,6 +33,7 @@ class App {
     this.authRoutes.routes(this.app);
     this.shopsRoutes.routes(this.app);
     this.scriptsRoutes.routes(this.app);
+    this.eventsRoutes.routes(this.app);
     this.app.use(errorMiddleware);
   }
 

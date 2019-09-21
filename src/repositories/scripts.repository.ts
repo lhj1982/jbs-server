@@ -6,9 +6,7 @@ mongoose.set('useFindAndModify', false);
 class ScriptsRepo {
   async findById(id: string) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
-    return await Script.where({ _id: id })
-      .findOne()
-      .exec();
+    return await Script.findById(mongoose.Types.ObjectId(id)).exec();
   }
 
   async find(params) {

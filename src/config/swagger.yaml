@@ -1,4 +1,4 @@
-swagger: "2.0"
+openapi: 3.0.0
 info:
   description: "JBS api document"
   version: "1.0.0"
@@ -7,10 +7,7 @@ info:
   contact:
     email: "lhj1982@gmail.com"
   license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "localhost:3000"
-basePath: "/v2"
+    name: MIT
 tags:
 - name: "oauth"
   description: "Everything about your Pets"
@@ -28,286 +25,337 @@ tags:
   externalDocs:
     description: "Find out more about our store"
     url: "http://swagger.io"
-schemes:
-- "https"
-- "http"
+
+servers:
+  - url: http://localhost:3000
+    description: Optional server description, e.g. Internal staging server for testing
+  - url: http://jbs.weijinglong.com:3000
+    description: Optional server description, e.g. Main (production) server
+    
+
 paths:
-  "/oauth/login":
+  /oauth/login:
     post:
       tags:
-      - "oauth"
+      - oauth
       summary: "Authorize user"
       description: ""
-      operationId: "addPet"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Pet object that needs to be added to the store"
+      operationId: "authrozieUser"
+      requestBody: 
+        description: Request content
         required: true
-        schema:
-          $ref: "#/definitions/OauthLogin"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OauthLogin'
       responses:
         200:
           description: "Success"
-          schema:
-            $ref: '#/definitions/OauthResponse'
-        405:
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/OauthResponse'
+        default:
           description: "Invalid input"
-  
-  "/scripts":
+          
+  /scripts:
     get:
       tags:
       - "script"
       summary: "List all scripts"
       operationId: "listScripts"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
       parameters:
         - in: query
           name: offset
-          type: integer
           description: The number of items to skip before starting to collect the result set
+          schema:
+            type: integer
         - in: query
           name: limit
-          type: integer
           description: The numbers of items to return
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
       responses:
         200:
           description: "Success"
-          schema:
-            $ref: '#/definitions/ScriptsResponse'
-        405:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptsResponse'
+        default:
           description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
           
-  "/scripts/{id}":
+  /scripts/{id}:
     get:
       tags:
       - "script"
       summary: "Get one script by id"
       operationId: "getScriptById"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
       parameters:
         - in: path
           name: id
-          required: true
-          type: string
           description: script id
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: "Success"
-          schema:
-            $ref: '#/definitions/Script'
-        405:
-          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Script'
+        default:
+          description: 'Default response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
   
-  "/shops":
+  /shops:
     get:
       tags:
       - "shop"
       summary: "List all shops"
       operationId: "listShops"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
       parameters:
         - in: query
           name: offset
-          type: integer
           description: The number of items to skip before starting to collect the result set
+          schema:
+            type: integer
         - in: query
           name: limit
-          type: integer
           description: The numbers of items to return
+          schema:
+            type: integer
       responses:
         200:
           description: "Success"
-          schema:
-            $ref: '#/definitions/ShopsResponse'
-        405:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopsResponse'
+        default:
           description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
     post:
       tags:
       - "shop"
       summary: "Add new shop"
       operationId: "AddShop"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-        - in: body
-          name: add shop request body
-          schema:
-            type: "object"
-            required:
-              - name
-              - key
-              - address
-              - mobile
-              - contactName
-              - contactMobile
-              - city
-            properties:
-              name:
-                type: "string"
-              key:
-                type: "string"
-              address:
-                type: "string"
-              mobile:
-                type: "string"
-              contactName:
-                type: "string"
-              contactMobile:
-                type: "string"
-              province:
-                type: "integer"
-              district:
-                type: "integer"
-              city:
-                type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - name
+                - key
+                - address
+                - mobile
+                - contactName
+                - contactMobile
+                - city
+              properties:
+                name:
+                  type: "string"
+                key:
+                  type: "string"
+                address:
+                  type: "string"
+                mobile:
+                  type: "string"
+                contactName:
+                  type: "string"
+                contactMobile:
+                  type: "string"
+                province:
+                  type: "integer"
+                district:
+                  type: "integer"
+                city:
+                  type: "string"
       responses:
         200:
           description: "Success"
-          schema:
-            $ref: '#/definitions/Shop'
-        405:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shop'
+        default:
           description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
           
-  "/shops/{id}":
+  /shops/{id}:
     get:
       tags:
       - "shop"
       summary: "Get one shop by id"
       operationId: "getShopById"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
       parameters:
         - in: path
           name: id
-          required: true
-          type: string
           description: shop id
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: "Success"
-          schema:
-            $ref: '#/definitions/Shop'
-        405:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shop'
+        default:
           description: "Invalid input"
-  "/shops/{shopId}/script/{scriptId}":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                
+  /shops/{shopId}/script/{scriptId}:
     post:
       tags:
       - "shop"
       summary: "Add one script to a shop"
       operationId: "addSingleShopScript"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
       parameters:
         - in: path
           name: shopId
           required: true
-          type: string
           description: shop id
+          schema:
+            type: string
         - in: path
           name: scriptId
           required: true
-          type: string
           description: script id
+          schema:
+            type: string
       responses:
         200:
           description: "Success"
-          schema:
-            $ref: '#/definitions/Shop'
-        405:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shop'
+        default:
           description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
           
-  "/events":
+  /events:
     get:
       tags:
       - "event"
       summary: "List all events"
       operationId: "listEvents"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
       parameters:
         - in: query
           name: offset
-          type: integer
           description: The number of items to skip before starting to collect the result set
+          schema:
+            type: integer
+            format: int32
         - in: query
           name: limit
-          type: integer
           description: The numbers of items to return
+          schema:
+            type: integer
+            format: int32
       responses:
         200:
           description: "Success"
-          schema:
-            $ref: '#/definitions/EventsResponse'
-        405:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsResponse'
+        default:
           description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
     post:
       tags:
       - "event"
       summary: "Add new event"
       operationId: "addEvent"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-        - in: body
-          name: event body
-          schema:
-            type: "object"
-            required:
-              - shopId
-              - scriptId
-              - startTime
-              - endTime
-              - hostUserId
-              - numberOfPersons
-              - price
-            properties:
-              shopId:
-                type: "string"
-              scriptId:
-                type: "string"
-              startTime:
-                type: "string"
-              endTime:
-                type: "string"
-              hostUserId:
-                type: "string"
-              hostComment:
-                type: "string"
-              numberOfPersons:
-                type: "integer"
-              price:
-                type: "integer"
+      requestBody:
+        required: true
+        description: event body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - shopId
+                - scriptId
+                - startTime
+                - endTime
+                - hostUserId
+                - numberOfPersons
+                - price
+              properties:
+                shopId:
+                  type: "string"
+                scriptId:
+                  type: "string"
+                startTime:
+                  type: "string"
+                  format: 'date-time'
+                endTime:
+                  type: "string"
+                  format: 'date-time'
+                hostUserId:
+                  type: "string"
+                hostComment:
+                  type: "string"
+                numberOfPersons:
+                  type: "integer"
+                  format: int32
+                  minimum: 1
+                  maximum: 20
+                price:
+                  type: "integer"
+                  format: int32
+              example:
+                shopId: '1234'
+                scriptId: '1234'
+                startTime: '2019-01-01 12:00:00'
+                endTime: '2019-01-01 12:00:00'
+                hostUserId: '2323'
+                numberOfPersons: 1
+                price: 100
       responses:
         200:
           description: "Success"
-          schema:
-            $ref: '#/definitions/Event'
-        405:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        default:
           description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
   
   /users:
     post:
@@ -316,214 +364,217 @@ paths:
       summary: "Create user"
       description: "This can only be done by the logged in user."
       operationId: "createUser"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
+      security:
+        - bearerAuth: []
+      requestBody:
         description: "Created user object"
         required: true
-        schema:
-          $ref: "#/definitions/User"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
       responses:
         default:
           description: "successful operation"
-  
-securityDefinitions:
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
-    flow: "implicit"
-    scopes:
-      write:pets: "modify pets in your account"
-      read:pets: "read your pets"
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
       
-definitions:
-  OauthLogin:
-    type: "object"
-    properties:
-      code:
-        type: "string"
-      type:
-        type: "string"
-      nickName:
-        type: "string"
-  
-  OauthResponse:
-    type: "object"
-    properties:
-      openId:
-        type: "string"
-      accessToken:
-        type: "string"
-  
-  User:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      username:
-        type: "string"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      email:
-        type: "string"
-      password:
-        type: "string"
-      phone:
-        type: "string"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
-    xml:
-      name: "User"
-  
-  Script:
-    type: "object"
-    properties:
-      id:
-        type: "string"
-      key:
-        type: "string"
-      name:
-        type: "string"
-      description:
-        type: "string"
-      minNumberOfPersons:
-        type: "integer"
-      maxNumberOfPersons:
-        type: "integer"
-      duration:
-        type: "integer"
-      introImage:
-        type: "string"
-      createdAt: 
-        type: "date"
-  
-  ArrayOfScripts:
-    type: "array"
-    items:
-      $ref: '#/definitions/Script'
-  
-  ScriptsResponse:
-    allOf: 
-      - $ref: '#/definitions/PaginatedDataResponse'
-      - 
-        type: "object"
-        properties:
-          data:
-            $ref: '#/definitions/ArrayOfScripts'
-            
-  Shop:
-    type: "object"
-    properties:
-      id:
-        type: "string"
-      key:
-        type: "string"
-      name:
-        type: "string"
-      address:
-        type: "string"
-      mobile:
-        type: "string"
-      phone:
-        type: "string"
-
-  
-  ArrayOfShops:
-    type: "array"
-    items:
-      $ref: '#/definitions/Shop'
-  
-  ShopsResponse:
-    allOf: 
-      - $ref: '#/definitions/PaginatedDataResponse'
-      - 
-        type: "object"
-        properties:
-          data:
-            $ref: '#/definitions/ArrayOfShops'  
-  
-  EventPrice:
-    type: "object"
-    properties:
-      weekdayDayPrice:
-        type: "integer"
-      weekdayNightPrice:
-        type: "integer"
-      weekendPrice:
-        type: "integer"
-  Event:
-    type: "object"
-    properties:
-      id:
-        type: "string"
-      name:
-        type: "string"
-      startTime:
-        type: "string"
-      endTime:
-        type: "string"
-      hostUser:
-        type: "object"
-        $ref: '#/definitions/User'
-  
-  ArrayOfEvents:
-    type: "array"
-    items:
-      $ref: '#/definitions/Event'
-  
-  EventsResponse:
-    allOf: 
-      - $ref: '#/definitions/PaginatedDataResponse'
-      - 
-        type: "object"
-        properties:
-          data:
-            $ref: '#/definitions/ArrayOfEvents'
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+  schemas:
+    OauthLogin:
+      type: "object"
+      properties:
+        code:
+          type: "string"
+        type:
+          type: "string"
+        nickName:
+          type: "string"
+      example:
+        code: '1234'
+        type: 'wxapp'
+        nickName: 'test'
     
-  PaginatedDataResponse:
-    type: "object"
-    properties:
-      code:
-        type: "string"
-      pagination:
-        type: "object"
-        properties:
-          offset:
-            type: "integer"
-          limit:
-            type: "integer"
-          total:
-            type: "integer"
-      links:
-        type: "object"
-        properties:
-          next:
-            type: "string"
-          prev:
-            type: "string"
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "string"
-        description: "Response code, for example, SUCCESS/FAIL"
-      message:
-        type: "string"
-        description: "Error message, if any"
-      data:
-        type: "string"
+    OauthResponse:
+      type: "object"
+      properties:
+        openId:
+          type: "string"
+        accessToken:
+          type: "string"
+    
+    User:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+        username:
+          type: "string"
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+        email:
+          type: "string"
+        password:
+          type: "string"
+        phone:
+          type: "string"
+        userStatus:
+          type: "integer"
+          format: "int32"
+          description: "User Status"
+      xml:
+        name: "User"
+    
+    Script:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        key:
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        minNumberOfPersons:
+          type: "integer"
+        maxNumberOfPersons:
+          type: "integer"
+        duration:
+          type: "integer"
+        introImage:
+          type: "string"
+        createdAt: 
+          type: "string"
+          format: "date-time"
+    
+    ArrayOfScripts:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/Script'
+    
+    ScriptsResponse:
+      allOf: 
+        - $ref: '#/components/schemas/PaginatedDataResponse'
+        - 
+          type: "object"
+          properties:
+            data:
+              $ref: '#/components/schemas/ArrayOfScripts'
+              
+    Shop:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        key:
+          type: "string"
+        name:
+          type: "string"
+        address:
+          type: "string"
+        mobile:
+          type: "string"
+        phone:
+          type: "string"
+
+    
+    ArrayOfShops:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/Shop'
+    
+    ShopsResponse:
+      allOf: 
+        - $ref: '#/components/schemas/PaginatedDataResponse'
+        - 
+          type: "object"
+          properties:
+            data:
+              $ref: '#/components/schemas/ArrayOfShops'  
+    
+    EventPrice:
+      type: "object"
+      properties:
+        weekdayDayPrice:
+          type: "integer"
+        weekdayNightPrice:
+          type: "integer"
+        weekendPrice:
+          type: "integer"
+    Event:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        startTime:
+          type: "string"
+        endTime:
+          type: "string"
+        hostUser:
+          type: "object"
+          $ref: '#/components/schemas/User'
+    
+    ArrayOfEvents:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/Event'
+    
+    EventsResponse:
+      allOf: 
+        - $ref: '#/components/schemas/PaginatedDataResponse'
+        - 
+          type: "object"
+          properties:
+            data:
+              $ref: '#/components/schemas/ArrayOfEvents'
+      
+    PaginatedDataResponse:
+      type: "object"
+      properties:
+        code:
+          type: "string"
+        pagination:
+          type: "object"
+          properties:
+            offset:
+              type: "integer"
+            limit:
+              type: "integer"
+            total:
+              type: "integer"
+        links:
+          type: "object"
+          properties:
+            next:
+              type: "string"
+            prev:
+              type: "string"
+    ApiResponse:
+      type: "object"
+      properties:
+        code:
+          type: "string"
+          description: "Response code, for example, SUCCESS/FAIL"
+        message:
+          type: "string"
+          description: "Error message, if any"
+        data:
+          type: "string"
+    UnauthorizedError:
+      description: Access token is missing or invalid
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
