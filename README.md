@@ -1,3 +1,18 @@
+# Setup
+
+## Install
+
+```
+nodejs
+
+npm install typescript -g
+```
+
+Mongodb
+
+https://linuxize.com/post/how-to-install-mongodb-on-centos-7/
+
+
 # WXAPP Login
 
 https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.html

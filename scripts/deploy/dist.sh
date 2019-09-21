@@ -2,7 +2,7 @@
 
 EXPECTED_ARGS=1
 REPO=git@github.com:adelablue/jbs-server.git
-BRANCH=master
+BRANCH=develop
 
 if [ $# -ne $EXPECTED_ARGS ]
 then
@@ -31,7 +31,7 @@ if [ "$1" = "live" ]; then
 	echo Login to jbs-server uzjeyy22
     echo remove all migrations and seed files on remote
 
-    scp -P 22000 ./ root@jbs-prod:~/jbs-server/ || exit 3
+    scp -P 22000 -r ./ root@jbs-prod:~/jbs-server/ || exit 3
     echo Sync project to remote
 	#rsync -vazr --exclude-from='/Users/hli36/projects/ademes/jbs/jbs-server/scripts/deploy/rsync_exclude' ./ root@jbs-prod:~/jbs-server/ || exit 3
 

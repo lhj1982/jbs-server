@@ -135,6 +135,54 @@ paths:
             $ref: '#/definitions/ShopsResponse'
         405:
           description: "Invalid input"
+    post:
+      tags:
+      - "shop"
+      summary: "Add new shop"
+      operationId: "AddShop"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        - in: body
+          name: add shop request body
+          schema:
+            type: "object"
+            required:
+              - name
+              - key
+              - address
+              - mobile
+              - contactName
+              - contactMobile
+              - city
+            properties:
+              name:
+                type: "string"
+              key:
+                type: "string"
+              address:
+                type: "string"
+              mobile:
+                type: "string"
+              contactName:
+                type: "string"
+              contactMobile:
+                type: "string"
+              province:
+                type: "integer"
+              district:
+                type: "integer"
+              city:
+                type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: '#/definitions/Shop'
+        405:
+          description: "Invalid input"
           
   "/shops/{id}":
     get:
@@ -156,7 +204,7 @@ paths:
         200:
           description: "Success"
           schema:
-            $ref: '#/definitions/Script'
+            $ref: '#/definitions/Shop'
         405:
           description: "Invalid input"
   "/shops/{shopId}/script/{scriptId}":
@@ -184,7 +232,7 @@ paths:
         200:
           description: "Success"
           schema:
-            $ref: '#/definitions/Script'
+            $ref: '#/definitions/Shop'
         405:
           description: "Invalid input"
           
@@ -252,8 +300,7 @@ paths:
               numberOfPersons:
                 type: "integer"
               price:
-                type: "object"
-                $ref: '#/definitions/EventPrice'
+                type: "integer"
       responses:
         200:
           description: "Success"
@@ -345,8 +392,22 @@ definitions:
     properties:
       id:
         type: "string"
+      key:
+        type: "string"
       name:
         type: "string"
+      description:
+        type: "string"
+      minNumberOfPersons:
+        type: "integer"
+      maxNumberOfPersons:
+        type: "integer"
+      duration:
+        type: "integer"
+      introImage:
+        type: "string"
+      createdAt: 
+        type: "date"
   
   ArrayOfScripts:
     type: "array"
@@ -367,8 +428,17 @@ definitions:
     properties:
       id:
         type: "string"
+      key:
+        type: "string"
       name:
         type: "string"
+      address:
+        type: "string"
+      mobile:
+        type: "string"
+      phone:
+        type: "string"
+
   
   ArrayOfShops:
     type: "array"

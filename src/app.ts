@@ -9,7 +9,9 @@ import * as mongoose from 'mongoose';
 const config = require('./config');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./config/swagger.json');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load(__dirname + '/config/swagger.yaml');
+// const swaggerDocument = require('./config/swagger.json');
 
 class App {
   app: express.Application = express();
