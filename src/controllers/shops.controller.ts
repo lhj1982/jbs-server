@@ -31,7 +31,7 @@ export class ShopsController extends BaseController {
   addShop = async (req: Request, res: Response, next: NextFunction) => {
     const { key, name, address, mobile, phone, contactName, contactMobile, province, city, district } = req.body;
     if (!key) {
-      next(new InvalidRequestException('AddShop', 'key'));
+      next(new InvalidRequestException('AddShop', ['key']));
       return;
     }
     const shop = await ShopsRepo.findOne({ key });
@@ -58,11 +58,11 @@ export class ShopsController extends BaseController {
   addScript = async (req: Request, res: Response, next: NextFunction) => {
     const { scriptId, shopId } = req.params;
     if (!scriptId) {
-      next(new InvalidRequestException('AddShopScript', 'scriptId'));
+      next(new InvalidRequestException('AddShopScript', ['scriptId']));
       return;
     }
     if (!shopId) {
-      next(new InvalidRequestException('AddShopScript', 'shopId'));
+      next(new InvalidRequestException('AddShopScript', ['shopId']));
       return;
     }
     const shop = await ShopsRepo.findById(shopId);

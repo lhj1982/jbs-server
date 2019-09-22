@@ -9,6 +9,9 @@ const User = mongoose.model('User', UserSchema);
 export const EventUserSchema = new Schema({
   event: { type: Schema.Types.ObjectId, ref: 'Event' },
   user: { type: Schema.Types.ObjectId, ref: 'User' },
+  userName: {
+    type: String
+  },
   source: {
     type: String
   },

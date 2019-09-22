@@ -10,10 +10,7 @@ info:
     name: MIT
 tags:
 - name: "oauth"
-  description: "Everything about your Pets"
-  externalDocs:
-    description: "Find out more"
-    url: "http://swagger.io"
+  description: "User authentication and authorization"
 - name: "script"
   description: "Access to scripts"
 - name: "shop"
@@ -22,9 +19,6 @@ tags:
   description: "Access to script events"
 - name: "user"
   description: "Operations about user"
-  externalDocs:
-    description: "Find out more about our store"
-    url: "http://swagger.io"
 
 servers:
   - url: http://localhost:3000
@@ -357,6 +351,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
   
+  /events/{eventId}/join:
+    post:
+      tags:
+      - "event"
+      summary: "User join a given event"
+      operationId: "joinEvent"
+      requestBody: 
+        required: true
+        description: join event request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                userId:
+                  type: "string"
+                userName:
+                  type: "string"
+                source:
+                  type: "string"
+                  enum:
+                    - online
+                    - offline
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          description: event id
+          schema:
+            type: string
+
   /users:
     post:
       tags:
@@ -395,6 +420,8 @@ components:
           type: "string"
         type:
           type: "string"
+          enum:
+            - wxapp
         nickName:
           type: "string"
       example:

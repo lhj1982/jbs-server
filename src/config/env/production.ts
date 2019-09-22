@@ -1,6 +1,7 @@
 module.exports = {
   server: {
-    port: 3000
+    port: 3000,
+    entrypoint: `http://jbs.weijinglong.com:3000`
   },
   dbUri: 'mongodb://localhost:27017/jbs',
   jwt: {

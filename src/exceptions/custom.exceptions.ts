@@ -13,8 +13,8 @@ class ResourceNotFoundException extends HttpException {
 }
 
 class InvalidRequestException extends HttpException {
-  constructor(service: string, attribute: string) {
-    super(404, `Invalid request for attribute ${attribute} in ${service}`);
+  constructor(service: string, attributes: string[]) {
+    super(404, `Invalid request for attribute(s) ${attributes} in ${service}`);
   }
 }
 

@@ -3,5 +3,6 @@ export default {
     port: process.env.SERVER_PORT
     // exposedHost: process.env.SERVER_EXPOSED_HOST,
     // exposedPort: process.env.SERVER_EXPOSED_PORT,
-  }
+  },
+  eventDateFormatParse: 'YYYY-MM-DD HH:mm:ss.SSSZ'
 };

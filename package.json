@@ -4,15 +4,16 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "clean": "rm -rf dist && mkdir dist",
-    "build": "tsc",
+    "clean": "rm -rf dist && mkdir -p dist/config",
+    "cp-files": "cp -r ./src/config/*.yaml ./dist/config/",
+    "build": "npm run clean && npm run cp-files && tsc",
     "prettier": "prettier --write 'src/**/*.ts' 'src/**/*.json'",
     "lint:fix": "eslint src --ext .js,.ts --fix",
-    "dev": "NODE_ENV=development node --inspect -r ts-node/register ./src/server.ts",
+    "dev": "npm run build && NODE_ENV=development node --inspect -r ts-node/register ./src/server.ts",
     "dev:watch": "NODE_ENV=development npm run prettier && npm run lint:fix && nodemon",
-    "start": "nodemon --use_strict ./dist/server.js",
-    "prod": "NODE_ENV=production npm run build && npm run start",
-    "start:pm2": "npx pm2 start pm2.yaml"
+    "start:prod:single": "NODE_ENV=production node ./dist/server.js",
+    "prod": "npm run build && npm run start:prod",
+    "start:prod:deamon": "NODE_ENV=production pm2 start ./dist/server.js"
   },
   "author": "",
   "license": "ISC",

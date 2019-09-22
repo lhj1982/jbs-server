@@ -30,7 +30,7 @@ export class ScriptsController extends BaseController {
     // console.log(req);
     const { key, name, description, minNumberOfPersons, maxNumberOfPersons, duration } = req.body;
     if (!key) {
-      next(new InvalidRequestException('AddScript', 'key'));
+      next(new InvalidRequestException('AddScript', ['key']));
       return;
     }
     const script = await ScriptsRepo.findOne({ key });

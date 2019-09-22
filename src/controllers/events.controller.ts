@@ -4,6 +4,7 @@ import EventsRepo from '../repositories/events.repository';
 import ScriptsRepo from '../repositories/scripts.repository';
 import UsersRepo from '../repositories/users.repository';
 import ShopsRepo from '../repositories/shops.repository';
+import EventUsersRepo from '../repositories/eventUsers.repository';
 import * as moment from 'moment';
 import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
@@ -33,23 +34,23 @@ export class EventsController extends BaseController {
   addEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons, price } = req.body;
     if (!scriptId) {
-      next(new InvalidRequestException('AddEvent', 'scriptId'));
+      next(new InvalidRequestException('AddEvent', ['scriptId']));
       return;
     }
     if (!shopId) {
-      next(new InvalidRequestException('AddEvent', 'shopId'));
+      next(new InvalidRequestException('AddEvent', ['shopId']));
       return;
     }
     if (!hostUserId) {
-      next(new InvalidRequestException('AddEvent', 'hostUserId'));
+      next(new InvalidRequestException('AddEvent', ['hostUserId']));
       return;
     }
     if (!numberOfPersons) {
-      next(new InvalidRequestException('AddEvent', 'numberOfPersons'));
+      next(new InvalidRequestException('AddEvent', ['numberOfPersons']));
       return;
     }
     if (!price) {
-      next(new InvalidRequestException('AddEvent', 'price'));
+      next(new InvalidRequestException('AddEvent', ['price']));
       return;
     }
 
@@ -69,13 +70,12 @@ export class EventsController extends BaseController {
       return;
     }
 
-    const dtStartTime = moment(startTime, 'YYYY-MM-DD HH:mm:ss.SSSZ')
+    const dtStartTime = moment(startTime, config.eventDateFormatParse)
       .utc()
       .format();
-    const dtEndTime = moment(endTime, 'YYYY-MM-DD HH:mm:ss.SSSZ')
+    const dtEndTime = moment(endTime, config.eventDateFormatParse)
       .utc()
       .format();
-    console.log(dtStartTime);
     const newEvent = await EventsRepo.saveOrUpdate({
       shop: shopId,
       script: scriptId,
@@ -90,7 +90,45 @@ export class EventsController extends BaseController {
     res.json({ code: 'SUCCESS', data: newEvent });
   };
 
-  joinEvent = async(req: Request, res: Response, next: NextFunction) => {
-  	
-  }
+  joinEvent = async (req: Request, res: Response, next: NextFunction) => {
+    const { eventId } = req.params;
+    const { userId, userName, source } = req.body;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    if (userId && userName) {
+      next(new InvalidRequestException('JoinEvent', [userId, userName]));
+      return;
+    }
+    if (source != 'online' || source != 'offline') {
+    	next(new InvalidRequestException('JoinEvent', [source]));
+      return;
+    }
+    if (source === 'online' && !userId) {
+    	next(new InvalidRequestException('JoinEvent', [source, userId]));
+      return;
+    }
+    if (source === 'offline' && !userName) {
+    	next(new InvalidRequestException('JoinEvent', [source, userName]));
+      return;
+    }
+    if (userId) {
+      const user = await UsersRepo.findById(userId);
+      if (!user) {
+        next(new ResourceNotFoundException('User', userId));
+        return;
+      }
+    }
+    const newEventUser = await EventUsersRepo.saveOrUpdate({
+      eventId,
+      userId,
+      userName,
+      source,
+      paid: false,
+      createdAt: new Date()
+    });
+    res.json({ code: 'SUCCESS', data: newEventUser });
+  };
 }

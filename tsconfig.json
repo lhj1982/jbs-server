@@ -10,7 +10,7 @@
     },
     "include": [
         "src/**/*.ts",
-        "src/**/*.yml"
+        "src/**/*.yaml"
     ],
     "exclude": [
         "node_modules"

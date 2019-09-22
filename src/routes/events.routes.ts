@@ -9,15 +9,18 @@ export class EventsRoutes {
     // Contact
     app
       .route('/events')
-      .get((req: Request, res: Response, next: NextFunction) => {
-        // middleware
-        console.log(`Request from: ${req.originalUrl}`);
-        console.log(`Request type: ${req.method}`);
-        next();
-      }, this.eventsController.getEvents)
+      .get(
+        verifyToken,
+        (req: Request, res: Response, next: NextFunction) => {
+          // middleware
+          console.log(`Request from: ${req.originalUrl}`);
+          console.log(`Request type: ${req.method}`);
+          next();
+        },
+        this.eventsController.getEvents
+      )
       .post(verifyToken, this.eventsController.addEvent);
 
-    app.route('/events/:eventId/join')
-    .post(verifyToken, this.eventsController.joinEvent);
+    app.route('/events/:eventId/join').post(verifyToken, this.eventsController.joinEvent);
   }
 }
