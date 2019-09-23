@@ -17,6 +17,9 @@ class EventsRepo {
     const total = await Event.countDocuments({}).exec();
     const pagination = { offset, limit, total };
     const pagedEvents = await Event.find({})
+      .populate('script', ['_id', 'name', 'description', 'duration'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
+      .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .skip(offset)
       .limit(limit)
       .exec();

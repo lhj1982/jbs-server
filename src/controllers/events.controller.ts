@@ -103,15 +103,15 @@ export class EventsController extends BaseController {
       return;
     }
     if (source != 'online' || source != 'offline') {
-    	next(new InvalidRequestException('JoinEvent', [source]));
+      next(new InvalidRequestException('JoinEvent', [source]));
       return;
     }
     if (source === 'online' && !userId) {
-    	next(new InvalidRequestException('JoinEvent', [source, userId]));
+      next(new InvalidRequestException('JoinEvent', [source, userId]));
       return;
     }
     if (source === 'offline' && !userName) {
-    	next(new InvalidRequestException('JoinEvent', [source, userName]));
+      next(new InvalidRequestException('JoinEvent', [source, userName]));
       return;
     }
     if (userId) {

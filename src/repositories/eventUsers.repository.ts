@@ -16,7 +16,8 @@ class EventUsersRepo {
     console.log(userName);
     return await EventUser.where({
       $or: [{ event: eventId, userName }]
-    }).findOne()
+    })
+      .findOne()
       .exec();
   }
 
@@ -31,7 +32,14 @@ class EventUsersRepo {
     const e = await this.findEventUser(eventId, userId, userName);
     console.log(e);
     if (!e) {
-      return await EventUser.create({ event: eventId, user: userId, userName, source, paid, createdAt });
+      return await EventUser.create({
+        event: eventId,
+        user: userId,
+        userName,
+        source,
+        paid,
+        createdAt
+      });
     } else {
       return e;
     }

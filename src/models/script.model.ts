@@ -29,6 +29,12 @@ export const ScriptSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  },
-  shops: [{ type: String, ref: 'Shop' }]
+  }
+  // shops: [{ type: String, ref: 'Shop' }]
+});
+
+ScriptSchema.virtual('shops', {
+  ref: 'Shop',
+  localField: '_id',
+  foreignField: 'shops'
 });
