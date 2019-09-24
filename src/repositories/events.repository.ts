@@ -9,6 +9,10 @@ class EventsRepo {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     return await Event.where({ _id: id })
       .findOne()
+      .populate('script', ['_id', 'name', 'description', 'duration'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
+      .populate('hostUser', ['_id', 'nickName', 'mobile'])
+      .populate('members', ['_id', 'user', 'source', 'paid', 'createdAt'])
       .exec();
   }
 
@@ -39,8 +43,8 @@ class EventsRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { shop, script, startTime, endTime } = event;
-    return await Event.findOneAndUpdate({ shop, script, startTime, endTime }, event, options).exec();
+    const { shop, script, startTime, endTime, hostUser } = event;
+    return await Event.findOneAndUpdate({ shop, script, startTime, endTime, hostUser }, event, options).exec();
   }
 }
 export default new EventsRepo();

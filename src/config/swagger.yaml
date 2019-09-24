@@ -260,6 +260,8 @@ paths:
       - "event"
       summary: "List all events"
       operationId: "listEvents"
+      security:
+        - bearerAuth: []
       parameters:
         - in: query
           name: offset
@@ -291,6 +293,8 @@ paths:
       - "event"
       summary: "Add new event"
       operationId: "addEvent"
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         description: event body
@@ -305,7 +309,6 @@ paths:
                 - endTime
                 - hostUserId
                 - numberOfPersons
-                - price
               properties:
                 shopId:
                   type: "string"
@@ -326,9 +329,6 @@ paths:
                   format: int32
                   minimum: 1
                   maximum: 20
-                price:
-                  type: "integer"
-                  format: int32
               example:
                 shopId: '1234'
                 scriptId: '1234'
@@ -351,6 +351,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
   
+  /events/{eventid}:
+    get:
+      tags:
+      - "event"
+      summary: "Get an event detail info"
+      operationId: "getEventById"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetails'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /events/{eventId}/join:
     post:
       tags:
@@ -364,6 +386,9 @@ paths:
           application/json:
             schema:
               type: "object"
+              required:
+                - source
+                - mobile
               properties:
                 userId:
                   type: "string"
@@ -374,6 +399,8 @@ paths:
                   enum:
                     - online
                     - offline
+                mobile:
+                  type: "string"
       parameters:
         - in: path
           name: eventId
@@ -381,6 +408,19 @@ paths:
           description: event id
           schema:
             type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventUser'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /users:
     post:
@@ -484,6 +524,14 @@ components:
         createdAt: 
           type: "string"
           format: "date-time"
+        tags:
+          type: "array"
+          items:
+            type: "string"
+        shops:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Shop'
     
     ArrayOfScripts:
       type: "array"
@@ -553,6 +601,23 @@ components:
         hostUser:
           type: "object"
           $ref: '#/components/schemas/User'
+        script:
+          type: "object"
+          $ref: '#/components/schemas/Script'
+        shop:
+          type: "object"
+          $ref: '#/components/schemas/Shop'
+
+    EventDetails:
+      allOf: 
+        - $ref: '#/components/schemas/Event'
+        - 
+          type: object
+          properties:
+            members:
+              type: array
+              items:
+                $ref: '#/components/schemas/EventUser'
     
     ArrayOfEvents:
       type: "array"
@@ -567,6 +632,28 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/ArrayOfEvents'
+
+    EventUser:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        event:
+          type: "string"
+        user:
+          type: "string"
+        userName:
+          type: "string"
+        mobile:
+          type: "string"
+        source:
+          type: "string"
+          enum: [online, offline]
+        paid:
+          type: "boolean"
+        createdAt:
+          type: "string"
+          format: "date-time"
       
     PaginatedDataResponse:
       type: "object"

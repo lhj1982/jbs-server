@@ -21,6 +21,7 @@ export class EventsRoutes {
       )
       .post(verifyToken, this.eventsController.addEvent);
 
+    app.route('/events/:eventId').get(verifyToken, this.eventsController.getEventDetails);
     app.route('/events/:eventId/join').post(verifyToken, this.eventsController.joinEvent);
   }
 }

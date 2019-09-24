@@ -14,6 +14,7 @@ class ScriptsRepo {
     const total = await Script.countDocuments({}).exec();
     const pagination = { offset, limit, total };
     const pagedScripts = await Script.find({})
+      .populate('shops')
       .skip(offset)
       .limit(limit)
       .exec();

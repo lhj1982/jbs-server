@@ -12,10 +12,10 @@ class EventUsersRepo {
   }
 
   async findEventUser(eventId: string, userId: string, userName: string) {
-    console.log(eventId);
-    console.log(userName);
+    // console.log(eventId);
+    // console.log(userName);
     return await EventUser.where({
-      $or: [{ event: eventId, userName }]
+      $or: [{ event: eventId, userName }, { event: eventId, user: userId }]
     })
       .findOne()
       .exec();

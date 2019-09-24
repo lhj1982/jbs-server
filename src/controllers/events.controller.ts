@@ -32,7 +32,7 @@ export class EventsController extends BaseController {
   };
 
   addEvent = async (req: Request, res: Response, next: NextFunction) => {
-    const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons, price } = req.body;
+    const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons } = req.body;
     if (!scriptId) {
       next(new InvalidRequestException('AddEvent', ['scriptId']));
       return;
@@ -47,10 +47,6 @@ export class EventsController extends BaseController {
     }
     if (!numberOfPersons) {
       next(new InvalidRequestException('AddEvent', ['numberOfPersons']));
-      return;
-    }
-    if (!price) {
-      next(new InvalidRequestException('AddEvent', ['price']));
       return;
     }
 
@@ -84,7 +80,7 @@ export class EventsController extends BaseController {
       hostUser: hostUserId,
       hostComment,
       numberOfPersons,
-      price,
+      price: 100,
       createdAt: new Date()
     });
     res.json({ code: 'SUCCESS', data: newEvent });
@@ -130,5 +126,21 @@ export class EventsController extends BaseController {
       createdAt: new Date()
     });
     res.json({ code: 'SUCCESS', data: newEventUser });
+  };
+
+  getEventDetails = async (req: Request, res: Response, next: NextFunction) => {
+    // console.log(new Date());
+    // console.log(moment());
+    // console.log(moment.utc());
+    // console.log(moment.utc(1566640351349));
+    // console.log(moment.unix(1566640351));
+    // console.log(moment('2019-02-03 10:00:00'));
+    const { eventId } = req.params;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    res.json({ code: 'SUCCESS', data: event });
   };
 }

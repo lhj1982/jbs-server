@@ -15,6 +15,10 @@ export const EventUserSchema = new Schema({
   source: {
     type: String
   },
+  mobile: {
+    type: String,
+    required: 'Mobile cannot be empty'
+  },
   paid: {
     type: Boolean
   },

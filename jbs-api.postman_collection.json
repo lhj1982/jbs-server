@@ -1,0 +1,549 @@
+{
+	"info": {
+		"_postman_id": "3dfff964-1c9b-44c4-85be-4a1ec8b491c4",
+		"name": "jbs-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get access token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx1283957182b4e6c1&secret=4eb795feb7cb40a9acb9aea5f6ef4268&code=071n4OVc0D6esB1d4dXc03gvVc0n4OVS&grant_type=authorization_code",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"sns",
+						"oauth2",
+						"access_token"
+					],
+					"query": [
+						{
+							"key": "appid",
+							"value": "wx1283957182b4e6c1"
+						},
+						{
+							"key": "secret",
+							"value": "4eb795feb7cb40a9acb9aea5f6ef4268"
+						},
+						{
+							"key": "code",
+							"value": "071n4OVc0D6esB1d4dXc03gvVc0n4OVS"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth/login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"code\": \"002c2Qdk1BLfTo0CMafk1yq6ek1c2Qdo\",\n\t\"nickName\": \"test1\",\n\t\"type\": \"wxapp\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/oauth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"oauth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add script",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1Njg5MDg0NzQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY4OTAxMjc0fQ.2PU2CJEseNH8AKuNOuT74azAz5Jogqp2VBjd7CgLVLY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"key\": \"test3\",\n\t\"name\": \"test\", \n\t\"description\": \"test3 desc\", \n\t\"minNumberOfPersons\": 4, \n\t\"maxNumberOfPersons\": 8, \n\t\"duration\": 2400\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/scripts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"scripts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.weixin.qq.com/sns/userinfo?access_token=22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU&openid=onlgJ1iMXxfirUdlsPp4SSX6fvsk",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"sns",
+						"userinfo"
+					],
+					"query": [
+						{
+							"key": "access_token",
+							"value": "22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU"
+						},
+						{
+							"key": "openid",
+							"value": "onlgJ1iMXxfirUdlsPp4SSX6fvsk"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "code2session",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.weixin.qq.com/sns/jscode2session?appid=wx67080218c81daab6&secret=f714576304cbae30e6976ecc82beb84a&js_code=JSCODE&grant_type=authorization_code\n",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"sns",
+						"jscode2session"
+					],
+					"query": [
+						{
+							"key": "appid",
+							"value": "wx67080218c81daab6"
+						},
+						{
+							"key": "secret",
+							"value": "f714576304cbae30e6976ecc82beb84a"
+						},
+						{
+							"key": "js_code",
+							"value": "JSCODE"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code\n"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sendSms",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://47.104.243.247:8513/sms/Api/Send.do",
+					"protocol": "http",
+					"host": [
+						"47",
+						"104",
+						"243",
+						"247"
+					],
+					"port": "8513",
+					"path": [
+						"sms",
+						"Api",
+						"Send.do"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add shop",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1NjkxMzM3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTI2NTc2fQ._0ftKOXAeGh0P_zuWkWkl7O2vZ63VmGmeeTVdMtzvdA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"test2\",\n\t\"key\": \"key2\",\n\t\"address\": \"test\",\n\t\"mobile\": \"test\",\n\t\"phone\": \"\",\n\t\"contactName\": \"test\",\n\t\"contactMobile\": \"test\",\n\t\"province\": \"\",\n\t\"city\": \"\",\n\t\"district\": \"虹口区\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/shops",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"shops"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add shop script",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1Njg5MDg0NzQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY4OTAxMjc0fQ.2PU2CJEseNH8AKuNOuT74azAz5Jogqp2VBjd7CgLVLY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/shops/5d838bb87bec9d16e274a763/script/5d834bd57e5f59ede8c80762",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"shops",
+						"5d838bb87bec9d16e274a763",
+						"script",
+						"5d834bd57e5f59ede8c80762"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get scripts",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/scripts?offset=0&limit=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"scripts"
+					],
+					"query": [
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add event",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"shopId\": \"5d838bb87bec9d16e274a763\",\n\t  \"scriptId\": \"5d834bd57e5f59ede8c80762\",\n\t  \"startTime\": \"2019-01-01 12:00:00\",\n\t  \"endTime\": \"2019-01-01 12:00:00\",\n\t  \"hostUserId\": \"5d80f9e705ee1f1efa3c5230\",\n\t  \"numberOfPersons\": 1,\n\t  \"price\": 100\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get shops",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/shops?offset=0&limit=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"shops"
+					],
+					"query": [
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get events",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1NjkxMzM3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTI2NTc2fQ._0ftKOXAeGh0P_zuWkWkl7O2vZ63VmGmeeTVdMtzvdA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/events?offset=0&limit=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events"
+					],
+					"query": [
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "join event - offline",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkxMjIzOTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTE1MTk0fQ.2Peh62ocN4poCOdjeIluHqYZAOBw8GBAsSosjlMvMMg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userName\": \"test\",\n\t\"source\": \"offline\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/5d860384b625286c983cd26a/join",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"5d860384b625286c983cd26a",
+						"join"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "join event - online",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkxMjIzOTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTE1MTk0fQ.2Peh62ocN4poCOdjeIluHqYZAOBw8GBAsSosjlMvMMg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"5d80f9e705ee1f1efa3c5230\",\n\t\"source\": \"online\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/5d860384b625286c983cd26a/join",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"5d860384b625286c983cd26a",
+						"join"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
