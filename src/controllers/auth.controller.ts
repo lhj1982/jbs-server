@@ -23,10 +23,10 @@ export class AuthController {
           const user = await UsersRepo.saveOrUpdateUser({ openId, unionId, sessionKey, nickName, gender, country, province, city, language, status: 'active', roles: ['5d7f8cd024f808a2e89d6aec'] });
           // create a token string
           // console.log(this.getTokenPayload);
-          console.log(user._id);
+          // console.log(user._id);
           const token = jwt.sign(this.getTokenPayload(user), config.jwt.secret);
           // console.log(token);
-          res.json({ openId, token });
+          res.json({ openId, token, user });
         } else {
           throw new Error(`Cannot get sessionKey, errorCode: ${errorCode}`);
         }

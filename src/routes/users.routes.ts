@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { UsersController } from '../controllers/users.controller';
+import { verifyToken } from '../middleware/verifyToken';
 
 export class UsersRoutes {
   usersController: UsersController = new UsersController();
@@ -18,5 +19,10 @@ export class UsersRoutes {
     }, this.usersController.getUsers);
 
     app.route('/users/access_token').get(this.usersController.getAccessToken);
+
+    app
+      .route('/users/:userId')
+      .get(verifyToken, this.usersController.getUser)
+      .put(verifyToken, this.usersController.updateUser);
   }
 }

@@ -26,8 +26,23 @@ class EventsRepo {
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .skip(offset)
       .limit(limit)
+      .sort({ startTime: 1 })
       .exec();
     return { pagination, data: pagedEvents };
+  }
+
+  async findByDate(fromDate, toDate) {
+    return await Event.find({
+      startTime: {
+        $gte: fromDate,
+        $lte: toDate
+      }
+    })
+      .populate('script', ['_id', 'name', 'description', 'duration'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
+      .populate('hostUser', ['_id', 'nickName', 'mobile'])
+      .sort({ startTime: 1 })
+      .exec();
   }
 
   async findOne(params) {

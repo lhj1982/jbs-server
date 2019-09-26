@@ -267,7 +267,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1Njg5MDg0NzQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY4OTAxMjc0fQ.2PU2CJEseNH8AKuNOuT74azAz5Jogqp2VBjd7CgLVLY",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkyNTUxNjAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MjQ3OTYwfQ.sdC2tfiar4epA7STT1bO8HynNiEl0dlNKHs5n_UIwJw",
 						"type": "text"
 					}
 				],
@@ -276,7 +276,7 @@
 					"raw": "{}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/shops/5d838bb87bec9d16e274a763/script/5d834bd57e5f59ede8c80762",
+					"raw": "http://localhost:3000/shops/5d8704781730fa0f5ee852d4/script/5d838a115c310d1434993013",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -284,9 +284,9 @@
 					"port": "3000",
 					"path": [
 						"shops",
-						"5d838bb87bec9d16e274a763",
+						"5d8704781730fa0f5ee852d4",
 						"script",
-						"5d834bd57e5f59ede8c80762"
+						"5d838a115c310d1434993013"
 					]
 				}
 			},
@@ -353,13 +353,13 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk0NTI3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NDQ1NTc2fQ.DXkFfy1UEUrjjCfFeVesj4wLGdWzD7sPiygILTKlcJo",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"shopId\": \"5d838bb87bec9d16e274a763\",\n\t  \"scriptId\": \"5d834bd57e5f59ede8c80762\",\n\t  \"startTime\": \"2019-01-01 12:00:00\",\n\t  \"endTime\": \"2019-01-01 12:00:00\",\n\t  \"hostUserId\": \"5d80f9e705ee1f1efa3c5230\",\n\t  \"numberOfPersons\": 1,\n\t  \"price\": 100\n}"
+					"raw": "{\n\t\"shopId\": \"5d838bb87bec9d16e274a763\",\n\t  \"scriptId\": \"5d834bd57e5f59ede8c80762\",\n\t  \"startTime\": \"2019-09-21 12:00:00\",\n\t  \"endTime\": \"2019-09-21 14:00:00\",\n\t  \"hostUserId\": \"5d80f9e705ee1f1efa3c5230\",\n\t  \"numberOfPersons\": 8,\n\t  \"price\": 100\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3000/events",
@@ -439,7 +439,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1NjkxMzM3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTI2NTc2fQ._0ftKOXAeGh0P_zuWkWkl7O2vZ63VmGmeeTVdMtzvdA",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkzMzQ3MTMsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MzI3NTEzfQ.E5nKSaN--fJTbJV5qm0V4VNWxr47DCCP5b3i2p827WQ",
 						"type": "text"
 					}
 				],
@@ -540,6 +540,131 @@
 						"events",
 						"5d860384b625286c983cd26a",
 						"join"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get event details",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkzMzQ3MTMsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MzI3NTEzfQ.E5nKSaN--fJTbJV5qm0V4VNWxr47DCCP5b3i2p827WQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/5d860384b625286c983cd26a",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"5d860384b625286c983cd26a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get events by date",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk0NTI3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NDQ1NTc2fQ.DXkFfy1UEUrjjCfFeVesj4wLGdWzD7sPiygILTKlcJo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/calendar/2019-03-01?offset=0&limit=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"calendar",
+						"2019-03-01"
+					],
+					"query": [
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk1MTU0OTMsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NTA4MjkzfQ.M4JXw2e6Uof6HxpnweqqNijfXsehFuRb24aF4pzZY2A",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"description\": \"testNick1\",\n\t\"mobile\": \"13651976276\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/users/5d80f9e705ee1f1efa3c5230",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"5d80f9e705ee1f1efa3c5230"
 					]
 				}
 			},

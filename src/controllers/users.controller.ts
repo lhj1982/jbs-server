@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import AuthApi from '../api/auth';
+import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException } from '../exceptions/custom.exceptions';
 import UsersRepo from '../repositories/users.repository';
 
 export class UsersController {
@@ -21,5 +22,31 @@ export class UsersController {
     // UserRepo.saveAccessToken();
     res.json(response);
     // return response;
+  };
+
+  getUser = async (req: Request, res: Response, next: NextFunction) => {};
+
+  updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params;
+    try {
+      const user = await UsersRepo.findById(userId);
+      if (!user) {
+        next(new ResourceNotFoundException('User', userId));
+        return;
+      }
+      const { description, email, mobile, wechatId, company, avatarImage } = req.body;
+      const userToUpdate = Object.assign(user, {
+        description,
+        email,
+        mobile,
+        wechatId,
+        company,
+        avatarImage
+      });
+      const updatedUser = await UsersRepo.saveOrUpdateUser(user);
+      res.json({ code: 'SUCCESS', data: updatedUser });
+    } catch (err) {
+      res.send(err);
+    }
   };
 }

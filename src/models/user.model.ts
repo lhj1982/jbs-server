@@ -25,6 +25,9 @@ export const UserSchema = new Schema({
   description: {
     type: String
   },
+  avatarImage: {
+    type: String
+  },
   province: {
     type: String
   },
@@ -56,6 +59,9 @@ export const UserSchema = new Schema({
     type: Number
   },
   birthday: {
+    type: String
+  },
+  wechatId: {
     type: String
   },
   accessToken: {

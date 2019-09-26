@@ -5,10 +5,10 @@ import ScriptsRepo from '../repositories/scripts.repository';
 import UsersRepo from '../repositories/users.repository';
 import ShopsRepo from '../repositories/shops.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
-import * as moment from 'moment';
 import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import config from '../config';
+import { string2Date, formatDate, addDays } from '../utils/dateUtil';
 
 export class EventsController extends BaseController {
   getEvents = async (req: Request, res: Response) => {
@@ -27,6 +27,22 @@ export class EventsController extends BaseController {
       result = Object.assign({}, result, links);
       res.json(result);
     } catch (err) {
+      res.send(err);
+    }
+  };
+
+  getEventsByDate = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const offset = 0;
+      const limit = 100;
+      const { date } = req.params;
+      const from = formatDate(date);
+      const to = addDays(date, 1);
+      console.log(`Find event between ${from} and ${to}...`);
+      const result = await EventsRepo.findByDate(from, to);
+      res.json({ code: 'SUCCESS', data: result });
+    } catch (err) {
+      console.error(err);
       res.send(err);
     }
   };
@@ -66,12 +82,8 @@ export class EventsController extends BaseController {
       return;
     }
 
-    const dtStartTime = moment(startTime, config.eventDateFormatParse)
-      .utc()
-      .format();
-    const dtEndTime = moment(endTime, config.eventDateFormatParse)
-      .utc()
-      .format();
+    const dtStartTime = formatDate(startTime, config.eventDateFormatParse);
+    const dtEndTime = formatDate(endTime, config.eventDateFormatParse);
     const newEvent = await EventsRepo.saveOrUpdate({
       shop: shopId,
       script: scriptId,
