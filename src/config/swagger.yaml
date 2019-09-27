@@ -378,7 +378,7 @@ paths:
     get:
       tags:
       - "event"
-      summary: "Get an events list by given date"
+      summary: "Get events list by given date"
       operationId: "getEventsByDate"
       parameters:
         - in: path
@@ -703,11 +703,68 @@ components:
         - 
           type: object
           properties:
+            priceSchema:
+              type: array
+              items:
+                $ref: '#/components/schemas/PriceSchema'
             members:
               type: array
               items:
                 $ref: '#/components/schemas/EventUser'
     
+    PriceSchema:
+      type: object
+      properties:
+        monday:
+          type: object
+          properties:
+            timeSpan:
+              type: string
+            price:
+              type: integer
+        tuesday:
+          type: object
+          properties:
+            timeSpan:
+              type: string
+            price:
+              type: integer
+        wednesday:
+          type: object
+          properties:
+            timeSpan:
+              type: string
+            price:
+              type: integer
+        thursday:
+          type: object
+          properties:
+            timeSpan:
+              type: string
+            price:
+              type: integer
+        friday:
+          type: object
+          properties:
+            timeSpan:
+              type: string
+            price:
+              type: integer
+        saturday:
+          type: object
+          properties:
+            timeSpan:
+              type: string
+            price:
+              type: integer
+        sunday:
+          type: object
+          properties:
+            timeSpan:
+              type: string
+            price:
+              type: integer
+
     ArrayOfEvents:
       type: "array"
       items:
