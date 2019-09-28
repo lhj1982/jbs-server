@@ -1,7 +1,9 @@
 import * as mongoose from 'mongoose';
 import { ScriptSchema } from '../models/script.model';
 import { EventSchema } from '../models/event.model';
+import { PriceWeeklySchemaSchema } from '../models/priceWeeklySchema.model';
 const Event = mongoose.model('Event', EventSchema);
+const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
 mongoose.set('useFindAndModify', false);
 
 class EventsRepo {
@@ -13,6 +15,18 @@ class EventsRepo {
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .populate('members', ['_id', 'user', 'source', 'paid', 'createdAt'])
+      .exec();
+  }
+
+  async findPriceWeeklySchemaByEvent(scriptId: string, shopId: string) {
+    return await PriceWeeklySchema.find(
+      {
+        script: scriptId,
+        shop: shopId
+      },
+      { _id: 0, priceSchema: 1 }
+    )
+      .findOne()
       .exec();
   }
 

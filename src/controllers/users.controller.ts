@@ -49,4 +49,6 @@ export class UsersController {
       res.send(err);
     }
   };
+
+  getUserEvents = async (req: Request, res: Response, next: NextFunction) => {};
 }

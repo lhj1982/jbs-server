@@ -703,10 +703,10 @@ components:
         - 
           type: object
           properties:
-            priceSchema:
+            priceWeeklySchema:
               type: array
               items:
-                $ref: '#/components/schemas/PriceSchema'
+                $ref: '#/components/schemas/PriceWeeklySchema'
             members:
               type: array
               items:
@@ -715,55 +715,71 @@ components:
     PriceSchema:
       type: object
       properties:
-        monday:
+        day:
+          type: string
+          enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+          description: "monday"
+        schedule:
+          type: array
+          items:
+            type: object
+            properties:
+              from:
+                type: string
+                description: "time format, HH:MM"
+              to:
+                type: string
+                description: "time format, HH:MM"
+              price:
+                type: integer
+
+    PriceWeeklySchema:
+      type: object
+      properties:
+        script:
           type: object
-          properties:
-            timeSpan:
-              type: string
-            price:
-              type: integer
-        tuesday:
+          $ref: '#/components/schemas/Script'
+        shop:
           type: object
-          properties:
-            timeSpan:
-              type: string
-            price:
-              type: integer
-        wednesday:
-          type: object
-          properties:
-            timeSpan:
-              type: string
-            price:
-              type: integer
-        thursday:
-          type: object
-          properties:
-            timeSpan:
-              type: string
-            price:
-              type: integer
-        friday:
-          type: object
-          properties:
-            timeSpan:
-              type: string
-            price:
-              type: integer
-        saturday:
-          type: object
-          properties:
-            timeSpan:
-              type: string
-            price:
-              type: integer
-        sunday:
-          type: object
-          properties:
-            timeSpan:
-              type: string
-            price:
-              type: integer
+          $ref: '#/components/schemas/Shop'
+        priceSchema:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceSchema'
+      example:
+        script:
+          _id: "1234"
+          key: "key"
+        shop:
+          _id: "4567"
+          key: "key"
+        priceSchema:
+          - 
+            day: "monday"
+            schedule:
+              -
+                from: "08:00"
+                to: "10:00"
+                price: 100
+              - 
+                from: "20:00"
+                to: "22:00"
+                price: 150
+          - 
+            day: "tuesday"
+            from: "08:00"
+            to: "10:00"
+            price: 100
+          -
+            day: "wednesday"
+            from: "08:00"
+            to: "10:00"
+            price: 100
+          -
+            day: "thursday"
+            from: "08:00"
+            to: "10:00"
+            price: 100
 
     ArrayOfEvents:
       type: "array"

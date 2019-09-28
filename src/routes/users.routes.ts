@@ -24,5 +24,7 @@ export class UsersRoutes {
       .route('/users/:userId')
       .get(verifyToken, this.usersController.getUser)
       .put(verifyToken, this.usersController.updateUser);
+
+    app.route('/users/:userId/events').get(verifyToken, this.usersController.getUserEvents);
   }
 }

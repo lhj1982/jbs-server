@@ -9,6 +9,7 @@ import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundExceptio
 import { BaseController } from './base.controller';
 import config from '../config';
 import { string2Date, formatDate, addDays } from '../utils/dateUtil';
+import * as _ from 'lodash';
 
 export class EventsController extends BaseController {
   getEvents = async (req: Request, res: Response) => {
@@ -153,6 +154,16 @@ export class EventsController extends BaseController {
       next(new ResourceNotFoundException('Event', eventId));
       return;
     }
-    res.json({ code: 'SUCCESS', data: event });
+    const { _id: scriptId } = event.script;
+    const { _id: shopId } = event.shop;
+    const priceWeeklySchema = await EventsRepo.findPriceWeeklySchemaByEvent(scriptId, shopId);
+    // console.log(priceWeeklySchema);
+    event.priceSchema = priceWeeklySchema.priceSchema;
+    const resp = _.merge(event, priceWeeklySchema);
+    event.test = 111;
+    res.json({
+      code: 'SUCCESS',
+      data: resp
+    });
   };
 }
