@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import { UserSchema } from '../models/user.model';
+import EventUsersRepo from './eventUsers.repository';
 const User = mongoose.model('User', UserSchema);
 mongoose.set('useFindAndModify', false);
 
@@ -37,6 +38,10 @@ class UsersRepo {
       returnNewDocument: true
     };
     return await User.findOneAndUpdate({ openId: user.openId }, user, options).exec();
+  }
+
+  async getUserEvents(userId: string) {
+    return await EventUsersRepo.findByUser(userId);
   }
 }
 export default new UsersRepo();

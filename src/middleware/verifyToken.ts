@@ -26,7 +26,8 @@ const verifyToken = (req, res, next) => {
     // console.log(decoded);
     // check if a user exists
     try {
-      const user = await UsersRepo.find({ _id: userId });
+      const user = await UsersRepo.findById(userId);
+      res.locals.loggedInUser = user;
       return next();
     } catch (err) {
       next(new ResourceNotFoundException(`User`, `${userId}`));

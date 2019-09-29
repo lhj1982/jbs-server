@@ -21,6 +21,13 @@ class EventUsersRepo {
       .exec();
   }
 
+  async findByUser(userId: string) {
+    return await EventUser.find({ user: userId })
+      .populate('event')
+      .populate('user')
+      .exec();
+  }
+
   async saveOrUpdate(eventUser) {
     const options = {
       new: true,

@@ -17,7 +17,10 @@ export class EventsRoutes {
       }, this.eventsController.getEvents)
       .post(verifyToken, this.eventsController.addEvent);
 
-    app.route('/events/:eventId').get(this.eventsController.getEventDetails);
+    app.route('/events/price-schema').get(this.eventsController.getPriceWeeklySchema);
+    app.route('/events/discount-rules').get(verifyToken, this.eventsController.getDiscountRules);
+
+    app.route('/events/:eventId').get(verifyToken, this.eventsController.getEventDetails);
     app.route('/events/calendar/:date').get(this.eventsController.getEventsByDate);
     app.route('/events/:eventId/join').post(verifyToken, this.eventsController.joinEvent);
   }

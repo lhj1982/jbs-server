@@ -453,6 +453,74 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /events/price-schema:
+    get:
+      tags:
+      - "event"
+      summary: "Retrieve price schema of event"
+      description: "Retrieve price schema of event"
+      operationId: "getEventPriceSchema"
+      parameters:
+        - in: query
+          name: scriptId
+          description: script id
+          schema:
+            type: string
+        - in: query
+          name: shopId
+          required: true
+          description: shopId
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceWeeklySchema'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /events/discount-rules:
+    get:
+      tags:
+      - "event"
+      summary: "Retrieve discount rulesle of am event"
+      description: "Retrieve discount rulesle of am event"
+      operationId: "getEventDiscountRules"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: scriptId
+          description: script id
+          schema:
+            type: string
+        - in: query
+          name: shopId
+          required: true
+          description: shopId
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscoutRules'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /users:
     post:
       tags:
@@ -518,6 +586,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /profile/my-events:
+    get:
+      tags:
+      - "user"
+      summary: "Get event list joined by logged in user"
+      description: "Get event list joined by logged in user."
+      operationId: "getMyEvents"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfEventUsers'
         default:
           description: "Invalid input"
           content:
@@ -707,6 +798,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/PriceWeeklySchema'
+            discountRules:
+              type: array
+              items:
+                $ref: '#/components/schemas/DiscoutRules'
             members:
               type: array
               items:
@@ -715,24 +810,20 @@ components:
     PriceSchema:
       type: object
       properties:
-        day:
-          type: string
-          enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
-          description: "monday"
-        schedule:
+        timeSpan:
           type: array
           items:
-            type: object
-            properties:
-              from:
-                type: string
-                description: "time format, HH:MM"
-              to:
-                type: string
-                description: "time format, HH:MM"
-              price:
-                type: integer
-
+            type: string
+            description: "time format, HH:MM"
+        days:
+          type: array
+          items:
+            type: string
+            enum: [1,2,3,4,5,6,7]
+        price:
+          type: integer
+          format: int32
+          
     PriceWeeklySchema:
       type: object
       properties:
@@ -746,6 +837,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PriceSchema'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
       example:
         script:
           _id: "1234"
@@ -755,31 +852,85 @@ components:
           key: "key"
         priceSchema:
           - 
-            day: "monday"
-            schedule:
-              -
-                from: "08:00"
-                to: "10:00"
-                price: 100
-              - 
-                from: "20:00"
-                to: "22:00"
-                price: 150
-          - 
-            day: "tuesday"
-            from: "08:00"
-            to: "10:00"
+            timeSpan: 
+              - "08:00"
+              - "10:00"
+            days:
+              - 1
+              - 2
+              - 3
+              - 4
+              - 5
+              - 6
+              - 7
             price: 100
           -
-            day: "wednesday"
-            from: "08:00"
-            to: "10:00"
-            price: 100
+            timeSpan: 
+              - "20:00"
+            days:
+              - 6
+              - 7
+            price: 150
+            
+    DiscoutRules:
+      type: object
+      properties:
+        script:
+          type: object
+          $ref: '#/components/schemas/Script'
+        shop:
+          type: object
+          $ref: '#/components/schemas/Shop'
+        rules:
+          type: object
+          properties:
+            timeSpan:
+              type: array
+              items:
+                type: string
+                description: "HH:MM"
+            days:
+              type: array
+              description: Days to which rules are applied
+              items:
+                type: string
+                enum: [1,2,3,4,5,6,7]
+            discountPercentage:
+              type: integer
+              format: int32
+              description: discount percentage, 0-100
+              minimum: 0
+              maximum: 100
+            discountInAmount:
+              type: integer
+              format: int32
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        script:
+          _id: "1234"
+          key: "key"
+        shop:
+          _id: "4567"
+          key: "key"
+        rule:
           -
-            day: "thursday"
-            from: "08:00"
-            to: "10:00"
-            price: 100
+            timeSpan:
+            - "08:00"
+            - "10:00"
+            days:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            discountPercentage: 80
 
     ArrayOfEvents:
       type: "array"
@@ -795,15 +946,22 @@ components:
             data:
               $ref: '#/components/schemas/ArrayOfEvents'
 
+    ArrayOfEventUsers:
+      type: array
+      items:
+        $ref: '#/components/schemas/EventUser'
+
     EventUser:
       type: "object"
       properties:
         id:
           type: "string"
         event:
-          type: "string"
+          type: object
+          $ref: '#/components/schemas/Event'
         user:
           type: "string"
+          $ref: '#/components/schemas/User'
         userName:
           type: "string"
         mobile:

@@ -6,13 +6,14 @@ const Schema = mongoose.Schema;
 const Shop = mongoose.model('Shop', ShopSchema);
 const Script = mongoose.model('Script', ScriptSchema);
 
-export const PriceWeeklySchemaSchema = new Schema({
+export const DiscountRulesSchema = new Schema({
   script: { type: Schema.Types.ObjectId, ref: 'Script' },
   shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
-  priceSchema: {
+  rules: {
     days: [{ type: String }],
     timeSpan: [{ type: String }],
-    price: Number
+    discountPercentage: Number,
+    discountInAmount: Number
   },
   createdAt: {
     type: Date,

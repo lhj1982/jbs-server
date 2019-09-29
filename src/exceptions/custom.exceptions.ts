@@ -6,6 +6,12 @@ class AuthorizationException extends HttpException {
   }
 }
 
+class AccessDeinedException extends HttpException {
+  constructor(token: string) {
+    super(403, `You are not allowed to perform this action, token: ${token}`);
+  }
+}
+
 class ResourceNotFoundException extends HttpException {
   constructor(resource: string, id: string) {
     super(404, `${resource} is not found, id: ${id}`);
@@ -24,4 +30,4 @@ class ResourceAlreadyExist extends HttpException {
   }
 }
 
-export { AuthorizationException, ResourceNotFoundException, InvalidRequestException, ResourceAlreadyExist };
+export { AuthorizationException, AccessDeinedException, ResourceNotFoundException, InvalidRequestException, ResourceAlreadyExist };

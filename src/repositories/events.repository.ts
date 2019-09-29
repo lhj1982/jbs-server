@@ -2,8 +2,10 @@ import * as mongoose from 'mongoose';
 import { ScriptSchema } from '../models/script.model';
 import { EventSchema } from '../models/event.model';
 import { PriceWeeklySchemaSchema } from '../models/priceWeeklySchema.model';
+import { DiscountRulesSchema } from '../models/discountRules.model';
 const Event = mongoose.model('Event', EventSchema);
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
+const DiscountRules = mongoose.model('DiscountRules', DiscountRulesSchema, 'discountRules');
 mongoose.set('useFindAndModify', false);
 
 class EventsRepo {
@@ -24,7 +26,7 @@ class EventsRepo {
         script: scriptId,
         shop: shopId
       },
-      { _id: 0, priceSchema: 1 }
+      { _id: 0, priceSchema: 1, createdAt: 1, updatedAt: 1 }
     )
       .findOne()
       .exec();
@@ -74,6 +76,19 @@ class EventsRepo {
     };
     const { shop, script, startTime, endTime, hostUser } = event;
     return await Event.findOneAndUpdate({ shop, script, startTime, endTime, hostUser }, event, options).exec();
+  }
+
+  async findDiscountRulesByShopAndScript(shopId: string, scriptId?: string) {
+    const condition = { shop: shopId };
+    if (scriptId) {
+      condition['script'] = scriptId;
+    }
+    return await DiscountRules.find(condition, {
+      _id: 0,
+      rules: 1,
+      createdAt: 1,
+      updatedAt: 1
+    }).exec();
   }
 }
 export default new EventsRepo();

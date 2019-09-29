@@ -157,13 +157,36 @@ export class EventsController extends BaseController {
     const { _id: scriptId } = event.script;
     const { _id: shopId } = event.shop;
     const priceWeeklySchema = await EventsRepo.findPriceWeeklySchemaByEvent(scriptId, shopId);
-    // console.log(priceWeeklySchema);
-    event.priceSchema = priceWeeklySchema.priceSchema;
+    console.log(priceWeeklySchema);
     const resp = _.merge(event, priceWeeklySchema);
-    event.test = 111;
     res.json({
       code: 'SUCCESS',
       data: resp
     });
+  };
+
+  getPriceWeeklySchema = async (req: Request, res: Response, next: NextFunction) => {
+    const { scriptId, shopId } = req.query;
+    const script = await ScriptsRepo.findById(scriptId);
+    const shop = await ShopsRepo.findById(shopId);
+    if (!shop) {
+      next(new ResourceNotFoundException('Shop', shopId));
+    }
+    if (!script) {
+      next(new ResourceNotFoundException('Script', scriptId));
+    }
+    const priceWeeklySchema = await EventsRepo.findPriceWeeklySchemaByEvent(scriptId, shopId);
+    res.json({ code: 'SUCCESS', data: priceWeeklySchema });
+  };
+
+  getDiscountRules = async (req: Request, res: Response, next: NextFunction) => {
+    const { scriptId, shopId } = req.query;
+    const script = await ScriptsRepo.findById(scriptId);
+    const shop = await ShopsRepo.findById(shopId);
+    if (!shop) {
+      next(new ResourceNotFoundException('Shop', shopId));
+    }
+    const discountRules = await EventsRepo.findDiscountRulesByShopAndScript(shopId, scriptId);
+    res.json({ code: 'SUCCESS', data: discountRules });
   };
 }
