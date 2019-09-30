@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import { escapeRegex } from '../utils/stringUtil';
 import { ScriptSchema } from '../models/script.model';
 const Script = mongoose.model('Script', ScriptSchema);
 mongoose.set('useFindAndModify', false);
@@ -6,14 +7,24 @@ mongoose.set('useFindAndModify', false);
 class ScriptsRepo {
   async findById(id: string) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
-    return await Script.findById(mongoose.Types.ObjectId(id)).exec();
+    return await Script.findById(mongoose.Types.ObjectId(id))
+      .populate('shops')
+      .exec();
   }
 
   async find(params) {
     const { offset, limit, keyword } = params;
-    const total = await Script.countDocuments({}).exec();
+    let condition = {};
+    if (keyword) {
+      const regex = new RegExp(escapeRegex(keyword), 'gi');
+      condition = {
+        $or: [{ name: regex }, { description: regex }, { tags: keyword }]
+      };
+    }
+    // console.log(condition);
+    const total = await Script.countDocuments(condition).exec();
     const pagination = { offset, limit, total };
-    const pagedScripts = await Script.find({})
+    const pagedScripts = await Script.find(condition)
       .populate('shops')
       .skip(offset)
       .limit(limit)

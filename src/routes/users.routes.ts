@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { UsersController } from '../controllers/users.controller';
 import { verifyToken } from '../middleware/verifyToken';
+import permit from '../middleware/permission.middleware';
 
 export class UsersRoutes {
   usersController: UsersController = new UsersController();
@@ -22,10 +23,10 @@ export class UsersRoutes {
 
     app
       .route('/users/:userId')
-      .get(verifyToken, this.usersController.getUser)
-      .put(verifyToken, this.usersController.updateUser);
+      .get(verifyToken, permit({ domain: 'user', operations: ['read'] }), this.usersController.getUser)
+      .put(verifyToken, permit({ domain: 'user', operations: ['update'] }), this.usersController.updateUser);
 
     app.route('/profile').get(verifyToken, this.usersController.getUser);
-    app.route('/profile/my-events').get(verifyToken, this.usersController.getUserEvents);
+    app.route('/profile/my-events').get(verifyToken, permit({ domain: 'user', operations: ['read'] }), this.usersController.getUserEvents);
   }
 }

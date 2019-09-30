@@ -27,8 +27,11 @@ export class UsersController {
 
   getUser = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
-
-    res.json({ code: 'SUCCESS', data: {} });
+    const { loggedInUser } = res.locals;
+    if (userId && userId != loggedInUser._id) {
+      next(new AccessDeinedException(''));
+    }
+    res.json({ code: 'SUCCESS', data: loggedInUser });
   };
 
   updateUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -56,7 +59,7 @@ export class UsersController {
   };
 
   getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
-    const loggedInUser = res.locals.loggedInUser;
+    const { loggedInUser } = res.locals;
     if (!loggedInUser) {
       next(new AccessDeinedException(''));
     }

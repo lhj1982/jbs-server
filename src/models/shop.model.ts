@@ -18,6 +18,12 @@ export const ShopSchema = new Schema({
   mobile: {
     type: String
   },
+  wechat_id: {
+    type: String
+  },
+  wechat_name: {
+    type: String
+  },
   phone: {
     type: String
   },

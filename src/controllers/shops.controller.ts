@@ -29,7 +29,7 @@ export class ShopsController extends BaseController {
   };
 
   addShop = async (req: Request, res: Response, next: NextFunction) => {
-    const { key, name, address, mobile, phone, contactName, contactMobile, province, city, district } = req.body;
+    const { key, name, address, mobile, phone, contactName, contactMobile, province, city, district, wechatId, wechatName } = req.body;
     if (!key) {
       next(new InvalidRequestException('AddShop', ['key']));
       return;
@@ -45,6 +45,8 @@ export class ShopsController extends BaseController {
       address,
       mobile,
       phone,
+      wechatId,
+      wechatName,
       contactName,
       contactMobile,
       province,

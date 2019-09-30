@@ -20,6 +20,18 @@ https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.ht
 
 # DB schema
 
+## import/export collection data
+```
+mongoimport -d jbs -c users --type json --file users.json 
+
+mongoexport --collection shops --db jbs --out shops.json
+```
+
+## update query
+```
+db.users.update({openId: "opcf_0En_ukxF-NVT67ceAyFWfJw"}, {$set: {roles: [ObjectId("5d7f8cd024f808a2e89d6aec"), ObjectId("5d7f8cc124f808a2e89d6aeb"), ObjectId("5d8f8c1228e1fb01bf80f5cb")]}});
+```
+
 ## users
 ```
 [{ 

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import AuthApi from '../api/auth';
 import UsersRepo from '../repositories/users.repository';
+import RolesRepo from '../repositories/roles.repository';
 import * as moment from 'moment';
 import * as jwt from 'jsonwebtoken';
 import config from '../config';
@@ -20,7 +21,20 @@ export class AuthController {
         if (code === 'SUCCESS') {
           // const user = await AuthApi.getUserInfo(sessionKey);
           // prettier-ignore
-          const user = await UsersRepo.saveOrUpdateUser({ openId, unionId, sessionKey, nickName, gender, country, province, city, language, status: 'active', roles: ['5d7f8cd024f808a2e89d6aec'] });
+          const role = await RolesRepo.findByName('user');
+          const user = await UsersRepo.saveOrUpdateUser({
+            openId,
+            unionId,
+            sessionKey,
+            nickName,
+            gender,
+            country,
+            province,
+            city,
+            language,
+            status: 'active',
+            roles: [role._id]
+          });
           // create a token string
           // console.log(this.getTokenPayload);
           // console.log(user._id);

@@ -27,9 +27,15 @@ export const EventSchema = new Schema(
     numberOfPersons: {
       type: Number
     },
+    numberOfOfflinePersons: {
+      type: Number,
+      default: 0
+    },
     price: Number,
     status: {
-      type: String
+      type: String,
+      enum: ['ready', 'complete', 'expired', 'cancelled'],
+      default: 'pending'
     },
     createdAt: {
       type: Date,

@@ -19,8 +19,10 @@ export const EventUserSchema = new Schema({
     type: String,
     required: 'Mobile cannot be empty'
   },
-  paid: {
-    type: Boolean
+  status: {
+    type: String,
+    enum: ['unpaid', 'paid', 'cancelled'],
+    default: 'unpaid'
   },
   createdAt: {
     type: Date,

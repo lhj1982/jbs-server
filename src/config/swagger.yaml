@@ -69,6 +69,11 @@ paths:
           description: The numbers of items to return
           schema:
             type: integer
+        - in: query
+          name: keyword
+          description: Search keyword
+          schema:
+            type: string
       responses:
         200:
           description: "Success"
@@ -76,6 +81,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScriptsResponse'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    post:
+      tags:
+      - "script"
+      summary: "Create a new script"
+      operationId: "createScript"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - key
+                - name
+                - description
+                - duration
+                - minNumberOfPersons
+                - maxNumberOfPersons
+                - introImage
+              properties:
+                key:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                minNumberOfPersons:
+                  type: integer
+                  format: int32
+                maxNumberOfPersons:
+                  type: integer
+                  format: int32
+                duration:
+                  type: integer
+                  format: int32
+                introImage:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Script'
         default:
           description: "Invalid input"
           content:
@@ -145,6 +206,8 @@ paths:
       - "shop"
       summary: "Add new shop"
       operationId: "AddShop"
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -167,6 +230,10 @@ paths:
                 address:
                   type: "string"
                 mobile:
+                  type: "string"
+                wechatId:
+                  type: "string"
+                wechatName:
                   type: "string"
                 contactName:
                   type: "string"
@@ -225,6 +292,8 @@ paths:
       - "shop"
       summary: "Add one script to a shop"
       operationId: "addSingleShopScript"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: shopId
@@ -305,6 +374,7 @@ paths:
                 - endTime
                 - hostUserId
                 - numberOfPersons
+                - price
               properties:
                 shopId:
                   type: "string"
@@ -325,6 +395,13 @@ paths:
                   format: int32
                   minimum: 1
                   maximum: 20
+                numberOfOfflinePersons:
+                  type: "integer"
+                  format: "int32"
+                  minimum: 0
+                price:
+                  type: "integer"
+                  format: int32
               example:
                 shopId: '1234'
                 scriptId: '1234'
@@ -332,6 +409,7 @@ paths:
                 endTime: '2019-01-01 12:00:00'
                 hostUserId: '2323'
                 numberOfPersons: 1
+                numberOfOfflinePersons: 0
                 price: 100
       responses:
         200:
@@ -367,6 +445,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EventDetails'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    put:
+      tags:
+      - "event"
+      summary: "Update a given event"
+      operationId: "updateEventById"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: eventId
+          description: event id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: content body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                status:
+                  type: "string"
+                  enum:
+                    - ready
+                    - complete
+                    - expired
+                    - cancelled
+                numberOfOfflinePersons:
+                  type: "integer"
+                  format: "int32"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
         default:
           description: "Invalid input"
           content:
@@ -421,10 +544,6 @@ paths:
                 - source
                 - mobile
               properties:
-                userId:
-                  type: "string"
-                userName:
-                  type: "string"
                 source:
                   type: "string"
                   enum:
@@ -452,6 +571,105 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
+  /events/{eventId}/users/cancel:
+    put:
+      tags:
+      - "event"
+      summary: "Cancel a user event"
+      description: "User choose not to join a given event"
+      operationId: "cancelEventUser"
+      security:
+        - bearerAuth: []
+      requestBody: 
+        required: true
+        description: cancel user event request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - userId
+                - status
+              properties:
+                status:
+                  type: "string"
+                  enum:
+                    - cancelled
+                userId:
+                  type: "string"
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          description: event id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventUser'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
+  /events/{eventId}/users/update-status:
+    put:
+      tags:
+      - "event"
+      summary: "Update a user event status"
+      description: "Orgnizer can update a user event status to paid/unpaid"
+      operationId: "updateEventUserStatus"
+      security:
+        - bearerAuth: []
+      requestBody: 
+        required: true
+        description: update user event status request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - userId
+                - status
+              properties:
+                status:
+                  type: "string"
+                  enum:
+                    - paid
+                    - unpaid
+                    - cancelled
+                userId:
+                  type: "string"
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          description: event id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventUser'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+      
 
   /events/price-schema:
     get:
@@ -592,7 +810,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-
+  /profile:
+    get:
+      tags:
+      - "user"
+      summary: "Get current user profile"
+      description: "Get current user profile."
+      operationId: "getProfile"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  
   /profile/my-events:
     get:
       tags:
@@ -649,7 +889,33 @@ components:
         user:
           type: "object"
           $ref: '#/components/schemas/User'
-    
+
+    Permission:
+      type: "object"
+      properties:
+        domain:
+          type: "string"
+        operations:
+          type: "array"
+          items:
+            type: "string"
+      example:
+        domain: "user"
+        operations:
+          - read
+          - write
+
+    Role:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          enum: ["admin", "user", "orgnizer"]
+        permissions:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Permission'
+
     User:
       type: "object"
       properties:
@@ -679,6 +945,11 @@ components:
         avatarImage:
           type: "string"
           description: "User avatar image url"
+        roles:
+          type: "array"
+          items:
+            type: "object"
+            $ref: '#/components/schemas/Role'
       xml:
         name: "User"
     
@@ -742,6 +1013,10 @@ components:
           type: "string"
         phone:
           type: "string"
+        wechatId:
+          type: "string"
+        wechatName:
+          type: "string"
 
     
     ArrayOfShops:
@@ -787,6 +1062,18 @@ components:
         shop:
           type: "object"
           $ref: '#/components/schemas/Shop'
+        numberOfPersons:
+          type: "integer"
+          format: "int32"
+        numberOfOfflinePersons:
+          type: "integer"
+          format: "int32"
+        hostComment:
+          type: "string"
+        price:
+          type: "integer"
+          format: "int32"
+
 
     EventDetails:
       allOf: 
@@ -875,33 +1162,36 @@ components:
     DiscoutRules:
       type: object
       properties:
-        script:
-          type: object
-          $ref: '#/components/schemas/Script'
-        shop:
-          type: object
-          $ref: '#/components/schemas/Shop'
-        rules:
-          type: object
-          properties:
-            timeSpan:
-              type: array
-              items:
+        key:
+          type: string
+        title:
+          type: string
+        description: 
+          type: string
+        timeSpan:
+          type: array
+          items:
+            type: object
+            properties:
+              from: 
                 type: string
                 description: "HH:MM"
-            days:
-              type: array
-              description: Days to which rules are applied
-              items:
+              to:
                 type: string
-                enum: [1,2,3,4,5,6,7]
-            discountPercentage:
+                description: "HH:MM"
+        days:
+          type: array
+          description: Days to which rules are applied
+          items:
+            type: string
+            enum: [1,2,3,4,5,6,7]
+        discount:
+          type: object
+          properties:
+            sponsor:
               type: integer
               format: int32
-              description: discount percentage, 0-100
-              minimum: 0
-              maximum: 100
-            discountInAmount:
+            participator:
               type: integer
               format: int32
         createdAt:
@@ -911,26 +1201,24 @@ components:
           type: string
           format: date-time
       example:
-        script:
-          _id: "1234"
-          key: "key"
-        shop:
-          _id: "4567"
-          key: "key"
-        rule:
-          -
-            timeSpan:
-            - "08:00"
-            - "10:00"
-            days:
-            - 1
-            - 2
-            - 3
-            - 4
-            - 5
-            - 6
-            - 7
-            discountPercentage: 80
+        key: "rule1"
+        title: "工作日晚场，开团“免费”，参团九折"
+        description: "工作日晚场，发起者返 0.1*人数*原价，参与者返 0.1*原价"
+        timeSpan:
+        - 
+          from: 17:00
+          to: 23:59
+        days:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+        discount:
+          sponsor: 10
+          participator: 10
 
     ArrayOfEvents:
       type: "array"

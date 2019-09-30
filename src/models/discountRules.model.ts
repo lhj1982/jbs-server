@@ -7,13 +7,19 @@ const Shop = mongoose.model('Shop', ShopSchema);
 const Script = mongoose.model('Script', ScriptSchema);
 
 export const DiscountRulesSchema = new Schema({
-  script: { type: Schema.Types.ObjectId, ref: 'Script' },
-  shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
-  rules: {
-    days: [{ type: String }],
-    timeSpan: [{ type: String }],
-    discountPercentage: Number,
-    discountInAmount: Number
+  key: { type: String },
+  title: { type: String },
+  description: { type: String },
+  days: [{ type: String }],
+  timeSpan: [
+    {
+      from: { type: String },
+      to: { type: String }
+    }
+  ],
+  discount: {
+    sponsor: { type: Number },
+    participator: { type: Number }
   },
   createdAt: {
     type: Date,

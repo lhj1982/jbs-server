@@ -12,5 +12,10 @@ module.exports = {
   query: {
     offset: 0,
     limit: 10
+  },
+  qiniu: {
+    bucket: 'jbs-server',
+    accessKey: 'tVQXlS0ahil12znZM0RcwSDehAzJfUhs4lmjSoNC',
+    secretKey: 'Ebwd-HQi_HPQuJD7yK62ooZUVxG3aVI80g73NCBF'
   }
 };

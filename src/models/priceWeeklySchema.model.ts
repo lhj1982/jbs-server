@@ -10,7 +10,7 @@ export const PriceWeeklySchemaSchema = new Schema({
   script: { type: Schema.Types.ObjectId, ref: 'Script' },
   shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
   priceSchema: {
-    days: [{ type: String }],
+    days: [{ type: Number }],
     timeSpan: [{ type: String }],
     price: Number
   },
@@ -22,4 +22,4 @@ export const PriceWeeklySchemaSchema = new Schema({
     type: Date,
     default: Date.now
   }
-});
+}, { toJSON: { virtuals: true }});

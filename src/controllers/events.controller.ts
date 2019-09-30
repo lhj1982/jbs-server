@@ -5,7 +5,7 @@ import ScriptsRepo from '../repositories/scripts.repository';
 import UsersRepo from '../repositories/users.repository';
 import ShopsRepo from '../repositories/shops.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
-import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException } from '../exceptions/custom.exceptions';
+import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import config from '../config';
 import { string2Date, formatDate, addDays } from '../utils/dateUtil';
@@ -49,7 +49,8 @@ export class EventsController extends BaseController {
   };
 
   addEvent = async (req: Request, res: Response, next: NextFunction) => {
-    const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons } = req.body;
+    const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons, price } = req.body;
+    let { numberOfOfflinePersons } = req.body;
     if (!scriptId) {
       next(new InvalidRequestException('AddEvent', ['scriptId']));
       return;
@@ -82,6 +83,9 @@ export class EventsController extends BaseController {
       next(new ResourceNotFoundException('User', hostUserId));
       return;
     }
+    if (!numberOfOfflinePersons) {
+      numberOfOfflinePersons = 0;
+    }
 
     const dtStartTime = formatDate(startTime, config.eventDateFormatParse);
     const dtEndTime = formatDate(endTime, config.eventDateFormatParse);
@@ -93,15 +97,45 @@ export class EventsController extends BaseController {
       hostUser: hostUserId,
       hostComment,
       numberOfPersons,
-      price: 100,
+      numberOfOfflinePersons,
+      price,
       createdAt: new Date()
     });
     res.json({ code: 'SUCCESS', data: newEvent });
   };
 
-  joinEvent = async (req: Request, res: Response, next: NextFunction) => {
+  /**
+   * Update event status, numberOfOfflinePersons
+   *
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
+  updateEvent = async (req: Request, res: Response, next: NextFunction) => {
+    const { status, numberOfOfflinePersons } = req.body;
+    const { loggedInUser } = res.locals;
     const { eventId } = req.params;
-    const { userId, userName, source } = req.body;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    const updateData = {};
+    if (status) {
+      updateData['status'] = status;
+    }
+    if (numberOfOfflinePersons) {
+      updateData['numberOfOfflinePersons'] = numberOfOfflinePersons;
+    }
+    const eventToUpdate = Object.assign(event, updateData);
+    const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate);
+    res.json({ code: 'SUCCESS', data: newEvent });
+  };
+
+  joinUserEvent = async (req: Request, res: Response, next: NextFunction) => {
+    const { eventId } = req.params;
+    const { userName, source, userId } = req.body;
+    const { loggedInUser } = res.locals;
     const event = await EventsRepo.findById(eventId);
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
@@ -123,31 +157,29 @@ export class EventsController extends BaseController {
       next(new InvalidRequestException('JoinEvent', [source, userName]));
       return;
     }
-    if (userId) {
-      const user = await UsersRepo.findById(userId);
-      if (!user) {
-        next(new ResourceNotFoundException('User', userId));
-        return;
-      }
+    if (userId != loggedInUser._id) {
+      next(new AccessDeinedException(''));
+      return;
     }
+    // if (userId) {
+    //   const user = await UsersRepo.findById(userId);
+    //   if (!user) {
+    //     next(new ResourceNotFoundException('User', userId));
+    //     return;
+    //   }
+    // }
     const newEventUser = await EventUsersRepo.saveOrUpdate({
       eventId,
       userId,
       userName,
       source,
-      paid: false,
+      status: 'unpaid',
       createdAt: new Date()
     });
     res.json({ code: 'SUCCESS', data: newEventUser });
   };
 
   getEventDetails = async (req: Request, res: Response, next: NextFunction) => {
-    // console.log(new Date());
-    // console.log(moment());
-    // console.log(moment.utc());
-    // console.log(moment.utc(1566640351349));
-    // console.log(moment.unix(1566640351));
-    // console.log(moment('2019-02-03 10:00:00'));
     const { eventId } = req.params;
     const event = await EventsRepo.findById(eventId);
     if (!event) {
@@ -171,9 +203,11 @@ export class EventsController extends BaseController {
     const shop = await ShopsRepo.findById(shopId);
     if (!shop) {
       next(new ResourceNotFoundException('Shop', shopId));
+      return;
     }
     if (!script) {
       next(new ResourceNotFoundException('Script', scriptId));
+      return;
     }
     const priceWeeklySchema = await EventsRepo.findPriceWeeklySchemaByEvent(scriptId, shopId);
     res.json({ code: 'SUCCESS', data: priceWeeklySchema });
@@ -188,5 +222,61 @@ export class EventsController extends BaseController {
     }
     const discountRules = await EventsRepo.findDiscountRulesByShopAndScript(shopId, scriptId);
     res.json({ code: 'SUCCESS', data: discountRules });
+  };
+
+  /**
+   * Used for update event users. for example, user cancel join event,
+   *
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
+  cancelEventUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { eventId } = req.params;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    const { loggedInUser } = res.locals;
+    const { userId, status } = req.body;
+    if (status != 'cancelled') {
+      next(new InvalidRequestException('EventUser', ['status']));
+      return;
+    }
+
+    if (userId != loggedInUser._id) {
+      next(new AccessDeinedException(''));
+    }
+    const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
+    const eventUserToUpdate = Object.assign(eventUser, { status: status });
+    const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate);
+    res.json({ code: 'SUCCESS', data: newEventUser });
+  };
+
+  /**
+   * Orgnizer can complete event user
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
+  updateEventUserStatus = async (req: Request, res: Response, next: NextFunction) => {
+    const { eventId } = req.params;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    const { loggedInUser } = res.locals;
+    const { userId, status } = req.body;
+
+    // if (userId != loggedInUser._id) {
+    // 	next(new AccessDeinedException(''));
+    // }
+
+    const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
+    const eventUserToUpdate = Object.assign(eventUser, { status: status });
+    const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate);
+    res.json({ code: 'SUCCESS', data: newEventUser });
   };
 }

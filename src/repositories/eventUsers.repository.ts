@@ -11,7 +11,7 @@ class EventUsersRepo {
       .exec();
   }
 
-  async findEventUser(eventId: string, userId: string, userName: string) {
+  async findEventUser(eventId: string, userId: string, userName?: string) {
     // console.log(eventId);
     // console.log(userName);
     return await EventUser.where({
@@ -35,16 +35,16 @@ class EventUsersRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { eventId, userId, userName, source, createdAt, paid } = eventUser;
+    const { eventId, userId, userName, source, createdAt, status } = eventUser;
     const e = await this.findEventUser(eventId, userId, userName);
-    console.log(e);
+    // console.log(e);
     if (!e) {
       return await EventUser.create({
         event: eventId,
         user: userId,
         userName,
         source,
-        paid,
+        status,
         createdAt
       });
     } else {
