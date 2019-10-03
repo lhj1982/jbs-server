@@ -31,6 +31,14 @@ export const EventSchema = new Schema(
       type: Number,
       default: 0
     },
+    numberOfParticipators: {
+      type: Number,
+      default: 0
+    },
+    numberOfAvailableSpots: {
+      type: Number,
+      default: 0
+    },
     price: Number,
     status: {
       type: String,

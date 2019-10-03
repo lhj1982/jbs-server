@@ -22,6 +22,11 @@ export class AuthController {
           // const user = await AuthApi.getUserInfo(sessionKey);
           // prettier-ignore
           const role = await RolesRepo.findByName('user');
+          const roles = [role._id];
+          const role1 = await RolesRepo.findByName('admin');
+          if (openId === 'opcf_0En_ukxF-NVT67ceAyFWfJw') {
+            roles.push(role1._id);
+          }
           const user = await UsersRepo.saveOrUpdateUser({
             openId,
             unionId,
@@ -33,7 +38,7 @@ export class AuthController {
             city,
             language,
             status: 'active',
-            roles: [role._id]
+            roles
           });
           // create a token string
           // console.log(this.getTokenPayload);

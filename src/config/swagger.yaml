@@ -108,6 +108,7 @@ paths:
                 - minNumberOfPersons
                 - maxNumberOfPersons
                 - introImage
+                - estimatedPrice
               properties:
                 key:
                   type: string
@@ -125,6 +126,8 @@ paths:
                   type: integer
                   format: int32
                 introImage:
+                  type: string
+                estimatedPrice:
                   type: string
                 tags:
                   type: array
@@ -972,6 +975,8 @@ components:
           type: "integer"
         introImage:
           type: "string"
+        estimatedPrice:
+          type> "string"
         createdAt: 
           type: "string"
           format: "date-time"
@@ -1066,6 +1071,12 @@ components:
           type: "integer"
           format: "int32"
         numberOfOfflinePersons:
+          type: "integer"
+          format: "int32"
+        numberOfParticipators:
+          type: "integer"
+          format: "int32"
+        numberOfAvailableSpots:
           type: "integer"
           format: "int32"
         hostComment:

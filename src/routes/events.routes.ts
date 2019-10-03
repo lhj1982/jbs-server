@@ -29,5 +29,7 @@ export class EventsRoutes {
     app.route('/events/:eventId/join').post(verifyToken, permit({ domain: 'event-user', operations: ['create'] }), this.eventsController.joinUserEvent);
     app.route('/events/:eventId/users/cancel').put(verifyToken, permit({ domain: 'event-user', operations: ['update'] }), this.eventsController.cancelEventUser);
     app.route('/events/:eventId/users/update-status').put(verifyToken, permit({ domain: 'event-user', operations: ['delete'] }), this.eventsController.updateEventUserStatus);
+
+    app.route('/events/available-discount').get(verifyToken, this.eventsController.getAvailableDiscount);
   }
 }

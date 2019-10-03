@@ -86,22 +86,39 @@ export class EventsController extends BaseController {
     if (!numberOfOfflinePersons) {
       numberOfOfflinePersons = 0;
     }
-
+    const numberOfAvailableSpots = numberOfPersons - numberOfOfflinePersons;
+    const numberOfParticipators = 0;
     const dtStartTime = formatDate(startTime, config.eventDateFormatParse);
     const dtEndTime = formatDate(endTime, config.eventDateFormatParse);
-    const newEvent = await EventsRepo.saveOrUpdate({
-      shop: shopId,
-      script: scriptId,
-      startTime: dtStartTime,
-      endTime: dtEndTime,
-      hostUser: hostUserId,
-      hostComment,
-      numberOfPersons,
-      numberOfOfflinePersons,
-      price,
-      createdAt: new Date()
-    });
-    res.json({ code: 'SUCCESS', data: newEvent });
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const newEvent = await EventsRepo.saveOrUpdate(
+        {
+          shop: shopId,
+          script: scriptId,
+          startTime: dtStartTime,
+          endTime: dtEndTime,
+          hostUser: hostUserId,
+          hostComment,
+          numberOfPersons,
+          numberOfOfflinePersons,
+          numberOfParticipators,
+          numberOfAvailableSpots,
+          price,
+          createdAt: new Date()
+        },
+        opts
+      );
+      await session.commitTransaction();
+      await EventsRepo.endSession();
+      res.json({ code: 'SUCCESS', data: newEvent });
+    } catch (err) {
+      await session.abortTransaction();
+      await EventsRepo.endSession();
+      throw err;
+    }
   };
 
   /**
@@ -128,7 +145,7 @@ export class EventsController extends BaseController {
       updateData['numberOfOfflinePersons'] = numberOfOfflinePersons;
     }
     const eventToUpdate = Object.assign(event, updateData);
-    const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate);
+    const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
     res.json({ code: 'SUCCESS', data: newEvent });
   };
 
@@ -278,5 +295,10 @@ export class EventsController extends BaseController {
     const eventUserToUpdate = Object.assign(eventUser, { status: status });
     const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate);
     res.json({ code: 'SUCCESS', data: newEventUser });
+  };
+
+  getAvailableDiscount = async (req: Request, res: Response, next: NextFunction) => {
+    const { scriptId, shopId } = req.body;
+    const { loggedInUser } = res.locals;
   };
 }

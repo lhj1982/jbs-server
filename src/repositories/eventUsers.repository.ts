@@ -23,8 +23,8 @@ class EventUsersRepo {
 
   async findByUser(userId: string) {
     return await EventUser.find({ user: userId })
-      .populate('event')
-      .populate('user')
+      .populate('event', ['_id', 'name'])
+      .populate('user', ['_id'])
       .exec();
   }
 

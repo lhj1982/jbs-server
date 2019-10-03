@@ -21,10 +21,10 @@ export class PricesController extends BaseController {
       return;
     }
     const priceWeeklySchema = await PricesRepo.findByShopAndScript(shopId, scriptId);
-    let priceWeeklySchemaToUpdate = {
-    	script: scriptId,
-    	shop: shopId,
-    	priceSchema
+    const priceWeeklySchemaToUpdate = {
+      script: scriptId,
+      shop: shopId,
+      priceSchema
     };
     // if (priceWeeklySchema) {
     //   priceWeeklySchemaToUpdate = _.merge(priceWeeklySchema, { priceSchema }); // Object.assign({}, ...priceWeeklySchema);

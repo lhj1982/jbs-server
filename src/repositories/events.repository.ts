@@ -2,21 +2,34 @@ import * as mongoose from 'mongoose';
 import { ScriptSchema } from '../models/script.model';
 import { EventSchema } from '../models/event.model';
 import { PriceWeeklySchemaSchema } from '../models/priceWeeklySchema.model';
-import { DiscountRulesSchema } from '../models/discountRules.model';
+import { DiscountRuleSchema } from '../models/discountRule.model';
+import { CommonRepo } from './common.repository';
 const Event = mongoose.model('Event', EventSchema);
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
-const DiscountRules = mongoose.model('DiscountRules', DiscountRulesSchema, 'discountRules');
+const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
 mongoose.set('useFindAndModify', false);
 
-class EventsRepo {
+class EventsRepo extends CommonRepo {
+  async getSession() {
+    return super.getSession(Event);
+  }
+
+  async endSession() {
+    super.endSession();
+  }
+
   async findById(id: string) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     return await Event.where({ _id: id })
       .findOne()
-      .populate('script', ['_id', 'name', 'description', 'duration'])
+      .populate('script', ['_id', 'name', 'duration'])
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
-      .populate('members', ['_id', 'user', 'source', 'paid', 'createdAt'])
+      .populate({
+        path: 'members',
+        match: { status: { $all: ['unpaid', 'paid'] } },
+        select: '_id user source status createdAt'
+      })
       .exec();
   }
 
@@ -37,7 +50,7 @@ class EventsRepo {
     const total = await Event.countDocuments({}).exec();
     const pagination = { offset, limit, total };
     const pagedEvents = await Event.find({})
-      .populate('script', ['_id', 'name', 'description', 'duration'])
+      .populate('script', ['_id', 'name', 'duration'])
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .skip(offset)
@@ -67,8 +80,9 @@ class EventsRepo {
       .exec();
   }
 
-  async saveOrUpdate(event) {
+  async saveOrUpdate(event, opt: object = {}) {
     const options = {
+      ...opt,
       new: true,
       upsert: true,
       setDefaultsOnInsert: true,
@@ -83,7 +97,7 @@ class EventsRepo {
     if (scriptId) {
       condition['script'] = scriptId;
     }
-    return await DiscountRules.find(condition, {
+    return await DiscountRule.find(condition, {
       _id: 0,
       rules: 1,
       createdAt: 1,

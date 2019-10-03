@@ -1,12 +1,8 @@
 import * as mongoose from 'mongoose';
-import { ShopSchema } from './shop.model';
-import { ScriptSchema } from './script.model';
 
 const Schema = mongoose.Schema;
-const Shop = mongoose.model('Shop', ShopSchema);
-const Script = mongoose.model('Script', ScriptSchema);
 
-export const DiscountRulesSchema = new Schema({
+export const DiscountRuleSchema = new Schema({
   key: { type: String },
   title: { type: String },
   description: { type: String },

@@ -1,0 +1,38 @@
+version: "3"
+services:
+  mongo0:
+    hostname: mongo0
+    container_name: mongo0
+    image: mongo
+    volumes:
+      - ./db/mongo-data/mongo0:/data/db
+      - ./db/mongod.conf:/etc/mongod.conf
+      - ./db/.mongorc.js:/.mongorc.js
+    ports:
+      - 27017:27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "-f", "/etc/mongod.conf", "--replSet", "rs0" ]
+  mongo1:
+    hostname: mongo1
+    container_name: mongo1
+    image: mongo
+    volumes:
+      - ./db/mongo-data/mongo1:/data/db
+      - ./db/mongod.conf:/etc/mongod.conf
+      - ./db/.mongorc.js:/.mongorc.js
+    ports:
+      - 27018:27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "-f", "/etc/mongod.conf", "--replSet", "rs0" ]
+  mongo2:
+    hostname: mongo2
+    container_name: mongo2
+    image: mongo
+    volumes:
+      - ./db/mongo-data/mongo2:/data/db
+      - ./db/mongod.conf:/etc/mongod.conf
+      - ./db/.mongorc.js:/.mongorc.js
+    ports:
+      - 27019:27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "-f", "/etc/mongod.conf", "--replSet", "rs0" ]

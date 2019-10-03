@@ -3,3 +3,5 @@
 - /package.lock
 - /.git
 - /.gitignore
+- /docker/db/mongo-data
+- /data

@@ -12,6 +12,28 @@ Mongodb
 
 https://linuxize.com/post/how-to-install-mongodb-on-centos-7/
 
+to be able to use transactions, we have to install mongodb rs, more info can be found here
+https://stackoverflow.com/questions/51461952/mongodb-v4-0-transaction-mongoerror-transaction-numbers-are-only-allowed-on-a/51462024
+```
+npm install run-rs -g
+run-rs -v 4.0.10 --shell
+```
+
+
+Docker with replica set on Docker
+
+https://37yonub.ru/articles/mongo-replica-set-docker-localhost
+
+don't forget to add mongo0 ,mongo1 mongo2 to /etc/hosts file
+
+```
+docker-compose up
+```
+
+```
+config={"_id":"rs0","members":[{"_id":0,"host":"mongo0:27017"},{"_id":1,"host":"mongo1:27017"},{"_id":2,"host":"mongo2:27017"}]}
+rs.initiate(config)
+```
 
 # WXAPP Login
 

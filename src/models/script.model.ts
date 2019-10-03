@@ -24,6 +24,9 @@ export const ScriptSchema = new Schema(
     introImage: {
       type: String
     },
+    estimatedPrice: {
+      type: String
+    },
     createdAt: {
       type: Date,
       default: Date.now
