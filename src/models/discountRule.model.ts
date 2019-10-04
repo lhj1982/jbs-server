@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 
 export const DiscountRuleSchema = new Schema({
   key: { type: String },
-  title: { type: String },
   description: { type: String },
+  timeDescription: { type: String },
   days: [{ type: String }],
   timeSpan: [
     {

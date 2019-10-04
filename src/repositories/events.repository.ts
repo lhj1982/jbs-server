@@ -4,7 +4,7 @@ import { EventSchema } from '../models/event.model';
 import { PriceWeeklySchemaSchema } from '../models/priceWeeklySchema.model';
 import { DiscountRuleSchema } from '../models/discountRule.model';
 import { CommonRepo } from './common.repository';
-const Event = mongoose.model('Event', EventSchema);
+const Event = mongoose.model('Event', EventSchema, 'events');
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
 mongoose.set('useFindAndModify', false);
@@ -27,7 +27,7 @@ class EventsRepo extends CommonRepo {
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .populate({
         path: 'members',
-        match: { status: { $all: ['unpaid', 'paid'] } },
+        match: { status: { $in: ['unpaid', 'paid'] } },
         select: '_id user source status createdAt'
       })
       .exec();
@@ -46,13 +46,25 @@ class EventsRepo extends CommonRepo {
   }
 
   async find(params) {
-    const { offset, limit, keyword } = params;
-    const total = await Event.countDocuments({}).exec();
+    const { offset, limit, keyword, scriptId, shopId } = params;
+    const condition = {};
+    if (!scriptId) {
+      condition['script'] = scriptId;
+    }
+    if (!shopId) {
+      condition['shop'] = shopId;
+    }
+    const total = await Event.countDocuments(condition).exec();
     const pagination = { offset, limit, total };
-    const pagedEvents = await Event.find({})
+    const pagedEvents = await Event.find(condition)
       .populate('script', ['_id', 'name', 'duration'])
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
+      .populate({
+        path: 'members',
+        match: { status: { $in: ['unpaid', 'paid'] } },
+        select: 'user source status'
+      })
       .skip(offset)
       .limit(limit)
       .sort({ startTime: 1 })

@@ -5,7 +5,8 @@ import ScriptsRepo from '../repositories/scripts.repository';
 import UsersRepo from '../repositories/users.repository';
 import ShopsRepo from '../repositories/shops.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
-import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException } from '../exceptions/custom.exceptions';
+import DiscountRulesMapRepo from '../repositories/discountRulesMap.repository';
+import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, EventIsFullBookedException } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import config from '../config';
 import { string2Date, formatDate, addDays } from '../utils/dateUtil';
@@ -24,6 +25,26 @@ export class EventsController extends BaseController {
         limit = config.query.limit;
       }
       let result = await EventsRepo.find({ keyword, offset, limit });
+      const links = this.generateLinks(result.pagination, req.route.path, '');
+      result = Object.assign({}, result, links);
+      res.json(result);
+    } catch (err) {
+      res.send(err);
+    }
+  };
+
+  getEventsByScriptAndShop = async (req: Request, res: Response) => {
+    try {
+      let offset = parseInt(req.query.offset);
+      let limit = parseInt(req.query.limit);
+      const { scriptId, shopId } = req.params;
+      if (!offset) {
+        offset = config.query.offset;
+      }
+      if (!limit) {
+        limit = config.query.limit;
+      }
+      let result = await EventsRepo.find({ scriptId, shopId, offset, limit });
       const links = this.generateLinks(result.pagination, req.route.path, '');
       result = Object.assign({}, result, links);
       res.json(result);
@@ -151,7 +172,7 @@ export class EventsController extends BaseController {
 
   joinUserEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
-    const { userName, source, userId } = req.body;
+    const { userName, source, userId, mobile } = req.body;
     const { loggedInUser } = res.locals;
     const event = await EventsRepo.findById(eventId);
     if (!event) {
@@ -162,7 +183,7 @@ export class EventsController extends BaseController {
       next(new InvalidRequestException('JoinEvent', [userId, userName]));
       return;
     }
-    if (source != 'online' || source != 'offline') {
+    if (source != 'online' && source != 'offline') {
       next(new InvalidRequestException('JoinEvent', [source]));
       return;
     }
@@ -185,15 +206,44 @@ export class EventsController extends BaseController {
     //     return;
     //   }
     // }
-    const newEventUser = await EventUsersRepo.saveOrUpdate({
-      eventId,
-      userId,
-      userName,
-      source,
-      status: 'unpaid',
-      createdAt: new Date()
-    });
-    res.json({ code: 'SUCCESS', data: newEventUser });
+
+    // get participators for given event
+    const eventUsers = await EventUsersRepo.findByEvent(eventId);
+    // update event user number
+    const updateData = this.getUpdatedEventParticipators(event, 'joinEvent', eventUsers.length);
+    const eventToUpdate = Object.assign(event, updateData);
+    const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
+    const { numberOfAvailableSpots } = newEvent;
+    if (numberOfAvailableSpots <= 0) {
+      next(new EventIsFullBookedException(eventId));
+      return;
+    }
+
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const newEventUser = await EventUsersRepo.saveOrUpdate(
+        {
+          event: eventId,
+          user: userId,
+          userName,
+          source,
+          mobile,
+          status: 'unpaid',
+          createdAt: new Date()
+        },
+        opts
+      );
+
+      await session.commitTransaction();
+      await EventsRepo.endSession();
+      res.json({ code: 'SUCCESS', data: newEventUser });
+    } catch (err) {
+      await session.abortTransaction();
+      await EventsRepo.endSession();
+      throw err;
+    }
   };
 
   getEventDetails = async (req: Request, res: Response, next: NextFunction) => {
@@ -265,10 +315,31 @@ export class EventsController extends BaseController {
     if (userId != loggedInUser._id) {
       next(new AccessDeinedException(''));
     }
-    const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
-    const eventUserToUpdate = Object.assign(eventUser, { status: status });
-    const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate);
-    res.json({ code: 'SUCCESS', data: newEventUser });
+
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
+      const eventUserToUpdate = Object.assign(eventUser, { status: status });
+      const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
+
+      // get participators for given event
+      const eventUsers = await EventUsersRepo.findByEvent(eventId);
+      console.log(eventUsers);
+      // update event user number
+      const { numberOfParticipators } = event;
+      const updateData = this.getUpdatedEventParticipators(event, 'joinEvent', eventUsers.length - 1);
+      const eventToUpdate = Object.assign(event, updateData);
+      const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
+      await session.commitTransaction();
+      await EventsRepo.endSession();
+      res.json({ code: 'SUCCESS', data: newEventUser });
+    } catch (err) {
+      await session.abortTransaction();
+      await EventsRepo.endSession();
+      throw err;
+    }
   };
 
   /**
@@ -292,13 +363,62 @@ export class EventsController extends BaseController {
     // }
 
     const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
-    const eventUserToUpdate = Object.assign(eventUser, { status: status });
-    const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate);
-    res.json({ code: 'SUCCESS', data: newEventUser });
+
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const eventUserToUpdate = Object.assign(eventUser, { status: status });
+      const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
+
+      // get participators for given event
+      const eventUsers = await EventUsersRepo.findByEvent(eventId);
+      // update event user number
+      const { numberOfParticipators } = event;
+      const updateData = this.getUpdatedEventParticipators(event, 'joinEvent', eventUsers.length);
+      const eventToUpdate = Object.assign(event, updateData);
+      const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
+      await session.commitTransaction();
+      await EventsRepo.endSession();
+
+      res.json({ code: 'SUCCESS', data: newEventUser });
+    } catch (err) {
+      await session.abortTransaction();
+      await EventsRepo.endSession();
+      throw err;
+    }
   };
 
-  getAvailableDiscount = async (req: Request, res: Response, next: NextFunction) => {
-    const { scriptId, shopId } = req.body;
+  getAvailableDiscountRules = async (req: Request, res: Response, next: NextFunction) => {
+    const { scriptId, shopId, startTime } = req.query;
     const { loggedInUser } = res.locals;
+    if (!shopId) {
+      next(new ResourceNotFoundException('Shop', shopId));
+      return;
+    }
+    if (!scriptId) {
+      next(new ResourceNotFoundException('Script', scriptId));
+      return;
+    }
+
+    const availableDiscountRulesRaw = await this.getAvailableDiscountRulesFromDB(scriptId, shopId, startTime);
+    const availableDiscountRules = availableDiscountRulesRaw.filter(rule => {
+    	const { discountRule } = rule;
+    	return discountRule != null;
+    }).map(rule => {
+    	const { discountRule } = rule;
+    	return discountRule;
+    });
+
+    // console.log(availableDiscountRules);
+    res.json({ code: 'SUCCESS', data: availableDiscountRules });
+  };
+
+  getAvailableDiscountRulesFromDB = async (scriptId, shopId, startTime) => {
+    let result = await DiscountRulesMapRepo.findByShopAndScript(shopId, scriptId, startTime);
+    if (result.length === 0) {
+      result = await DiscountRulesMapRepo.findByShopAndScript(shopId, undefined, startTime);
+    }
+    return result;
   };
 }

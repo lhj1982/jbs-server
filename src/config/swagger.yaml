@@ -428,6 +428,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
   
+  /events/{scriptId}/{shopId}:
+    get:
+      tags:
+      - "event"
+      summary: "List all events by given script and shop"
+      operationId: "listEventsByScriptAndShop"
+      parameters:
+        - in: query
+          name: offset
+          description: The number of items to skip before starting to collect the result set
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: limit
+          description: The numbers of items to return
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsResponse'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /events/{eventId}:
     get:
       tags:
@@ -707,13 +740,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /events/discount-rules:
+  /events/available-discount-rules:
     get:
       tags:
       - "event"
-      summary: "Retrieve discount rulesle of am event"
-      description: "Retrieve discount rulesle of am event"
-      operationId: "getEventDiscountRules"
+      summary: "Retrieve available discount rules"
+      description: "Retrieve available discount rules."
+      operationId: "getAvailableDiscountRules"
       security:
         - bearerAuth: []
       parameters:
@@ -728,13 +761,22 @@ paths:
           description: shopId
           schema:
             type: string
+        - in: query
+          name: startTime
+          description: start time
+          schema:
+            type: string
+            format: date-time
       responses:
         200:
           description: "Success"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DiscoutRules'
+                type: "array"
+                items:
+                  type: "object"
+                  $ref: '#/components/schemas/DiscoutRuleMap'
         default:
           description: "Invalid input"
           content:
@@ -976,7 +1018,7 @@ components:
         introImage:
           type: "string"
         estimatedPrice:
-          type> "string"
+          type: "string"
         createdAt: 
           type: "string"
           format: "date-time"
@@ -1099,7 +1141,7 @@ components:
             discountRules:
               type: array
               items:
-                $ref: '#/components/schemas/DiscoutRules'
+                $ref: '#/components/schemas/DiscoutRule'
             members:
               type: array
               items:
@@ -1170,12 +1212,12 @@ components:
               - 7
             price: 150
             
-    DiscoutRules:
+    DiscoutRule:
       type: object
       properties:
         key:
           type: string
-        title:
+        timeDescription:
           type: string
         description: 
           type: string
@@ -1213,7 +1255,7 @@ components:
           format: date-time
       example:
         key: "rule1"
-        title: "工作日晚场，开团“免费”，参团九折"
+        timeDescription: "工作日晚场"
         description: "工作日晚场，发起者返 0.1*人数*原价，参与者返 0.1*原价"
         timeSpan:
         - 
@@ -1230,6 +1272,22 @@ components:
         discount:
           sponsor: 10
           participator: 10
+
+    DiscoutRuleMap:
+      type: "object"
+      properties:
+        shop:
+          type: "object"
+          $ref: "#/components/schemas/Shop"
+        script:
+          type: "object"
+          $ref: "#/components/schemas/Script"
+        discountRule:
+          type: "object"
+          $ref: "#/components/schemas/DiscoutRule"
+        createdAt:
+          type: "string"
+          format: "date-time"
 
     ArrayOfEvents:
       type: "array"

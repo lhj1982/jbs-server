@@ -28,6 +28,7 @@ class App {
 
   // cors - must be before app use routes
   constructor() {
+    console.log(this.mongoUrl);
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.config();
     this.mongoSetup();

@@ -27,11 +27,17 @@ https://37yonub.ru/articles/mongo-replica-set-docker-localhost
 don't forget to add mongo0 ,mongo1 mongo2 to /etc/hosts file
 
 ```
+172.18.0.4   mongo0 
+172.18.0.2   mongo1 
+172.18.0.3   mongo2
+```
+
+```
 docker-compose up
 ```
 
 ```
-config={"_id":"rs0","members":[{"_id":0,"host":"mongo0:27017"},{"_id":1,"host":"mongo1:27017"},{"_id":2,"host":"mongo2:27017"}]}
+config={"_id":"rs0","members":[{"_id":0,"host":"192.168.0.102:27017"},{"_id":1,"host":"192.168.0.102:27017"},{"_id":2,"host":"192.168.0.102:27017"}]}
 rs.initiate(config)
 ```
 

@@ -20,4 +20,19 @@ const addDays = (fromDate: string, daysToAdd: number) => {
   return formatDate(fromDate).add(daysToAdd, 'days');
 };
 
-export { string2Date, formatDate, addDays };
+const getDay = (dateStr: string) => {
+  const date = moment(dateStr);
+  const weekDay = date.day();
+  if (weekDay == 0) {
+    return 7;
+  } else {
+    return weekDay;
+  }
+};
+
+const getTime = (dateStr: string) => {
+  const date = moment(dateStr);
+  return date.format('HH:mm');
+};
+
+export { string2Date, formatDate, addDays, getDay, getTime };

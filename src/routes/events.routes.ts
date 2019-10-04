@@ -7,7 +7,8 @@ export class EventsRoutes {
   eventsController: EventsController = new EventsController();
 
   routes(app): void {
-    // Contact
+    app.route('/events/available-discount-rules').get(verifyToken, this.eventsController.getAvailableDiscountRules);
+
     app
       .route('/events')
       .get((req: Request, res: Response, next: NextFunction) => {
@@ -18,6 +19,7 @@ export class EventsRoutes {
       }, this.eventsController.getEvents)
       .post(verifyToken, permit({ domain: 'event', operations: ['update'] }), this.eventsController.addEvent);
 
+    app.route('/events/:scriptId/:shopId').get(this.eventsController.getEventsByScriptAndShop);
     app.route('/events/price-schema').get(this.eventsController.getPriceWeeklySchema);
     app.route('/events/discount-rules').get(verifyToken, this.eventsController.getDiscountRules);
 
@@ -29,7 +31,5 @@ export class EventsRoutes {
     app.route('/events/:eventId/join').post(verifyToken, permit({ domain: 'event-user', operations: ['create'] }), this.eventsController.joinUserEvent);
     app.route('/events/:eventId/users/cancel').put(verifyToken, permit({ domain: 'event-user', operations: ['update'] }), this.eventsController.cancelEventUser);
     app.route('/events/:eventId/users/update-status').put(verifyToken, permit({ domain: 'event-user', operations: ['delete'] }), this.eventsController.updateEventUserStatus);
-
-    app.route('/events/available-discount').get(verifyToken, this.eventsController.getAvailableDiscount);
   }
 }

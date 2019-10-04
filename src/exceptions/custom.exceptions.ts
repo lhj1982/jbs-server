@@ -30,4 +30,10 @@ class ResourceAlreadyExist extends HttpException {
   }
 }
 
-export { AuthorizationException, AccessDeinedException, ResourceNotFoundException, InvalidRequestException, ResourceAlreadyExist };
+class EventIsFullBookedException extends HttpException {
+  constructor(key: string) {
+    super(500, `Event ${key} is fully booked`);
+  }
+}
+
+export { AuthorizationException, AccessDeinedException, ResourceNotFoundException, InvalidRequestException, ResourceAlreadyExist, EventIsFullBookedException };

@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import { EventUserSchema } from '../models/eventUser.model';
-const EventUser = mongoose.model('EventUser', EventUserSchema);
+const EventUser = mongoose.model('EventUser', EventUserSchema, 'eventUsers');
 mongoose.set('useFindAndModify', false);
 
 class EventUsersRepo {
@@ -8,6 +8,17 @@ class EventUsersRepo {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     return await EventUser.where({ _id: id })
       .findOne()
+      .exec();
+  }
+
+  async findByEvent(eventId: string, filter = { status: ['unpaid', 'paid'] }) {
+    const { status } = filter;
+    return await EventUser.find({
+      event: eventId,
+      status: { $in: status }
+    })
+      .populate('event', ['_id', 'name'])
+      .populate('user', ['_id'])
       .exec();
   }
 
@@ -22,33 +33,38 @@ class EventUsersRepo {
   }
 
   async findByUser(userId: string) {
-    return await EventUser.find({ user: userId })
+    return await EventUser.find({
+      user: userId,
+      status: { $in: ['unpaid', 'paid'] }
+    })
       .populate('event', ['_id', 'name'])
       .populate('user', ['_id'])
       .exec();
   }
 
-  async saveOrUpdate(eventUser) {
+  async saveOrUpdate(eventUser, opt: object = {}) {
     const options = {
+      ...opt,
       new: true,
       upsert: true,
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { eventId, userId, userName, source, createdAt, status } = eventUser;
-    const e = await this.findEventUser(eventId, userId, userName);
+    const { event, user, userName, source, createdAt, status, mobile } = eventUser;
+    const e = await this.findEventUser(event, user, userName);
     // console.log(e);
     if (!e) {
-      return await EventUser.create({
-        event: eventId,
-        user: userId,
+      return await EventUser({
+        event,
+        user,
         userName,
         source,
         status,
+        mobile,
         createdAt
-      });
+      }).save(options);
     } else {
-      return e;
+      return await EventUser.findOneAndUpdate({ _id: e._id }, { event, user, userName, source, createdAt, status, mobile }, options).exec();
     }
   }
 }
