@@ -23,6 +23,12 @@ export const EventSchema = new Schema(
       type: Date
     },
     hostUser: { type: Schema.Types.ObjectId, ref: 'User' },
+    hostUserMobile: {
+      type: String
+    },
+    hostUserWechatId: {
+      type: String
+    },
     hostComment: {
       type: String
     },
@@ -50,6 +56,10 @@ export const EventSchema = new Schema(
       type: String,
       enum: ['ready', 'completed', 'expired', 'cancelled'],
       default: 'ready'
+    },
+    isHostJoin: {
+      type: Boolean,
+      default: true
     },
     createdAt: {
       type: Date,

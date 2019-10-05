@@ -31,8 +31,9 @@ class UsersRepo {
     await User.save(user).exec();
   }
 
-  async saveOrUpdateUser(user) {
+  async saveOrUpdateUser(user, opts: object = {}) {
     const options = {
+      ...opts,
       new: true,
       upsert: true,
       setDefaultsOnInsert: true,

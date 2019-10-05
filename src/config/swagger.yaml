@@ -376,6 +376,8 @@ paths:
                 - startTime
                 - endTime
                 - hostUserId
+                - hostUserMobile
+                - hostUserWechatId
                 - numberOfPersons
                 - price
               properties:
@@ -391,6 +393,10 @@ paths:
                   format: 'date-time'
                 hostUserId:
                   type: "string"
+                hostUserMobile:
+                  type: "string"
+                hostUserWechatId:
+                  type: "string"
                 hostComment:
                   type: "string"
                 numberOfPersons:
@@ -405,15 +411,21 @@ paths:
                 price:
                   type: "integer"
                   format: int32
+                isHostJoin:
+                  type: "boolean"
+                  default: true
               example:
                 shopId: '1234'
                 scriptId: '1234'
                 startTime: '2019-01-01 12:00:00'
                 endTime: '2019-01-01 12:00:00'
                 hostUserId: '2323'
+                hostUserMobile: 'test'
+                hostUserWechatId: 'test'
                 numberOfPersons: 1
                 numberOfOfflinePersons: 0
                 price: 100
+                isHostJoin: true
       responses:
         200:
           description: "Success"

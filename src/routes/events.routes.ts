@@ -9,6 +9,7 @@ export class EventsRoutes {
   routes(app): void {
     app.route('/events/available-discount-rules').get(verifyToken, this.eventsController.getAvailableDiscountRules);
     app.route('/events/calendar/:date').get(this.eventsController.getEventsByDate);
+    app.route('/events/get-events-count-by-date').get(this.eventsController.getEventsCountByDate);
     app.route('/events/price-schema').get(this.eventsController.getPriceWeeklySchema);
     app.route('/events/discount-rules').get(verifyToken, this.eventsController.getDiscountRules);
 

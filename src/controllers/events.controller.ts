@@ -76,8 +76,11 @@ export class EventsController extends BaseController {
     }
   };
 
+  getEventsCountByDate = async (req: Request, res: Response, next: NextFunction) => {};
+
   addEvent = async (req: Request, res: Response, next: NextFunction) => {
-    const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons, price } = req.body;
+    const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons, price, hostUserMobile, hostUserWechatId } = req.body;
+    let { isHostJoin } = req.body;
     let { numberOfOfflinePersons } = req.body;
     if (!scriptId) {
       next(new InvalidRequestException('AddEvent', ['scriptId']));
@@ -89,6 +92,14 @@ export class EventsController extends BaseController {
     }
     if (!hostUserId) {
       next(new InvalidRequestException('AddEvent', ['hostUserId']));
+      return;
+    }
+    if (!hostUserMobile) {
+      next(new InvalidRequestException('AddEvent', ['hostUserMobile']));
+      return;
+    }
+    if (!hostUserWechatId) {
+      next(new InvalidRequestException('AddEvent', ['hostUserWechatId']));
       return;
     }
     if (!numberOfPersons) {
@@ -114,6 +125,10 @@ export class EventsController extends BaseController {
     if (!numberOfOfflinePersons) {
       numberOfOfflinePersons = 0;
     }
+    if (!isHostJoin) {
+      isHostJoin = true;
+    }
+    const { loggedInUser } = res.locals;
     const numberOfAvailableSpots = numberOfPersons - numberOfOfflinePersons;
     const numberOfParticipators = 0;
     const dtStartTime = formatDate(startTime, config.eventDateFormatParse);
@@ -122,6 +137,16 @@ export class EventsController extends BaseController {
     session.startTransaction();
     try {
       const opts = { session };
+
+      const { mobile } = loggedInUser;
+      // update user mobile if user does not have mobile
+      if (!mobile) {
+        const userToUpdate = Object.assign(loggedInUser, {
+          mobile: hostUserMobile
+        });
+
+        await UsersRepo.saveOrUpdateUser(userToUpdate, opts);
+      }
 
       const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
       let discountRule = undefined;
@@ -136,6 +161,8 @@ export class EventsController extends BaseController {
           startTime: dtStartTime,
           endTime: dtEndTime,
           hostUser: hostUserId,
+          hostUserMobile,
+          hostUserWechatId,
           hostComment,
           numberOfPersons,
           numberOfOfflinePersons,
@@ -143,6 +170,7 @@ export class EventsController extends BaseController {
           numberOfAvailableSpots,
           price,
           discountRule,
+          isHostJoin,
           createdAt: new Date()
         },
         opts
