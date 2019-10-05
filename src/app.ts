@@ -1,5 +1,23 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import * as mongoose from 'mongoose';
+import config from './config';
+import { RoleSchema } from './models/role.model';
+import { ShopSchema } from './models/shop.model';
+import { ScriptSchema } from './models/script.model';
+import { DiscountRuleSchema } from './models/discountRule.model';
+import { UserSchema } from './models/user.model';
+import { EventSchema } from './models/event.model';
+import { EventUserSchema } from './models/eventUser.model';
+
+const Role = mongoose.model('Role', RoleSchema, 'roles');
+const Event = mongoose.model('Event', EventSchema, 'events');
+const User = mongoose.model('User', UserSchema, 'users');
+const EventUser = mongoose.model('EventUser', EventUserSchema, 'eventUsers');
+const Shop = mongoose.model('Shop', ShopSchema, 'shops');
+const Script = mongoose.model('Script', ScriptSchema, 'scripts');
+const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
+
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';
 import { ScriptsRoutes } from './routes/scripts.routes';
@@ -7,8 +25,6 @@ import { AuthRoutes } from './routes/auth.routes';
 import { EventsRoutes } from './routes/events.routes';
 import { PricesRoutes } from './routes/prices.routes';
 import errorMiddleware from './middleware/error.middleare';
-import * as mongoose from 'mongoose';
-import config from './config';
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');

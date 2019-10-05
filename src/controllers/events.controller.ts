@@ -17,7 +17,7 @@ import {
 import { BaseController } from './base.controller';
 import config from '../config';
 import { string2Date, formatDate, addDays } from '../utils/dateUtil';
-import * as _ from 'lodash';
+// import * as _ from 'lodash';
 
 export class EventsController extends BaseController {
   getEvents = async (req: Request, res: Response) => {
@@ -102,10 +102,10 @@ export class EventsController extends BaseController {
       next(new InvalidRequestException('AddEvent', ['hostUserWechatId']));
       return;
     }
-    if (!numberOfPersons) {
-      next(new InvalidRequestException('AddEvent', ['numberOfPersons']));
-      return;
-    }
+    // if (!numberOfPersons) {
+    //   next(new InvalidRequestException('AddEvent', ['numberOfPersons']));
+    //   return;
+    // }
 
     const script = await ScriptsRepo.findById(scriptId);
     if (!script) {
@@ -122,6 +122,11 @@ export class EventsController extends BaseController {
       next(new ResourceNotFoundException('User', hostUserId));
       return;
     }
+    const { minNumberOfPersons, maxNumberOfPersons } = script;
+    if (!minNumberOfPersons || !maxNumberOfPersons) {
+      next(new InvalidRequestException('AddEvent', ['minNumberOfPersons', 'maxNumberOfPersons']));
+      return;
+    }
     if (!numberOfOfflinePersons) {
       numberOfOfflinePersons = 0;
     }
@@ -129,7 +134,8 @@ export class EventsController extends BaseController {
       isHostJoin = true;
     }
     const { loggedInUser } = res.locals;
-    const numberOfAvailableSpots = numberOfPersons - numberOfOfflinePersons;
+    const minNumberOfAvailableSpots = minNumberOfPersons - numberOfOfflinePersons;
+    const maxNumberOfAvailableSpots = maxNumberOfPersons - numberOfOfflinePersons;
     const numberOfParticipators = 0;
     const dtStartTime = formatDate(startTime, config.eventDateFormatParse);
     const dtEndTime = formatDate(endTime, config.eventDateFormatParse);
@@ -164,10 +170,12 @@ export class EventsController extends BaseController {
           hostUserMobile,
           hostUserWechatId,
           hostComment,
-          numberOfPersons,
+          minNumberOfPersons,
+          maxNumberOfPersons,
           numberOfOfflinePersons,
           numberOfParticipators,
-          numberOfAvailableSpots,
+          minNumberOfAvailableSpots,
+          maxNumberOfAvailableSpots,
           price,
           discountRule,
           isHostJoin,
@@ -193,7 +201,7 @@ export class EventsController extends BaseController {
    * @param {NextFunction} next [description]
    */
   updateEvent = async (req: Request, res: Response, next: NextFunction) => {
-    const { status, numberOfOfflinePersons } = req.body;
+    const { numberOfOfflinePersons, hostComment } = req.body;
     const { loggedInUser } = res.locals;
     const { eventId } = req.params;
     const event = await EventsRepo.findById(eventId);
@@ -202,11 +210,11 @@ export class EventsController extends BaseController {
       return;
     }
     const updateData = {};
-    if (status) {
-      updateData['status'] = status;
-    }
     if (numberOfOfflinePersons) {
       updateData['numberOfOfflinePersons'] = numberOfOfflinePersons;
+    }
+    if (hostComment) {
+      updateData['hostComment'] = hostComment;
     }
     const eventToUpdate = Object.assign(event, updateData);
     const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
@@ -222,7 +230,7 @@ export class EventsController extends BaseController {
    */
   joinUserEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
-    const { userName, source, userId, mobile } = req.body;
+    const { userName, source, userId, mobile, wechatId } = req.body;
     const { loggedInUser } = res.locals;
     const event = await EventsRepo.findById(eventId);
     if (!event) {
@@ -245,6 +253,10 @@ export class EventsController extends BaseController {
       next(new InvalidRequestException('JoinEvent', [source, userName]));
       return;
     }
+    if (!wechatId) {
+      next(new InvalidRequestException('JoinEvent', [wechatId]));
+      return;
+    }
     if (userId != loggedInUser._id) {
       next(new AccessDeinedException(''));
       return;
@@ -259,9 +271,8 @@ export class EventsController extends BaseController {
 
     // get participators for given event
     const eventUsers = await EventUsersRepo.findByEvent(eventId);
-    const newEvent = await this.updateEventParticpantsNumber(event, eventUsers);
-    const { numberOfAvailableSpots } = newEvent;
-    if (numberOfAvailableSpots <= 0) {
+    await this.updateEventParticpantsNumber(event, eventUsers);
+    if (!this.canJoinEvent(event, eventUsers)) {
       next(new EventIsFullBookedException(eventId));
       return;
     }
@@ -277,6 +288,7 @@ export class EventsController extends BaseController {
           userName,
           source,
           mobile,
+          wechatId,
           status: 'unpaid',
           createdAt: new Date()
         },
@@ -303,8 +315,7 @@ export class EventsController extends BaseController {
     const { _id: scriptId } = event.script;
     const { _id: shopId } = event.shop;
     const priceWeeklySchema = await EventsRepo.findPriceWeeklySchemaByEvent(scriptId, shopId);
-    console.log(priceWeeklySchema);
-    const resp = _.merge(event, priceWeeklySchema);
+    const resp = Object.assign(event, { priceWeeklySchema });
     res.json({
       code: 'SUCCESS',
       data: resp
@@ -545,23 +556,34 @@ export class EventsController extends BaseController {
    * @param {[type]} eventUsers [description]
    */
   updateEventParticpantsNumber = async (event, eventUsers) => {
-    const { numberOfPersons, numberOfOfflinePersons } = event;
-    let { numberOfAvailableSpots, numberOfParticipators } = event;
-    if (!numberOfAvailableSpots) {
-      numberOfAvailableSpots = 0;
+    const { minNumberOfPersons, maxNumberOfPersons, numberOfOfflinePersons } = event;
+    let { minNumberOfAvailableSpots, maxNumberOfAvailableSpots, numberOfParticipators } = event;
+    if (!minNumberOfAvailableSpots) {
+      minNumberOfAvailableSpots = 0;
+    }
+    if (!maxNumberOfAvailableSpots) {
+      maxNumberOfAvailableSpots = 0;
     }
     if (!numberOfParticipators) {
       numberOfParticipators = 0;
     }
     numberOfParticipators = eventUsers.length;
-    numberOfAvailableSpots = numberOfPersons - numberOfParticipators - numberOfOfflinePersons;
+    minNumberOfAvailableSpots = minNumberOfPersons - numberOfParticipators - numberOfOfflinePersons;
+    maxNumberOfAvailableSpots = maxNumberOfPersons - numberOfParticipators - numberOfOfflinePersons;
     const eventToUpdate = Object.assign(event, {
-      numberOfAvailableSpots,
+      minNumberOfAvailableSpots,
+      maxNumberOfAvailableSpots,
       numberOfParticipators,
       numberOfOfflinePersons
     });
     const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
     return newEvent;
+  };
+
+  canJoinEvent = (event, eventUsers) => {
+    const { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons, minNumberOfPersons, maxNumberOfPersons } = event;
+    const numberOfOnlinePersons = eventUsers.length;
+    return numberOfOnlinePersons + numberOfOfflinePersons < maxNumberOfPersons;
   };
 
   canCompleteEvent = (event, eventUsers) => {
@@ -574,8 +596,8 @@ export class EventsController extends BaseController {
         break;
       }
     }
-    const { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons, numberOfPersons } = event;
+    const { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons, minNumberOfPersons, maxNumberOfPersons } = event;
     const numberOfOnlinePersons = eventUsers.length;
-    return allPaid && numberOfOnlinePersons + numberOfOfflinePersons >= numberOfPersons;
+    return allPaid && numberOfOnlinePersons + numberOfOfflinePersons >= minNumberOfPersons && numberOfOnlinePersons + numberOfOfflinePersons <= maxNumberOfPersons;
   };
 }

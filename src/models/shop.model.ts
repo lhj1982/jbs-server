@@ -1,8 +1,8 @@
 import * as mongoose from 'mongoose';
-import { ScriptSchema } from './script.model';
+// import { ScriptSchema } from './script.model';
 
 const Schema = mongoose.Schema;
-const Script = mongoose.model('Script', ScriptSchema);
+// const Script = mongoose.model('Script', ScriptSchema);
 
 export const ShopSchema = new Schema({
   name: {
@@ -18,10 +18,10 @@ export const ShopSchema = new Schema({
   mobile: {
     type: String
   },
-  wechat_id: {
+  wechatId: {
     type: String
   },
-  wechat_name: {
+  wechatName: {
     type: String
   },
   phone: {

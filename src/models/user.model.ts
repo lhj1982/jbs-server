@@ -1,8 +1,8 @@
 import * as mongoose from 'mongoose';
-import { RoleSchema } from './role.model';
+// import { RoleSchema } from './role.model';
 
 const Schema = mongoose.Schema;
-const Role = mongoose.model('Role', RoleSchema);
+// const Role = mongoose.model('Role', RoleSchema);
 
 export const UserSchema = new Schema(
   {

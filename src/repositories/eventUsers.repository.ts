@@ -55,7 +55,7 @@ class EventUsersRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { event, user, userName, source, createdAt, status, mobile } = eventUser;
+    const { event, user, userName, source, createdAt, status, mobile, wechatId } = eventUser;
     const e = await this.findEventUser(event, user, userName);
     // console.log(e);
     if (!e) {
@@ -66,10 +66,11 @@ class EventUsersRepo {
         source,
         status,
         mobile,
+        wechatId,
         createdAt
       }).save(options);
     } else {
-      return await EventUser.findOneAndUpdate({ _id: e._id }, { event, user, userName, source, createdAt, status, mobile }, options).exec();
+      return await EventUser.findOneAndUpdate({ _id: e._id }, { event, user, userName, source, createdAt, status, mobile, wechatId }, options).exec();
     }
   }
 }

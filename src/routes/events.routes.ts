@@ -21,15 +21,15 @@ export class EventsRoutes {
       //   console.log(`Request type: ${req.method}`);
       //   next();
       // }, this.eventsController.getEvents)
-      .post(verifyToken, permit({ domain: 'event', operations: ['update'] }), this.eventsController.addEvent);
+      .post(verifyToken, permit({ domain: 'event', operations: ['create'] }), this.eventsController.addEvent);
     app.route('/events/:scriptId/:shopId').get(this.eventsController.getEventsByScriptAndShop);
     app
       .route('/events/:eventId')
       .get(verifyToken, this.eventsController.getEventDetails)
-      .put(verifyToken, permit({ domain: 'event', operations: ['write'] }), this.eventsController.updateEvent);
+      .put(verifyToken, permit({ domain: 'event', operations: ['update'] }), this.eventsController.updateEvent);
     app.route('/events/:eventId/join').post(verifyToken, permit({ domain: 'event-user', operations: ['create'] }), this.eventsController.joinUserEvent);
     app.route('/events/:eventId/users/cancel').put(verifyToken, permit({ domain: 'event-user', operations: ['update'] }), this.eventsController.cancelEventUser);
-    app.route('/events/:eventId/users/update-status').put(verifyToken, permit({ domain: 'event-user', operations: ['delete'] }), this.eventsController.updateEventUserStatus);
+    app.route('/events/:eventId/users/update-status').put(verifyToken, permit({ domain: 'event-user', operations: ['update'] }), this.eventsController.updateEventUserStatus);
 
     app.route('/events/:eventId/complete').put(verifyToken, permit({ domain: 'event', operations: ['update'] }), this.eventsController.completeEvent);
   }

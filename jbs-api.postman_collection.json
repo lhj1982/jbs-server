@@ -6,6 +6,41 @@
 	},
 	"item": [
 		{
+			"name": "sendSms",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://47.104.243.247:8513/sms/Api/Send.do",
+					"protocol": "http",
+					"host": [
+						"47",
+						"104",
+						"243",
+						"247"
+					],
+					"port": "8513",
+					"path": [
+						"sms",
+						"Api",
+						"Send.do"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "get access token",
 			"request": {
 				"method": "POST",
@@ -60,7 +95,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"code\": \"002c2Qdk1BLfTo0CMafk1yq6ek1c2Qdo\",\n\t\"nickName\": \"test1\",\n\t\"type\": \"wxapp\"\n}"
+					"raw": "{\n\t\"code\": \"002AD2TM1z3Wo61uckRM1o1LSM1AD2Te\",\n\t\"nickName\": \"test1\",\n\t\"type\": \"wxapp\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3000/oauth/login",
@@ -72,73 +107,6 @@
 					"path": [
 						"oauth",
 						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add script",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1Njg5MDg0NzQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY4OTAxMjc0fQ.2PU2CJEseNH8AKuNOuT74azAz5Jogqp2VBjd7CgLVLY",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"key\": \"test3\",\n\t\"name\": \"test\", \n\t\"description\": \"test3 desc\", \n\t\"minNumberOfPersons\": 4, \n\t\"maxNumberOfPersons\": 8, \n\t\"duration\": 2400\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/scripts",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"scripts"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get user info",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://api.weixin.qq.com/sns/userinfo?access_token=22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU&openid=onlgJ1iMXxfirUdlsPp4SSX6fvsk",
-					"protocol": "https",
-					"host": [
-						"api",
-						"weixin",
-						"qq",
-						"com"
-					],
-					"path": [
-						"sns",
-						"userinfo"
-					],
-					"query": [
-						{
-							"key": "access_token",
-							"value": "22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU"
-						},
-						{
-							"key": "openid",
-							"value": "onlgJ1iMXxfirUdlsPp4SSX6fvsk"
-						}
 					]
 				}
 			},
@@ -185,14 +153,54 @@
 			"response": []
 		},
 		{
-			"name": "sendSms",
+			"name": "get user info",
 			"request": {
-				"method": "POST",
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.weixin.qq.com/sns/userinfo?access_token=22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU&openid=onlgJ1iMXxfirUdlsPp4SSX6fvsk",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"sns",
+						"userinfo"
+					],
+					"query": [
+						{
+							"key": "access_token",
+							"value": "22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU"
+						},
+						{
+							"key": "openid",
+							"value": "onlgJ1iMXxfirUdlsPp4SSX6fvsk"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get scripts",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
 						"type": "text"
 					}
 				],
@@ -201,19 +209,148 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://47.104.243.247:8513/sms/Api/Send.do",
+					"raw": "http://localhost:3000/scripts?offset=0&limit=5",
 					"protocol": "http",
 					"host": [
-						"47",
-						"104",
-						"243",
-						"247"
+						"localhost"
 					],
-					"port": "8513",
+					"port": "3000",
 					"path": [
-						"sms",
-						"Api",
-						"Send.do"
+						"scripts"
+					],
+					"query": [
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get script by id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/scripts/5d943f6818a5347ba31a8f8e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"scripts",
+						"5d943f6818a5347ba31a8f8e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add script",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NzAwMDMyNTgsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5OTk2MDU4fQ.xjckSYai854x7Si5cf769XffXUC97EgmebKPkrBSb-4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"key\": \"jinzhiyunie-feiguyu\",\n\t\"name\": \"金枝欲孽\", \n\t\"description\": \"<p class=\\\"more-i\\\"><span>大江东去浪淘尽，千古风流人物。</span><span>故垒西边，人道是，三国周郎赤壁。</span><span>遥想公瑾当年，小乔初嫁了，雄姿英发。</span><span>羽扇纶巾，谈笑间樯橹灰飞烟灭!</span><span>......</span><span>确认过眼神，我遇上对的人。</span><span>我挥剑转身，而鲜血如红唇。</span><span>前朝记忆渡红尘，伤人的不是刀刃，</span><span>是你转世而来的魂!</span><span>......</span><span>赤手空拳心机里攻防，铁臂铜墙也敢碰撞!</span><span>今生不枉这一趟，烈火烧出凤凰!</span><span>......</span><span>可这江东的风，能否助这赤壁的火?</span><span>这一仗，心的战场!</span></p></div>\", \n\t\"minNumberOfPersons\": 9, \n\t\"maxNumberOfPersons\": 10, \n\t\"introImage\": \"jinzhiyunie-feiguyu\",\n\t\"duration\": 180,\n\t\"tags\": [\"中国\",\"古装\",\"清朝\"]\n}"
+				},
+				"url": {
+					"raw": "http://jbs.weijinglong.com:3000/scripts",
+					"protocol": "http",
+					"host": [
+						"jbs",
+						"weijinglong",
+						"com"
+					],
+					"port": "3000",
+					"path": [
+						"scripts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get shops",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/shops?offset=0&limit=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"shops"
+					],
+					"query": [
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						}
 					]
 				}
 			},
@@ -293,137 +430,6 @@
 			"response": []
 		},
 		{
-			"name": "get scripts",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3000/scripts?offset=0&limit=10",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"scripts"
-					],
-					"query": [
-						{
-							"key": "offset",
-							"value": "0"
-						},
-						{
-							"key": "limit",
-							"value": "10"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add event",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk0NTI3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NDQ1NTc2fQ.DXkFfy1UEUrjjCfFeVesj4wLGdWzD7sPiygILTKlcJo",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"shopId\": \"5d838bb87bec9d16e274a763\",\n\t  \"scriptId\": \"5d834bd57e5f59ede8c80762\",\n\t  \"startTime\": \"2019-09-21 12:00:00\",\n\t  \"endTime\": \"2019-09-21 14:00:00\",\n\t  \"hostUserId\": \"5d80f9e705ee1f1efa3c5230\",\n\t  \"numberOfPersons\": 8,\n\t  \"price\": 100\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/events",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get shops",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3000/shops?offset=0&limit=10",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"shops"
-					],
-					"query": [
-						{
-							"key": "offset",
-							"value": "0"
-						},
-						{
-							"key": "limit",
-							"value": "10"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "get events",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -472,7 +478,7 @@
 			"response": []
 		},
 		{
-			"name": "join event - offline",
+			"name": "add event",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -484,34 +490,32 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkxMjIzOTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTE1MTk0fQ.2Peh62ocN4poCOdjeIluHqYZAOBw8GBAsSosjlMvMMg",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyOTQzMzksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjg3MTM5fQ.Bd2iVIW7d7xwZYxdRZTJE61c8ZlHBJF1SQGZLh-Oxi4",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"userName\": \"test\",\n\t\"source\": \"offline\"\n}"
+					"raw": "{\n\t\"shopId\": \"5d94483749007da24ffc87af\",\n\t  \"scriptId\": \"5d943f6818a5347ba31a8f8e\",\n\t  \"startTime\": \"2019-10-04 12:00:00\",\n\t  \"endTime\": \"2019-10-04 12:00:00\",\n\t  \"hostUserId\": \"5d89da1d89f4bf67f957828b\",\n\t  \"hostUserMobile\": \"test\",\n\t  \"hostUserWechatId\": \"test\",\n\t  \"numberOfOfflinePersons\": 0,\n\t  \"price\": 100,\n\t  \"hostComment\": \"test\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/events/5d860384b625286c983cd26a/join",
+					"raw": "http://localhost:3000/events",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"events",
-						"5d860384b625286c983cd26a",
-						"join"
+						"events"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "join event - online",
+			"name": "update event",
 			"request": {
-				"method": "POST",
+				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -521,16 +525,16 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkxMjIzOTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTE1MTk0fQ.2Peh62ocN4poCOdjeIluHqYZAOBw8GBAsSosjlMvMMg",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1Njk5NDM2MDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5OTM2NDA3fQ.IyPp_KQgeZbJIwAJmQTnudOj_iDsm_BisWADi_yEWXI",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"userId\": \"5d80f9e705ee1f1efa3c5230\",\n\t\"source\": \"online\"\n}"
+					"raw": "{\n\t\"numberOfOfflinePersons\": 2\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/events/5d860384b625286c983cd26a/join",
+					"raw": "http://localhost:3000/events/5d93546a9470b5b633375d3d",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -538,8 +542,7 @@
 					"port": "3000",
 					"path": [
 						"events",
-						"5d860384b625286c983cd26a",
-						"join"
+						"5d93546a9470b5b633375d3d"
 					]
 				}
 			},
@@ -561,7 +564,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkzMzQ3MTMsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MzI3NTEzfQ.E5nKSaN--fJTbJV5qm0V4VNWxr47DCCP5b3i2p827WQ",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAzNDk5MTksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMzQyNzE5fQ.ra1mGMaS1cckeko5g5kPKiLIvL8PJIBIa5viZSFVr4c",
 						"type": "text"
 					}
 				],
@@ -570,15 +573,17 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:3000/events/5d860384b625286c983cd26a",
+					"raw": "http://jbs.weijinglong.com:3000/events/5d998791b5c1c627bb7c524b",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"jbs",
+						"weijinglong",
+						"com"
 					],
 					"port": "3000",
 					"path": [
 						"events",
-						"5d860384b625286c983cd26a"
+						"5d998791b5c1c627bb7c524b"
 					]
 				}
 			},
@@ -635,6 +640,325 @@
 			"response": []
 		},
 		{
+			"name": "get event by script and shop",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxOTgwODAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTkwODgwfQ.9OvcCCjo_S2i_PviKRJA0RagU6wL5XBFuC71cpbcUS0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/5d94427c18a5347ba31a8f8f/5d94483749007da24ffc87af",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"5d94427c18a5347ba31a8f8f",
+						"5d94483749007da24ffc87af"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get event available discount rules",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyMDUzNTAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTk4MTUwfQ.Kw22hNdMUH5K_tUvjUxWJRGnUdjGlKHyaIHbH9No7GA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/available-discount-rules?shopId=5d94483749007da24ffc87af&scriptId=5d943f6818a5347ba31a8f8e&starTime=2019-10-04 07:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"available-discount-rules"
+					],
+					"query": [
+						{
+							"key": "shopId",
+							"value": "5d94483749007da24ffc87af"
+						},
+						{
+							"key": "scriptId",
+							"value": "5d943f6818a5347ba31a8f8e"
+						},
+						{
+							"key": "starTime",
+							"value": "2019-10-04 07:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "complete event",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyNTAzOTMsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjQzMTkzfQ.eDCJynCBvrGz55hPttmlCtKc0OknIaDfxp_WEVxAqDA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"status\": \"completed\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/5d95d689717955a1af03027e/complete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"5d95d689717955a1af03027e",
+						"complete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "join event - offline",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkxMjIzOTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTE1MTk0fQ.2Peh62ocN4poCOdjeIluHqYZAOBw8GBAsSosjlMvMMg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userName\": \"test\",\n\t\"source\": \"offline\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/5d860384b625286c983cd26a/join",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"5d860384b625286c983cd26a",
+						"join"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "join event - online",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyOTQzMzksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjg3MTM5fQ.Bd2iVIW7d7xwZYxdRZTJE61c8ZlHBJF1SQGZLh-Oxi4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"5d944a4af4b8167cc437e0cb\",\n\t\"source\": \"online\",\n\t\"mobile\": \"testmobile\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/5d98aea6d9027783b3e2617c/join",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"5d98aea6d9027783b3e2617c",
+						"join"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cancel join event",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyMTI3NjYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjA1NTY2fQ.yLML3qnnQcazAeg18q4SbKu2c6TEXUxB7fa-Y6wogBg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"5d944a4af4b8167cc437e0cb\",\n\t\"status\": \"cancelled\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/5d95d689717955a1af03027e/users/cancel",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"5d95d689717955a1af03027e",
+						"users",
+						"cancel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get my profile",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1Njk4NjE1NTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5ODU0MzU0fQ.cRucDW1J82CJV6mxCG7eHe9wrjR16ew0X2OCoOMuyh0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get my events",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyNzU0MDgsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjY4MjA4fQ.9-YE5RYmStEQykWHVafUwuuFCsNzOx3SL5yJtm3Dvgw",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/profile/my-events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"profile",
+						"my-events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "update user",
 			"request": {
 				"method": "PUT",
@@ -665,6 +989,176 @@
 					"path": [
 						"users",
 						"5d80f9e705ee1f1efa3c5230"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get price schema",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk3MzMwMTEsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NzI1ODExfQ.r6OJxLrjt0VFU00cQ1h53_FMdu4IJE1wQBFOMQVjTk0",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/price-schema?shopId=5d94483749007da24ffc87af&scriptId=5d943f6818a5347ba31a8f8e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"price-schema"
+					],
+					"query": [
+						{
+							"key": "shopId",
+							"value": "5d94483749007da24ffc87af"
+						},
+						{
+							"key": "scriptId",
+							"value": "5d943f6818a5347ba31a8f8e"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add price schema",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAwMzk3NzUsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMDMyNTc1fQ.-UlL6AnGFoJDdenMQIzJ6KeZocW8akwjhebuDnHH-Eg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"scriptId\": \"5d9445ee18a5347ba31a8f9a\",\n\t\"shopId\": \"5d94483749007da24ffc87b4\",\n\t\"priceSchema\": [{\n\t\t\"days\": [1,2,3,4,5],\n\t\t\"timeSpan\": [\"09:00\",\"12:30\",\"16:00\",\"19:30\"],\n\t\t\"price\": 268\n\t},{\n\t\t\"days\": [6,7],\n\t\t\"timeSpan\": [\"09:00\"],\n\t\t\"price\": 268\n\t}, {\n\t\t\"days\": [6,7],\n\t\t\"timeSpan\": [\"14:30\",\"19:00\"],\n\t\t\"price\": 268\n\t},{\n\t\t\"days\": [1,2,3,4,5,6,7],\n\t\t\"timeSpan\": [\"23:30\"],\n\t\t\"price\": 308\n\t}]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/prices/price-schema",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"prices",
+						"price-schema"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get discount rules",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxOTgwODAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTkwODgwfQ.9OvcCCjo_S2i_PviKRJA0RagU6wL5XBFuC71cpbcUS0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/discount-rules?shopId=5d838bb87bec9d16e274a763&scriptId=5d834bd57e5f59ede8c80762",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"discount-rules"
+					],
+					"query": [
+						{
+							"key": "shopId",
+							"value": "5d838bb87bec9d16e274a763"
+						},
+						{
+							"key": "scriptId",
+							"value": "5d834bd57e5f59ede8c80762"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add discount rule",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxMjU4NDQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTE4NjQ0fQ.-r-FGWVxpqOMLHGWYuy0t4-TwtXYxX-RWSMWqCtwBrw",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"key\": \"all-8\",\n  \"timeDescription\": \"工作日晚场，开团“免费”，参团九折\",\n  \"description\": \"工作日晚场，发起者返 0.1*人数*原价，参与者返 0.1*原价\",\n  \"timeSpan\": [\n    {\n      \"from\": \"17:00\",\n      \"to\": \"23:59\"\n    }\n  ],\n  \"days\": [\n    1,\n    2,\n    3,\n    4,\n    5,\n    6,\n    7\n  ],\n  \"discount\": {\n    \"sponsor\": 10,\n    \"participator\": 10\n  }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/discount-rules",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"discount-rules"
 					]
 				}
 			},

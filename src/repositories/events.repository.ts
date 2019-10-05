@@ -27,12 +27,12 @@ class EventsRepo extends CommonRepo {
     return await Event.where({ _id: id, status: { $in: status } })
       .findOne()
       .populate('script')
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
-        select: '_id user source status createdAt'
+        select: '_id user source status mobile wechatId createdAt'
       })
       .populate('discountRule')
       .exec();
@@ -62,17 +62,18 @@ class EventsRepo extends CommonRepo {
     if (shopId) {
       condition['shop'] = shopId;
     }
-    console.log(condition);
+    // console.log(condition);
     const total = await Event.countDocuments(condition).exec();
     const pagination = { offset, limit, total };
     const pagedEvents = await Event.find(condition)
       .populate('script')
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
+      .populate('commissions')
       .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
-        select: 'user source status'
+        select: '_id user source status mobile wechatId createdAt'
       })
       .skip(offset)
       .limit(limit)
@@ -89,7 +90,7 @@ class EventsRepo extends CommonRepo {
       }
     })
       .populate('script')
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .sort({ startTime: 1 })
       .exec();

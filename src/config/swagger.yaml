@@ -378,7 +378,6 @@ paths:
                 - hostUserId
                 - hostUserMobile
                 - hostUserWechatId
-                - numberOfPersons
                 - price
               properties:
                 shopId:
@@ -399,11 +398,6 @@ paths:
                   type: "string"
                 hostComment:
                   type: "string"
-                numberOfPersons:
-                  type: "integer"
-                  format: int32
-                  minimum: 1
-                  maximum: 20
                 numberOfOfflinePersons:
                   type: "integer"
                   format: "int32"
@@ -422,7 +416,6 @@ paths:
                 hostUserId: '2323'
                 hostUserMobile: 'test'
                 hostUserWechatId: 'test'
-                numberOfPersons: 1
                 numberOfOfflinePersons: 0
                 price: 100
                 isHostJoin: true
@@ -479,6 +472,8 @@ paths:
       - "event"
       summary: "Get an event detail info"
       operationId: "getEventById"
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: eventId
@@ -521,13 +516,8 @@ paths:
             schema:
               type: "object"
               properties:
-                status:
+                hostComment:
                   type: "string"
-                  enum:
-                    - ready
-                    - complete
-                    - expired
-                    - cancelled
                 numberOfOfflinePersons:
                   type: "integer"
                   format: "int32"
@@ -589,15 +579,21 @@ paths:
             schema:
               type: "object"
               required:
+                - userId
                 - source
                 - mobile
+                - wechatId
               properties:
+                userId:
+                  type: "string"
                 source:
                   type: "string"
                   enum:
                     - online
                     - offline
                 mobile:
+                  type: "string"
+                wechatId:
                   type: "string"
       parameters:
         - in: path
@@ -830,7 +826,7 @@ paths:
                 type: "array"
                 items:
                   type: "object"
-                  $ref: '#/components/schemas/DiscoutRuleMap'
+                  $ref: '#/components/schemas/DiscountRuleMap'
         default:
           description: "Invalid input"
           content:
@@ -1163,7 +1159,10 @@ components:
         shop:
           type: "object"
           $ref: '#/components/schemas/Shop'
-        numberOfPersons:
+        minNumberOfPersons:
+          type: "integer"
+          format: "int32"
+        maxNumberOfPersons:
           type: "integer"
           format: "int32"
         numberOfOfflinePersons:
@@ -1172,7 +1171,10 @@ components:
         numberOfParticipators:
           type: "integer"
           format: "int32"
-        numberOfAvailableSpots:
+        minNumberOfAvailableSpots:
+          type: "integer"
+          format: "int32"
+        maxNumberOfAvailableSpots:
           type: "integer"
           format: "int32"
         hostComment:
@@ -1197,7 +1199,7 @@ components:
                 $ref: '#/components/schemas/PriceWeeklySchema'
             discountRule:
               type: object
-              $ref: '#/components/schemas/DiscoutRule'
+              $ref: '#/components/schemas/DiscountRule'
             members:
               type: array
               items:
@@ -1268,7 +1270,7 @@ components:
               - 7
             price: 150
             
-    DiscoutRule:
+    DiscountRule:
       type: object
       properties:
         key:
@@ -1329,7 +1331,7 @@ components:
           sponsor: 10
           participator: 10
 
-    DiscoutRuleMap:
+    DiscountRuleMap:
       type: "object"
       properties:
         shop:
@@ -1340,7 +1342,7 @@ components:
           $ref: "#/components/schemas/Script"
         discountRule:
           type: "object"
-          $ref: "#/components/schemas/DiscoutRule"
+          $ref: "#/components/schemas/DiscountRule"
         createdAt:
           type: "string"
           format: "date-time"

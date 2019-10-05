@@ -1,10 +1,10 @@
 import * as mongoose from 'mongoose';
-import { ShopSchema } from './shop.model';
-import { ScriptSchema } from './script.model';
+// import { ShopSchema } from './shop.model';
+// import { ScriptSchema } from './script.model';
 
 const Schema = mongoose.Schema;
-const Shop = mongoose.model('Shop', ShopSchema);
-const Script = mongoose.model('Script', ScriptSchema);
+// const Shop = mongoose.model('Shop', ShopSchema);
+// const Script = mongoose.model('Script', ScriptSchema);
 
 export const PriceWeeklySchemaSchema = new Schema(
   {

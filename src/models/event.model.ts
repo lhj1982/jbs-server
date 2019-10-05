@@ -1,16 +1,16 @@
 import * as mongoose from 'mongoose';
-import { ShopSchema } from './shop.model';
-import { ScriptSchema } from './script.model';
-import { UserSchema } from './user.model';
-import { EventUserSchema } from './eventUser.model';
-import { DiscountRuleSchema } from './discountRule.model';
+
+// import { ShopSchema } from './shop.model';
+// import { ScriptSchema } from './script.model';
+// import { UserSchema } from './user.model';
+// import { EventUserSchema } from './eventUser.model';
+// import { DiscountRuleSchema } from './discountRule.model';
 
 const Schema = mongoose.Schema;
-const Shop = mongoose.model('Shop', ShopSchema);
+// const Shop = mongoose.model('Shop', ShopSchema);
 // const Script = mongoose.model('Script', ScriptSchema);
 // const User = mongoose.model('User', UserSchema);
 // const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema);
-// const EventUser = mongoose.model('EventUser', EventUserSchema);
 
 export const EventSchema = new Schema(
   {
@@ -32,7 +32,10 @@ export const EventSchema = new Schema(
     hostComment: {
       type: String
     },
-    numberOfPersons: {
+    minNumberOfPersons: {
+      type: Number
+    },
+    maxNumberOfPersons: {
       type: Number
     },
     numberOfOfflinePersons: {
@@ -43,7 +46,11 @@ export const EventSchema = new Schema(
       type: Number,
       default: 0
     },
-    numberOfAvailableSpots: {
+    minNumberOfAvailableSpots: {
+      type: Number,
+      default: 0
+    },
+    maxNumberOfAvailableSpots: {
       type: Number,
       default: 0
     },
@@ -66,7 +73,7 @@ export const EventSchema = new Schema(
       default: Date.now
     }
   },
-  { toJSON: { virtuals: true } }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 EventSchema.virtual('members', {
