@@ -25,9 +25,7 @@ class EventUsersRepo {
   async findEventUser(eventId: string, userId: string, userName?: string) {
     // console.log(eventId);
     // console.log(userName);
-    return await EventUser.where({
-      $or: [{ event: eventId, userName }, { event: eventId, user: userId }]
-    })
+    return await EventUser.where({ event: eventId, user: userId })
       .findOne()
       .exec();
   }
@@ -37,8 +35,9 @@ class EventUsersRepo {
       user: userId,
       status: { $in: ['unpaid', 'paid'] }
     })
-      .populate('event', ['_id', 'name'])
-      .populate('user', ['_id'])
+      .populate({path: 'event', populate: {path: 'script', select: 'key name'}})
+      .populate({path: 'event', populate: {path: 'shop', select: 'key name'}})
+      .populate('user', ['nickName'])
       .exec();
   }
 

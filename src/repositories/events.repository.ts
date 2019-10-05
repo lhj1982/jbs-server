@@ -3,10 +3,13 @@ import { ScriptSchema } from '../models/script.model';
 import { EventSchema } from '../models/event.model';
 import { PriceWeeklySchemaSchema } from '../models/priceWeeklySchema.model';
 import { DiscountRuleSchema } from '../models/discountRule.model';
+import { EventCommissionSchema } from '../models/eventCommissions.model';
 import { CommonRepo } from './common.repository';
 const Event = mongoose.model('Event', EventSchema, 'events');
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
+const EventCommission = mongoose.model('EventCommission', EventCommissionSchema, 'eventCommissions');
+
 mongoose.set('useFindAndModify', false);
 
 class EventsRepo extends CommonRepo {
@@ -18,9 +21,10 @@ class EventsRepo extends CommonRepo {
     super.endSession();
   }
 
-  async findById(id: string) {
+  async findById(id: string, filter = {status: ['ready']}) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
-    return await Event.where({ _id: id })
+    const { status } = filter;
+    return await Event.where({ _id: id, status: {$in: status} })
       .findOne()
       .populate('script', ['_id', 'name', 'duration'])
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
@@ -45,15 +49,19 @@ class EventsRepo extends CommonRepo {
       .exec();
   }
 
-  async find(params) {
+  async find(params, filter = {status: ['ready']}) {
+    const { status } = filter;
     const { offset, limit, keyword, scriptId, shopId } = params;
-    const condition = {};
-    if (!scriptId) {
+    const condition = {
+      status: {$in: status }
+    };
+    if (scriptId) {
       condition['script'] = scriptId;
     }
-    if (!shopId) {
+    if (shopId) {
       condition['shop'] = shopId;
     }
+    console.log(condition);
     const total = await Event.countDocuments(condition).exec();
     const pagination = { offset, limit, total };
     const pagedEvents = await Event.find(condition)
@@ -90,6 +98,18 @@ class EventsRepo extends CommonRepo {
     return await Event.where(params)
       .findOne()
       .exec();
+  }
+
+  async saveEventCommissions(commissions, opt: object = {}) {
+    const options = {
+      ...opt,
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true,
+      returnNewDocument: true
+    };
+    const { event } = commissions;
+    return await EventCommission.findOneAndUpdate({event}, commissions, options).exec();
   }
 
   async saveOrUpdate(event, opt: object = {}) {

@@ -15,27 +15,27 @@ export class BaseController {
    *
    * @type {[type]}
    */
-  getUpdatedEventParticipators = (event, type, amount = 0) => {
-    const { numberOfPersons } = event;
-    let { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons } = event;
-    if (!numberOfAvailableSpots) {
-      numberOfAvailableSpots = 0;
-    }
-    if (!numberOfParticipators) {
-      numberOfParticipators = 0;
-    }
-    if (type === 'joinEvent') {
-      numberOfParticipators = amount;
-    }
-    if (type === 'updateOfflinePersons') {
-      numberOfOfflinePersons = amount;
-    }
-    numberOfAvailableSpots = numberOfPersons - numberOfParticipators - numberOfOfflinePersons;
+  // getUpdatedEventParticipators = (event, type, amount = 0) => {
+  //   const { numberOfPersons } = event;
+  //   let { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons } = event;
+  //   if (!numberOfAvailableSpots) {
+  //     numberOfAvailableSpots = 0;
+  //   }
+  //   if (!numberOfParticipators) {
+  //     numberOfParticipators = 0;
+  //   }
+  //   if (type === 'joinEvent') {
+  //     numberOfParticipators = amount;
+  //   }
+  //   if (type === 'updateOfflinePersons') {
+  //     numberOfOfflinePersons = amount;
+  //   }
+  //   numberOfAvailableSpots = numberOfPersons - numberOfParticipators - numberOfOfflinePersons;
 
-    return {
-      numberOfAvailableSpots,
-      numberOfParticipators,
-      numberOfOfflinePersons
-    };
-  };
+  //   return {
+  //     numberOfAvailableSpots,
+  //     numberOfParticipators,
+  //     numberOfOfflinePersons
+  //   };
+  // };
 }

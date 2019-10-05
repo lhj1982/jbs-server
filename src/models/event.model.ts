@@ -3,11 +3,13 @@ import { ShopSchema } from './shop.model';
 import { ScriptSchema } from './script.model';
 import { UserSchema } from './user.model';
 import { EventUserSchema } from './eventUser.model';
+import { DiscountRuleSchema } from './discountRule.model';
 
 const Schema = mongoose.Schema;
 const Shop = mongoose.model('Shop', ShopSchema);
-const Script = mongoose.model('Script', ScriptSchema);
-const User = mongoose.model('User', UserSchema);
+// const Script = mongoose.model('Script', ScriptSchema);
+// const User = mongoose.model('User', UserSchema);
+// const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema);
 // const EventUser = mongoose.model('EventUser', EventUserSchema);
 
 export const EventSchema = new Schema(
@@ -40,10 +42,14 @@ export const EventSchema = new Schema(
       default: 0
     },
     price: Number,
+    discountRule: {
+      type: Schema.Types.ObjectId,
+      ref: 'DiscountRule'
+    },
     status: {
       type: String,
-      enum: ['ready', 'complete', 'expired', 'cancelled'],
-      default: 'pending'
+      enum: ['ready', 'completed', 'expired', 'cancelled'],
+      default: 'ready'
     },
     createdAt: {
       type: Date,
@@ -55,6 +61,11 @@ export const EventSchema = new Schema(
 
 EventSchema.virtual('members', {
   ref: 'EventUser',
+  localField: '_id',
+  foreignField: 'event'
+});
+EventSchema.virtual('commissions', {
+  ref: 'EventCommission',
   localField: '_id',
   foreignField: 'event'
 });

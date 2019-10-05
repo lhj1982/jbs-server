@@ -3,7 +3,7 @@ import { DiscountRuleSchema } from '../models/discountRule.model';
 import { DiscountRuleMapSchema } from '../models/discountRuleMap.model';
 import { getDay, getTime } from '../utils/dateUtil';
 
-const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
+// const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
 const DiscountRuleMap = mongoose.model('DiscountRuleMap', DiscountRuleMapSchema, 'discountRulesMap');
 mongoose.set('useFindAndModify', false);
 
@@ -20,22 +20,21 @@ class DiscountRulesMapRepo {
     if (startTime) {
       const weekDay = getDay(startTime);
       const time = getTime(startTime);
-      // { days: { all: [weekDay] } }
-      discountRuleCondition['days'] = { $all: [weekDay] };
+      {
+        days: {
+          all: [weekDay];
+        }
+      }
+      // discountRuleCondition['days'] = { $all: ['5'] };
       discountRuleCondition['timeSpan'] = {
         $elemMatch: { from: { $lte: time }, to: { $gte: time } }
       };
     }
-    // console.log(discountRuleCondition);
+    console.log(discountRuleCondition);
     return await DiscountRuleMap.find(condition)
       .populate('script', ['_id', 'key', 'name'])
       .populate('shop', ['_id', 'key', 'name'])
-      .populate({
-        path: 'discountRule',
-        match: discountRuleCondition,
-        select: 'key description timeDescription days timeSpan discount'
-      })
-      // .populate('discountRule', ['key', 'description', 'timeDescription', 'days', 'timeSpan', 'discount'])
+      .populate('discountRule', ['key', 'description', 'timeDescription', 'days', 'timeSpan', 'discount'])
       .exec();
   }
 

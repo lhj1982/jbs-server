@@ -36,4 +36,10 @@ class EventIsFullBookedException extends HttpException {
   }
 }
 
-export { AuthorizationException, AccessDeinedException, ResourceNotFoundException, InvalidRequestException, ResourceAlreadyExist, EventIsFullBookedException };
+class EventCannotCompleteException extends HttpException {
+  constructor(key: string) {
+    super(500, `Event ${key} cannot complete, it's either not fully booked or paid`);
+  }
+}
+
+export { AuthorizationException, AccessDeinedException, ResourceNotFoundException, InvalidRequestException, ResourceAlreadyExist, EventIsFullBookedException, EventCannotCompleteException };

@@ -9,6 +9,7 @@ class ScriptsRepo {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     return await Script.findById(mongoose.Types.ObjectId(id))
       .populate('shops')
+      .populate('discountRuleMap')
       .exec();
   }
 
@@ -26,6 +27,7 @@ class ScriptsRepo {
     const pagination = { offset, limit, total };
     const pagedScripts = await Script.find(condition)
       .populate('shops')
+      .populate('discountRuleMap')
       .skip(offset)
       .limit(limit)
       .exec();

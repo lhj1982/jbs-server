@@ -6,7 +6,7 @@ import UsersRepo from '../repositories/users.repository';
 import ShopsRepo from '../repositories/shops.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import DiscountRulesMapRepo from '../repositories/discountRulesMap.repository';
-import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, EventIsFullBookedException } from '../exceptions/custom.exceptions';
+import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, EventIsFullBookedException, EventCannotCompleteException } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import config from '../config';
 import { string2Date, formatDate, addDays } from '../utils/dateUtil';
@@ -115,6 +115,13 @@ export class EventsController extends BaseController {
     session.startTransaction();
     try {
       const opts = { session };
+
+      const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
+      let discountRule = undefined;
+      if (applicableDiscountRules.length > 0) {
+        discountRule = applicableDiscountRules[0]._id;
+      }
+
       const newEvent = await EventsRepo.saveOrUpdate(
         {
           shop: shopId,
@@ -128,6 +135,7 @@ export class EventsController extends BaseController {
           numberOfParticipators,
           numberOfAvailableSpots,
           price,
+          discountRule,
           createdAt: new Date()
         },
         opts
@@ -170,6 +178,13 @@ export class EventsController extends BaseController {
     res.json({ code: 'SUCCESS', data: newEvent });
   };
 
+  /**
+   * User choose to join the event.
+   *
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
   joinUserEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
     const { userName, source, userId, mobile } = req.body;
@@ -209,10 +224,7 @@ export class EventsController extends BaseController {
 
     // get participators for given event
     const eventUsers = await EventUsersRepo.findByEvent(eventId);
-    // update event user number
-    const updateData = this.getUpdatedEventParticipators(event, 'joinEvent', eventUsers.length);
-    const eventToUpdate = Object.assign(event, updateData);
-    const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
+    const newEvent = await this.updateEventParticpantsNumber(event, eventUsers);
     const { numberOfAvailableSpots } = newEvent;
     if (numberOfAvailableSpots <= 0) {
       next(new EventIsFullBookedException(eventId));
@@ -323,15 +335,6 @@ export class EventsController extends BaseController {
       const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
       const eventUserToUpdate = Object.assign(eventUser, { status: status });
       const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
-
-      // get participators for given event
-      const eventUsers = await EventUsersRepo.findByEvent(eventId);
-      console.log(eventUsers);
-      // update event user number
-      const { numberOfParticipators } = event;
-      const updateData = this.getUpdatedEventParticipators(event, 'joinEvent', eventUsers.length - 1);
-      const eventToUpdate = Object.assign(event, updateData);
-      const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
       res.json({ code: 'SUCCESS', data: newEventUser });
@@ -343,7 +346,8 @@ export class EventsController extends BaseController {
   };
 
   /**
-   * Orgnizer can complete event user
+   * Orgnizer can mark event user paid or not.
+   *
    * @param {Request}      req  [description]
    * @param {Response}     res  [description]
    * @param {NextFunction} next [description]
@@ -357,7 +361,10 @@ export class EventsController extends BaseController {
     }
     const { loggedInUser } = res.locals;
     const { userId, status } = req.body;
-
+    if (['paid', 'unpaid'].indexOf(status) == -1) {
+      next(new InvalidRequestException('EventUser', ['status']));
+      return;
+    }
     // if (userId != loggedInUser._id) {
     // 	next(new AccessDeinedException(''));
     // }
@@ -371,13 +378,6 @@ export class EventsController extends BaseController {
       const eventUserToUpdate = Object.assign(eventUser, { status: status });
       const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
 
-      // get participators for given event
-      const eventUsers = await EventUsersRepo.findByEvent(eventId);
-      // update event user number
-      const { numberOfParticipators } = event;
-      const updateData = this.getUpdatedEventParticipators(event, 'joinEvent', eventUsers.length);
-      const eventToUpdate = Object.assign(event, updateData);
-      const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
 
@@ -401,17 +401,28 @@ export class EventsController extends BaseController {
       return;
     }
 
-    const availableDiscountRulesRaw = await this.getAvailableDiscountRulesFromDB(scriptId, shopId, startTime);
-    const availableDiscountRules = availableDiscountRulesRaw.filter(rule => {
-    	const { discountRule } = rule;
-    	return discountRule != null;
-    }).map(rule => {
-    	const { discountRule } = rule;
-    	return discountRule;
-    });
-
+    const availableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
     // console.log(availableDiscountRules);
-    res.json({ code: 'SUCCESS', data: availableDiscountRules });
+    res.json({
+      code: 'SUCCESS',
+      data: availableDiscountRules
+    });
+  };
+
+  generateAvailableDiscountRules = async (scriptId, shopId, startTime) => {
+    const availableDiscountRulesRaw = await this.getAvailableDiscountRulesFromDB(scriptId, shopId, startTime);
+    // console.log(availableDiscountRulesRaw);
+    const availableDiscountRules = availableDiscountRulesRaw
+      .filter(rule => {
+        const { discountRule } = rule;
+        return discountRule != null;
+      })
+      .map(rule => {
+        // console.log(rule);
+        const { discountRule } = rule;
+        return discountRule;
+      });
+    return availableDiscountRules;
   };
 
   getAvailableDiscountRulesFromDB = async (scriptId, shopId, startTime) => {
@@ -420,5 +431,85 @@ export class EventsController extends BaseController {
       result = await DiscountRulesMapRepo.findByShopAndScript(shopId, undefined, startTime);
     }
     return result;
+  };
+
+  completeEvent = async (req: Request, res: Response, next: NextFunction) => {
+    const { eventId } = req.params;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    const { status } = req.body;
+    const { loggedInUser } = res.locals;
+    if (['completed'].indexOf(status) == -1) {
+      next(new InvalidRequestException('Event', ['status']));
+      return;
+    }
+
+    // get participators for given event
+    const eventUsers = await EventUsersRepo.findByEvent(eventId);
+    let newEvent = await this.updateEventParticpantsNumber(event, eventUsers);
+
+    // // update event user number
+    // const updateData = this.getUpdatedEventParticipators(event, 'joinEvent', eventUsers.length);
+    // const eventToUpdate = Object.assign(event, updateData);
+    // const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
+    // const { numberOfAvailableSpots } = newEvent;
+    if (!this.canCompleteEvent(event, eventUsers)) {
+      next(new EventCannotCompleteException(eventId));
+      return;
+    }
+
+    const eventToUpdate = Object.assign(newEvent, { status });
+    newEvent = await EventsRepo.saveOrUpdate(eventToUpdate);
+    const eventCommissions = this.generateEventCommission(newEvent);
+    res.json({ code: 'SUCCESS', data: newEvent });
+  };
+
+
+  generateEventCommission = (event) => {
+
+  };
+
+  /**
+   * Update event participants stats.
+   *
+   * @param {[type]} event      [description]
+   * @param {[type]} eventUsers [description]
+   */
+  updateEventParticpantsNumber = async (event, eventUsers) => {
+    const { numberOfPersons, numberOfOfflinePersons } = event;
+    let { numberOfAvailableSpots, numberOfParticipators } = event;
+    if (!numberOfAvailableSpots) {
+      numberOfAvailableSpots = 0;
+    }
+    if (!numberOfParticipators) {
+      numberOfParticipators = 0;
+    }
+    numberOfParticipators = eventUsers.length;
+    numberOfAvailableSpots = numberOfPersons - numberOfParticipators - numberOfOfflinePersons;
+    const eventToUpdate = Object.assign(event, {
+      numberOfAvailableSpots,
+      numberOfParticipators,
+      numberOfOfflinePersons
+    });
+    const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
+    return newEvent;
+  };
+
+  canCompleteEvent = (event, eventUsers) => {
+  	let allPaid = true;
+  	for (let i=0; i<eventUsers.length; i++) {
+  		const eventUser = eventUsers[i];
+  		const { status } = eventUser;
+  		if (status === 'unpaid') {
+  			allPaid = true;
+  			break;
+  		}
+  	}
+    const { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons, numberOfPersons } = event;
+    const numberOfOnlinePersons = eventUsers.length;
+    return allPaid && (numberOfOnlinePersons + numberOfOfflinePersons >= numberOfPersons);
   };
 }

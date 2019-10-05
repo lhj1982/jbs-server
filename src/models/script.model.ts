@@ -42,3 +42,9 @@ ScriptSchema.virtual('shops', {
   localField: '_id',
   foreignField: 'scripts'
 });
+
+ScriptSchema.virtual('discountRuleMap', {
+  ref: 'DiscountRuleMap',
+  localField: '_id',
+  foreignField: 'script'
+});
