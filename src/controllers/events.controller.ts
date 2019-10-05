@@ -6,7 +6,14 @@ import UsersRepo from '../repositories/users.repository';
 import ShopsRepo from '../repositories/shops.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import DiscountRulesMapRepo from '../repositories/discountRulesMap.repository';
-import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, EventIsFullBookedException, EventCannotCompleteException } from '../exceptions/custom.exceptions';
+import {
+  InvalidRequestException,
+  ResourceAlreadyExist,
+  ResourceNotFoundException,
+  AccessDeinedException,
+  EventIsFullBookedException,
+  EventCannotCompleteException
+} from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import config from '../config';
 import { string2Date, formatDate, addDays } from '../utils/dateUtil';
@@ -446,30 +453,61 @@ export class EventsController extends BaseController {
       next(new InvalidRequestException('Event', ['status']));
       return;
     }
-
     // get participators for given event
     const eventUsers = await EventUsersRepo.findByEvent(eventId);
-    let newEvent = await this.updateEventParticpantsNumber(event, eventUsers);
-
-    // // update event user number
-    // const updateData = this.getUpdatedEventParticipators(event, 'joinEvent', eventUsers.length);
-    // const eventToUpdate = Object.assign(event, updateData);
-    // const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
-    // const { numberOfAvailableSpots } = newEvent;
+    await this.updateEventParticpantsNumber(event, eventUsers);
+    let newEvent = await EventsRepo.findById(eventId);
     if (!this.canCompleteEvent(event, eventUsers)) {
       next(new EventCannotCompleteException(eventId));
       return;
     }
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const eventToUpdate = Object.assign(newEvent, { status });
+      newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
+      const eventCommissions = this.generateEventCommission(newEvent, eventUsers);
 
-    const eventToUpdate = Object.assign(newEvent, { status });
-    newEvent = await EventsRepo.saveOrUpdate(eventToUpdate);
-    const eventCommissions = this.generateEventCommission(newEvent);
-    res.json({ code: 'SUCCESS', data: newEvent });
+      await EventsRepo.saveEventCommissions(eventCommissions, opts);
+
+      await session.commitTransaction();
+      await EventsRepo.endSession();
+      res.json({ code: 'SUCCESS', data: newEvent });
+    } catch (err) {
+      await session.abortTransaction();
+      await EventsRepo.endSession();
+      throw err;
+    }
   };
 
-
-  generateEventCommission = (event) => {
-
+  generateEventCommission = (event, eventUsers) => {
+    const { discountRule, hostUser, price } = event;
+    const totalAmount = price * eventUsers.length;
+    if (discountRule) {
+      const { discount } = discountRule;
+      const { sponsor, participator } = discount;
+      const hostCommission = {
+        user: hostUser,
+        amount: (totalAmount * sponsor) / 100
+      };
+      const participatorCommissions = eventUsers.map(eventUser => {
+        const { user } = eventUser;
+        return {
+          user,
+          amount: (price * participator) / 100
+        };
+      });
+      return {
+        event,
+        commissions: {
+          host: hostCommission,
+          participators: participatorCommissions
+        }
+      };
+    } else {
+      return undefined;
+    }
   };
 
   /**
@@ -499,17 +537,17 @@ export class EventsController extends BaseController {
   };
 
   canCompleteEvent = (event, eventUsers) => {
-  	let allPaid = true;
-  	for (let i=0; i<eventUsers.length; i++) {
-  		const eventUser = eventUsers[i];
-  		const { status } = eventUser;
-  		if (status === 'unpaid') {
-  			allPaid = true;
-  			break;
-  		}
-  	}
+    let allPaid = true;
+    for (let i = 0; i < eventUsers.length; i++) {
+      const eventUser = eventUsers[i];
+      const { status } = eventUser;
+      if (status === 'unpaid') {
+        allPaid = true;
+        break;
+      }
+    }
     const { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons, numberOfPersons } = event;
     const numberOfOnlinePersons = eventUsers.length;
-    return allPaid && (numberOfOnlinePersons + numberOfOfflinePersons >= numberOfPersons);
+    return allPaid && numberOfOnlinePersons + numberOfOfflinePersons >= numberOfPersons;
   };
 }

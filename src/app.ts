@@ -13,6 +13,8 @@ const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load(__dirname + '/config/swagger.yaml');
+import logger from './utils/logger';
+logger.info('Hello world');
 // const swaggerDocument = require('./config/swagger.json');
 
 class App {

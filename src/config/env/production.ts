@@ -3,6 +3,7 @@ module.exports = {
     port: 3000,
     entrypoint: `http://jbs.weijinglong.com:3000`
   },
+  logDir: '/data/log/jbs-server',
   dbUri: 'mongodb://mongo0:27017,mongo1:27017,mongo2:27017/jbs?replicaSet=rs0&slaveOk=true',
   jwt: {
     issuer: 'ademes',

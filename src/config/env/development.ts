@@ -3,6 +3,7 @@ module.exports = {
     port: 3000,
     entrypoint: `http://localhost:3000`
   },
+  logDir: __dirname + '/../../logs',
   dbUri: 'mongodb://mongo0:27017,mongo1:27017,mongo2:27017/jbs?replicaSet=rs0&slaveOk=true',
   jwt: {
     issuer: 'ademes',

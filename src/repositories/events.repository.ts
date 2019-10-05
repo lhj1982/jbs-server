@@ -21,12 +21,12 @@ class EventsRepo extends CommonRepo {
     super.endSession();
   }
 
-  async findById(id: string, filter = {status: ['ready']}) {
+  async findById(id: string, filter = { status: ['ready'] }) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     const { status } = filter;
-    return await Event.where({ _id: id, status: {$in: status} })
+    return await Event.where({ _id: id, status: { $in: status } })
       .findOne()
-      .populate('script', ['_id', 'name', 'duration'])
+      .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .populate({
@@ -34,6 +34,7 @@ class EventsRepo extends CommonRepo {
         match: { status: { $in: ['unpaid', 'paid'] } },
         select: '_id user source status createdAt'
       })
+      .populate('discountRule')
       .exec();
   }
 
@@ -49,11 +50,11 @@ class EventsRepo extends CommonRepo {
       .exec();
   }
 
-  async find(params, filter = {status: ['ready']}) {
+  async find(params, filter = { status: ['ready'] }) {
     const { status } = filter;
     const { offset, limit, keyword, scriptId, shopId } = params;
     const condition = {
-      status: {$in: status }
+      status: { $in: status }
     };
     if (scriptId) {
       condition['script'] = scriptId;
@@ -65,7 +66,7 @@ class EventsRepo extends CommonRepo {
     const total = await Event.countDocuments(condition).exec();
     const pagination = { offset, limit, total };
     const pagedEvents = await Event.find(condition)
-      .populate('script', ['_id', 'name', 'duration'])
+      .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .populate({
@@ -87,7 +88,7 @@ class EventsRepo extends CommonRepo {
         $lte: toDate
       }
     })
-      .populate('script', ['_id', 'name', 'description', 'duration'])
+      .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone'])
       .populate('hostUser', ['_id', 'nickName', 'mobile'])
       .sort({ startTime: 1 })
@@ -109,7 +110,7 @@ class EventsRepo extends CommonRepo {
       returnNewDocument: true
     };
     const { event } = commissions;
-    return await EventCommission.findOneAndUpdate({event}, commissions, options).exec();
+    return await EventCommission.findOneAndUpdate({ event }, commissions, options).exec();
   }
 
   async saveOrUpdate(event, opt: object = {}) {

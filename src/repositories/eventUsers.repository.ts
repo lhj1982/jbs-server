@@ -35,8 +35,14 @@ class EventUsersRepo {
       user: userId,
       status: { $in: ['unpaid', 'paid'] }
     })
-      .populate({path: 'event', populate: {path: 'script', select: 'key name'}})
-      .populate({path: 'event', populate: {path: 'shop', select: 'key name'}})
+      .populate({
+        path: 'event',
+        populate: { path: 'script', select: 'key name' }
+      })
+      .populate({
+        path: 'event',
+        populate: { path: 'shop', select: 'key name' }
+      })
       .populate('user', ['nickName'])
       .exec();
   }

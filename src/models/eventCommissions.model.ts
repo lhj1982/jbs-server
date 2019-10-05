@@ -13,9 +13,11 @@ export const EventCommissionSchema = new Schema({
       user: { type: Schema.Types.ObjectId, ref: 'User' },
       amount: Number
     },
-    participators: [{
-      user: { type: Schema.Types.ObjectId, ref: 'User' },
-      amount: Number
-    }]
+    participators: [
+      {
+        user: { type: Schema.Types.ObjectId, ref: 'User' },
+        amount: Number
+      }
+    ]
   }
 });
