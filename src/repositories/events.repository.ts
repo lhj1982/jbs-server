@@ -32,7 +32,11 @@ class EventsRepo extends CommonRepo {
       .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
-        select: '_id user source status mobile wechatId createdAt'
+        populate: {
+          path: 'user',
+          select: 'nickName avatarUrl gender country province city language'
+        },
+        select: '_id source status mobile wechatId createdAt'
       })
       .populate('discountRule')
       .exec();

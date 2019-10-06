@@ -43,7 +43,7 @@ class EventUsersRepo {
         path: 'event',
         populate: { path: 'shop', select: 'key name' }
       })
-      .populate('user', ['nickName'])
+      .populate('user', ['nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
       .exec();
   }
 

@@ -1,22 +1,32 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import AuthApi from '../api/auth';
 import UsersRepo from '../repositories/users.repository';
 import RolesRepo from '../repositories/roles.repository';
+import { InvalidRequestException } from '../exceptions/custom.exceptions';
 import * as moment from 'moment';
 import * as jwt from 'jsonwebtoken';
 import config from '../config';
 
 export class AuthController {
-  login = async (req: Request, res: Response) => {
+  login = async (req: Request, res: Response, next: NextFunction) => {
     const params = req.body;
     // prettier-ignore
-    const { type, nickName, avatarUrl, gender, country, province, city, language } = params;
+    const { type, nickName, avatarUrl, gender, country, province, city, language, description } = params;
     try {
       if (type === 'wxapp') {
+        if (!avatarUrl) {
+          next(new InvalidRequestException('Auth', ['avatarUrl']));
+          return;
+        }
+        if (!gender || ['male', 'female'].indexOf(gender) == -1) {
+          next(new InvalidRequestException('Auth', ['gender']));
+          return;
+        }
         const response = await AuthApi.code2Session(params.code);
         // prettier-ignore
         // const response = { code: 'SUCCESS', openId: '1234', sessionKey: 'test1', unionId: undefined, errorCode: undefined, errorMsg: undefined };
         const { code, openId, unionId, sessionKey, errorCode, errorMsg } = response;
+
         // console.log(response);
         if (code === 'SUCCESS') {
           // const user = await AuthApi.getUserInfo(sessionKey);
@@ -32,6 +42,8 @@ export class AuthController {
             unionId,
             sessionKey,
             nickName,
+            description,
+            avatarUrl,
             gender,
             country,
             province,

@@ -46,7 +46,7 @@ class App {
 
   // cors - must be before app use routes
   constructor() {
-    console.log(this.mongoUrl);
+    // console.log(this.mongoUrl);
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.config();
     this.mongoSetup();
@@ -78,6 +78,11 @@ class App {
     this.app.use(this.allowCrossDomain);
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use((req, res, next) => {
+      logger.info(`Request from: ${req.originalUrl}`);
+      logger.info(`Request type: ${req.method}`);
+      next();
+    });
     // serving static files
     this.app.use(express.static('public'));
   }

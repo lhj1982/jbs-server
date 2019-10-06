@@ -960,6 +960,12 @@ components:
   schemas:
     OauthLogin:
       type: "object"
+      required:
+        - code
+        - type
+        - nickName
+        - avatarUrl
+        - gender
       properties:
         code:
           type: "string"
@@ -969,10 +975,31 @@ components:
             - wxapp
         nickName:
           type: "string"
+        avatarUrl:
+          type: "string"
+        description:
+          type: "string"
+        gender:
+          type: "string"
+          enum: ["male", "female"]
+        country:
+          type: "string"
+        province:
+          type: "string"
+        city:
+          type: "string"
+        language:
+          type: "string"
       example:
         code: '1234'
         type: 'wxapp'
         nickName: 'test'
+        avatarUrl: "http://test"
+        gender: "male"
+        country: "China"
+        city: "Shanghai"
+        language: "zh_CN"
+        province: "xxx"
     
     OauthResponse:
       type: "object"
@@ -1417,6 +1444,10 @@ components:
         code:
           type: "string"
           description: "Response code, for example, SUCCESS/FAIL"
+          enum:
+            - SUCCESS
+            - unauthorized
+            - access_denied
         message:
           type: "string"
           description: "Error message, if any"

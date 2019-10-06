@@ -26,7 +26,7 @@ export const UserSchema = new Schema(
     description: {
       type: String
     },
-    avatarImage: {
+    avatarUrl: {
       type: String
     },
     province: {
@@ -58,6 +58,10 @@ export const UserSchema = new Schema(
     },
     age: {
       type: Number
+    },
+    gender: {
+      type: String,
+      enum: ['male', 'female']
     },
     birthday: {
       type: String

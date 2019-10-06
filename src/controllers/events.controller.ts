@@ -238,27 +238,27 @@ export class EventsController extends BaseController {
       return;
     }
     if (userId && userName) {
-      next(new InvalidRequestException('JoinEvent', [userId, userName]));
+      next(new InvalidRequestException('JoinEvent', ['userId', 'userName']));
       return;
     }
     if (source != 'online' && source != 'offline') {
-      next(new InvalidRequestException('JoinEvent', [source]));
+      next(new InvalidRequestException('JoinEvent', ['source']));
       return;
     }
     if (source === 'online' && !userId) {
-      next(new InvalidRequestException('JoinEvent', [source, userId]));
+      next(new InvalidRequestException('JoinEvent', ['source', 'userId']));
       return;
     }
     if (source === 'offline' && !userName) {
-      next(new InvalidRequestException('JoinEvent', [source, userName]));
+      next(new InvalidRequestException('JoinEvent', ['source', 'userName']));
       return;
     }
     if (!wechatId) {
-      next(new InvalidRequestException('JoinEvent', [wechatId]));
+      next(new InvalidRequestException('JoinEvent', ['wechatId']));
       return;
     }
     if (userId != loggedInUser._id) {
-      next(new AccessDeinedException(''));
+      next(new AccessDeinedException(userId, 'You are only join event yourself'));
       return;
     }
     // if (userId) {
@@ -371,7 +371,7 @@ export class EventsController extends BaseController {
     }
 
     if (userId != loggedInUser._id) {
-      next(new AccessDeinedException(''));
+      next(new AccessDeinedException(userId, 'You can only cancel your own booking'));
     }
 
     const session = await EventsRepo.getSession();
@@ -414,6 +414,11 @@ export class EventsController extends BaseController {
     // if (userId != loggedInUser._id) {
     // 	next(new AccessDeinedException(''));
     // }
+    const { hostUser } = event;
+    if (loggedInUser._id != hostUser._id) {
+      next(new AccessDeinedException(loggedInUser._id, 'Only host can update status'));
+      return;
+    }
 
     const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
 
