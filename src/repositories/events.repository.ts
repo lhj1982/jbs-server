@@ -145,8 +145,8 @@ class EventsRepo extends CommonRepo {
 
   async findEventsByUser(userId: string) {
     const myHostEvents = await Event.find({ hostUser: userId })
-    .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
-    .populate({
+      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
+      .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
         populate: {
@@ -155,8 +155,8 @@ class EventsRepo extends CommonRepo {
         },
         select: '_id source status mobile wechatId createdAt'
       })
-    .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
-    .exec();
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .exec();
     const eventsUserJoined = (await Event.find()
       .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
       .populate({
@@ -169,11 +169,10 @@ class EventsRepo extends CommonRepo {
         }
       })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
-      .exec())
-      .filter(event => {
-        const { members } = event;
-        return members.length > 0;
-      });
+      .exec()).filter(event => {
+      const { members } = event;
+      return members.length > 0;
+    });
     return myHostEvents.concat(eventsUserJoined);
   }
 }

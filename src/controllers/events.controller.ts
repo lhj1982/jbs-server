@@ -141,9 +141,9 @@ export class EventsController extends BaseController {
     const dtEndTime = formatDate(endTime, config.eventDateFormatParse);
     const session = await EventsRepo.getSession();
     session.startTransaction();
+    let newEvent;
     try {
       const opts = { session };
-
       const { mobile } = loggedInUser;
       // update user mobile if user does not have mobile
       if (!mobile) {
@@ -160,7 +160,7 @@ export class EventsController extends BaseController {
         discountRule = applicableDiscountRules[0]._id;
       }
 
-      const newEvent = await EventsRepo.saveOrUpdate(
+      newEvent = await EventsRepo.saveOrUpdate(
         {
           shop: shopId,
           script: scriptId,
@@ -183,14 +183,34 @@ export class EventsController extends BaseController {
         },
         opts
       );
+
+      if (isHostJoin) {
+        const newEventUser = await EventUsersRepo.saveOrUpdate(
+          {
+            event: newEvent.id,
+            user: hostUserId,
+            undefined,
+            source: 'online',
+            mobile: hostUserMobile,
+            wechatId: hostUserWechatId,
+            status: 'unpaid',
+            createdAt: new Date()
+          },
+          opts
+        );
+      }
       await session.commitTransaction();
       await EventsRepo.endSession();
-      res.json({ code: 'SUCCESS', data: newEvent });
+      
     } catch (err) {
       await session.abortTransaction();
       await EventsRepo.endSession();
       throw err;
     }
+    // get participators for given event
+    const eventUsers = await EventUsersRepo.findByEvent(newEvent.id);
+    newEvent = await this.updateEventParticpantsNumber(newEvent, eventUsers);
+    res.json({ code: 'SUCCESS', data: newEvent });
   };
 
   /**
@@ -257,7 +277,7 @@ export class EventsController extends BaseController {
       next(new InvalidRequestException('JoinEvent', ['wechatId']));
       return;
     }
-    if (userId != loggedInUser._id) {
+    if (userId != loggedInUser.id) {
       next(new AccessDeinedException(userId, 'You are only join event yourself'));
       return;
     }
@@ -307,7 +327,11 @@ export class EventsController extends BaseController {
 
   getEventDetails = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
-    const event = await EventsRepo.findById(eventId);
+    let event = await EventsRepo.findById(eventId);
+    // get participators for given event
+    const eventUsers = await EventUsersRepo.findByEvent(eventId);
+    await this.updateEventParticpantsNumber(event, eventUsers);
+    event = await EventsRepo.findById(eventId);
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
       return;
@@ -501,8 +525,7 @@ export class EventsController extends BaseController {
     }
     // get participators for given event
     const eventUsers = await EventUsersRepo.findByEvent(eventId);
-    await this.updateEventParticpantsNumber(event, eventUsers);
-    let newEvent = await EventsRepo.findById(eventId);
+    let newEvent = await this.updateEventParticpantsNumber(event, eventUsers);
     if (!this.canCompleteEvent(event, eventUsers)) {
       next(new EventCannotCompleteException(eventId));
       return;
