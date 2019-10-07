@@ -3,6 +3,8 @@ module.exports = {
     port: 3000,
     entrypoint: `http://localhost:3000`
   },
+  appId: 'wx67080218c81daab6',
+  appSecret: 'f714576304cbae30e6976ecc82beb84a',
   logDir: __dirname + '/../../logs',
   dbUri: 'mongodb://mongo0:27017,mongo1:27017,mongo2:27017/jbs?replicaSet=rs0&slaveOk=true',
   jwt: {
@@ -18,5 +20,10 @@ module.exports = {
     bucket: 'jbs-server',
     accessKey: 'tVQXlS0ahil12znZM0RcwSDehAzJfUhs4lmjSoNC',
     secretKey: 'Ebwd-HQi_HPQuJD7yK62ooZUVxG3aVI80g73NCBF'
+  },
+  sms: {
+    spCode: '1470',
+    loginName: 'dyfhpy',
+    password: '123456'
   }
 };

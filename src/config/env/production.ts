@@ -3,6 +3,8 @@ module.exports = {
     port: 3000,
     entrypoint: `http://api.boogoogoo.com:3000`
   },
+  appId: 'wx2d3cdf121a317007',
+  appSecret: '842c453f9d2976a618df2c7dc54e93b8',
   logDir: '/data/log/jbs-server',
   dbUri: 'mongodb://mongo0:27017,mongo1:27017,mongo2:27017/jbs?replicaSet=rs0&slaveOk=true',
   jwt: {
@@ -18,5 +20,10 @@ module.exports = {
     bucket: 'jbs-server',
     accessKey: 'tVQXlS0ahil12znZM0RcwSDehAzJfUhs4lmjSoNC',
     secretKey: 'Ebwd-HQi_HPQuJD7yK62ooZUVxG3aVI80g73NCBF'
+  },
+  sms: {
+    spCode: '1470',
+    loginName: 'dyfhpy',
+    password: '123456'
   }
 };
