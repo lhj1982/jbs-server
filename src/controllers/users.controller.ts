@@ -3,6 +3,7 @@ import AuthApi from '../api/auth';
 import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException } from '../exceptions/custom.exceptions';
 import UsersRepo from '../repositories/users.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
+import EventsRepo from '../repositories/events.repository';
 
 export class UsersController {
   getUsers = async (req: Request, res: Response) => {
@@ -58,12 +59,21 @@ export class UsersController {
     }
   };
 
-  getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
+  getMyEvents = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedInUser } = res.locals;
     if (!loggedInUser) {
       next(new AccessDeinedException(''));
     }
-    const eventUsers = await UsersRepo.getUserEvents(loggedInUser._id);
-    res.json({ code: 'SUCCESS', data: eventUsers });
+    const events = await EventsRepo.findEventsByUser(loggedInUser._id);
+    res.json({ code: 'SUCCESS', data: events });
   };
+
+  // getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
+  //   const { loggedInUser } = res.locals;
+  //   if (!loggedInUser) {
+  //     next(new AccessDeinedException(''));
+  //   }
+  //   const eventUsers = await UsersRepo.getUserEvents(loggedInUser._id);
+  //   res.json({ code: 'SUCCESS', data: eventUsers });
+  // };
 }

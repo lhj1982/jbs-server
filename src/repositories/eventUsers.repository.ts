@@ -30,22 +30,22 @@ class EventUsersRepo {
       .exec();
   }
 
-  async findByUser(userId: string) {
-    return await EventUser.find({
-      user: userId,
-      status: { $in: ['unpaid', 'paid'] }
-    })
-      .populate({
-        path: 'event',
-        populate: { path: 'script', select: 'key name' }
-      })
-      .populate({
-        path: 'event',
-        populate: { path: 'shop', select: 'key name' }
-      })
-      .populate('user', ['nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
-      .exec();
-  }
+  // async findByUser(userId: string) {
+  //   return await EventUser.find({
+  //     user: userId,
+  //     status: { $in: ['unpaid', 'paid'] }
+  //   })
+  //     .populate({
+  //       path: 'event',
+  //       populate: { path: 'script', select: 'key name' }
+  //     })
+  //     .populate({
+  //       path: 'event',
+  //       populate: { path: 'shop', select: 'key name' }
+  //     })
+  //     .populate('user', ['nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
+  //     .exec();
+  // }
 
   async saveOrUpdate(eventUser, opt: object = {}) {
     const options = {

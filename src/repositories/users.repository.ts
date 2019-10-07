@@ -42,8 +42,8 @@ class UsersRepo {
     return await User.findOneAndUpdate({ openId: user.openId }, user, options).exec();
   }
 
-  async getUserEvents(userId: string) {
-    return await EventUsersRepo.findByUser(userId);
-  }
+  // async getUserEvents(userId: string) {
+  //   return await EventUsersRepo.findByUser(userId);
+  // }
 }
 export default new UsersRepo();

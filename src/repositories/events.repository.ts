@@ -142,5 +142,39 @@ class EventsRepo extends CommonRepo {
       updatedAt: 1
     }).exec();
   }
+
+  async findEventsByUser(userId: string) {
+    const myHostEvents = await Event.find({ hostUser: userId })
+    .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
+    .populate({
+        path: 'members',
+        match: { status: { $in: ['unpaid', 'paid'] } },
+        populate: {
+          path: 'user',
+          select: '_id nickName avatarUrl gender country province city language'
+        },
+        select: '_id source status mobile wechatId createdAt'
+      })
+    .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+    .exec();
+    const eventsUserJoined = (await Event.find()
+      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
+      .populate({
+        path: 'members',
+        match: { user: userId, status: { $in: ['unpaid', 'paid'] } },
+        select: 'nickName avatarUrl gender country province city language',
+        populate: {
+          path: 'user',
+          select: '_id nickName avatarUrl gender country province city language'
+        }
+      })
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .exec())
+      .filter(event => {
+        const { members } = event;
+        return members.length > 0;
+      });
+    return myHostEvents.concat(eventsUserJoined);
+  }
 }
 export default new EventsRepo();

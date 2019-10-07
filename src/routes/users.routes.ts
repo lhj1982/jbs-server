@@ -27,6 +27,6 @@ export class UsersRoutes {
       .put(verifyToken, permit({ domain: 'user', operations: ['update'] }), this.usersController.updateUser);
 
     app.route('/profile').get(verifyToken, this.usersController.getUser);
-    app.route('/profile/my-events').get(verifyToken, permit({ domain: 'user', operations: ['read'] }), this.usersController.getUserEvents);
+    app.route('/profile/my-events').get(verifyToken, permit({ domain: 'user', operations: ['read'] }), this.usersController.getMyEvents);
   }
 }
