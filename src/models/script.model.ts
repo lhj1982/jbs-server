@@ -48,3 +48,9 @@ ScriptSchema.virtual('discountRuleMap', {
   localField: '_id',
   foreignField: 'script'
 });
+
+ScriptSchema.virtual('events', {
+  ref: 'Event',
+  localField: '_id',
+  foreignField: 'script'
+});

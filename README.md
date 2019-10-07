@@ -41,6 +41,8 @@ config={"_id":"rs0","members":[{"_id":0,"host":"192.168.0.102:27017"},{"_id":1,"
 rs.initiate(config)
 ```
 
+rs.reconfig(config,{force: true});
+
 # WXAPP Login
 
 https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.html
@@ -58,6 +60,14 @@ mongoexport --collection shops --db jbs --out shops.json
 ## update query
 ```
 db.users.update({openId: "opcf_0En_ukxF-NVT67ceAyFWfJw"}, {$set: {roles: [ObjectId("5d7f8cd024f808a2e89d6aec"), ObjectId("5d7f8cc124f808a2e89d6aeb"), ObjectId("5d8f8c1228e1fb01bf80f5cb")]}});
+
+
+# SMS Message
+
+【不咕咕】拼团成功！[13651976276]您好，[十三先生剧情推理实景演绎]的[2019-10-07 14:00]《新台南七号公寓》拼团成功！根据发起人[13651976276]（微信搜索号：[13651976276]）的记录以及不咕咕返现规则，商家将返回给您 20 元，若出现任何问题，请与不咕咕官方客服号小boo（微信搜索号：booboy）联系！
+
+# API 
+
 ```
 
 ## users

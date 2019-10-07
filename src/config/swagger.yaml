@@ -23,7 +23,7 @@ tags:
 servers:
   - url: http://localhost:3000
     description: Optional server description, e.g. Internal staging server for testing
-  - url: http://jbs.weijinglong.com:3000
+  - url: http://api.boogoogoo.com:3000
     description: Optional server description, e.g. Main (production) server
     
 

@@ -28,13 +28,13 @@ class EventsRepo extends CommonRepo {
       .findOne()
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
-      .populate('hostUser', ['_id', 'nickName', 'mobile'])
+      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
       .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
         populate: {
           path: 'user',
-          select: 'nickName avatarUrl gender country province city language'
+          select: '_id nickName avatarUrl gender country province city language'
         },
         select: '_id source status mobile wechatId createdAt'
       })
@@ -72,7 +72,7 @@ class EventsRepo extends CommonRepo {
     const pagedEvents = await Event.find(condition)
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
-      .populate('hostUser', ['_id', 'nickName', 'mobile'])
+      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
       .populate('commissions')
       .populate({
         path: 'members',

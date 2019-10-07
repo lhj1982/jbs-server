@@ -9,6 +9,15 @@ class ScriptsRepo {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     return await Script.findById(mongoose.Types.ObjectId(id))
       .populate('shops')
+      .populate({
+        path: 'events',
+        match: { status: { $in: ['ready'] } },
+        populate: {
+          path: 'hostUser',
+          select: 'nickName avatarUrl gender country province city language'
+        },
+        options: { sort: { startTime: -1 } }
+      })
       .populate('discountRuleMap')
       .exec();
   }
