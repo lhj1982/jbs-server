@@ -14,7 +14,7 @@ export const DiscountRuleSchema = new Schema({
     }
   ],
   discount: {
-    sponsor: { type: Number },
+    host: { type: Number },
     participator: { type: Number }
   },
   createdAt: {

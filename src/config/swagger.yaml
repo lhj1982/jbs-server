@@ -1326,7 +1326,7 @@ components:
         discount:
           type: object
           properties:
-            sponsor:
+            host:
               type: integer
               format: int32
             participator:

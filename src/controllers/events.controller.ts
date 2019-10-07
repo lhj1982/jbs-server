@@ -532,10 +532,10 @@ export class EventsController extends BaseController {
     const totalAmount = price * eventUsers.length;
     if (discountRule) {
       const { discount } = discountRule;
-      const { sponsor, participator } = discount;
+      const { host, participator } = discount;
       const hostCommission = {
         user: hostUser,
-        amount: (totalAmount * sponsor) / 100
+        amount: (totalAmount * host) / 100
       };
       const participatorCommissions = eventUsers.map(eventUser => {
         const { user } = eventUser;
