@@ -370,7 +370,7 @@ export class EventsController extends BaseController {
       return;
     }
 
-    if (userId != loggedInUser._id) {
+    if (userId != loggedInUser.id) {
       next(new AccessDeinedException(userId, 'You can only cancel your own booking'));
     }
 
@@ -415,7 +415,9 @@ export class EventsController extends BaseController {
     // 	next(new AccessDeinedException(''));
     // }
     const { hostUser } = event;
-    if (loggedInUser._id != hostUser._id) {
+    const { id: hostUserId } = hostUser;
+    const { id: loggedInUserId } = loggedInUser;
+    if (loggedInUser.id != hostUser.id) {
       next(new AccessDeinedException(loggedInUser._id, 'Only host can update status'));
       return;
     }

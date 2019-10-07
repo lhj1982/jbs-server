@@ -9,7 +9,7 @@ class AuthorizationException extends HttpException {
 class AccessDeinedException extends HttpException {
   constructor(id: string, message = '') {
     if (message) {
-      super(403, 'access_denied', `${message}, token: ${id}`);
+      super(403, 'access_denied', `${message}, id: ${id}`);
     } else {
       super(403, 'access_denied', `You are not allowed to perform this action, id: ${id}`);
     }

@@ -9,6 +9,7 @@ import { DiscountRuleSchema } from './models/discountRule.model';
 import { UserSchema } from './models/user.model';
 import { EventSchema } from './models/event.model';
 import { EventUserSchema } from './models/eventUser.model';
+import { EventCommissionSchema } from './models/eventCommissions.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');

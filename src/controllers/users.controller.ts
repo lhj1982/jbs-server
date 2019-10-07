@@ -28,7 +28,7 @@ export class UsersController {
   getUser = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
     const { loggedInUser } = res.locals;
-    if (userId && userId != loggedInUser._id) {
+    if (userId && userId != loggedInUser.id) {
       next(new AccessDeinedException(''));
     }
     res.json({ code: 'SUCCESS', data: loggedInUser });
