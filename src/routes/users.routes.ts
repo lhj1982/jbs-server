@@ -23,10 +23,10 @@ export class UsersRoutes {
 
     app
       .route('/users/:userId')
-      .get(verifyToken, permit({ domain: 'user', operations: ['read'] }), this.usersController.getUser)
+      .get(this.usersController.getUserDetails)
       .put(verifyToken, permit({ domain: 'user', operations: ['update'] }), this.usersController.updateUser);
 
-    app.route('/profile').get(verifyToken, this.usersController.getUser);
+    app.route('/profile').get(verifyToken, permit({ domain: 'user', operations: ['read'] }), this.usersController.getMyProfile);
     app.route('/profile/my-events').get(verifyToken, permit({ domain: 'user', operations: ['read'] }), this.usersController.getMyEvents);
   }
 }

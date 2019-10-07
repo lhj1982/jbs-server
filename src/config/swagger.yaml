@@ -859,6 +859,32 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
   /users/{userId}:
+    get:
+      tags:
+      - "user"
+      summary: "Retrieve user information"
+      description: "Retrieve user information."
+      operationId: "getUserDetailById"
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: user id
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
     put:
       tags:
       - "user"
@@ -932,7 +958,7 @@ paths:
     get:
       tags:
       - "user"
-      summary: "Get event list joined by logged in user"
+      summary: "Get event list hosted or joined by logged in user"
       description: "Get event list joined by logged in user."
       operationId: "getMyEvents"
       security:
@@ -1077,6 +1103,18 @@ components:
       xml:
         name: "User"
     
+    UserDetail:
+      type: "object"
+      allOf: 
+        - $ref: '#/components/schemas/User'
+        - 
+          type: "object"
+          properties:
+            events:
+              type: "array"
+              items:
+                $ref: '#/components/schemas/EventDetails'  
+
     Script:
       type: "object"
       properties:

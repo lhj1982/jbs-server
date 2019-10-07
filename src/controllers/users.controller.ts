@@ -4,6 +4,7 @@ import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundExceptio
 import UsersRepo from '../repositories/users.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import EventsRepo from '../repositories/events.repository';
+import * as _ from 'lodash';
 
 export class UsersController {
   getUsers = async (req: Request, res: Response) => {
@@ -26,13 +27,25 @@ export class UsersController {
     // return response;
   };
 
-  getUser = async (req: Request, res: Response, next: NextFunction) => {
+  getMyProfile = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
     const { loggedInUser } = res.locals;
     if (userId && userId != loggedInUser.id) {
       next(new AccessDeinedException(''));
     }
     res.json({ code: 'SUCCESS', data: loggedInUser });
+  };
+
+  getUserDetails = async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params;
+    const user = await UsersRepo.findById(userId);
+    if (!user) {
+      next(new ResourceNotFoundException('User', userId));
+      return;
+    }
+    const events = await EventsRepo.findEventsByUser(userId);
+    const response = Object.assign(user.toObject(), { events });
+    res.json({ code: 'SUCCESS', data: response });
   };
 
   updateUser = async (req: Request, res: Response, next: NextFunction) => {

@@ -201,7 +201,6 @@ export class EventsController extends BaseController {
       }
       await session.commitTransaction();
       await EventsRepo.endSession();
-      
     } catch (err) {
       await session.abortTransaction();
       await EventsRepo.endSession();
