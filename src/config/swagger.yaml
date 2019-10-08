@@ -23,7 +23,7 @@ tags:
 servers:
   - url: http://localhost:3000
     description: Optional server description, e.g. Internal staging server for testing
-  - url: http://api.boogoogoo.com:3000
+  - url: https://api.boogoogoo.com
     description: Optional server description, e.g. Main (production) server
     
 
@@ -466,6 +466,88 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /events/{scriptId}/{shopId}/discount-rules:
+    get:
+      tags:
+      - "event"
+      summary: "Retrieve all discount rules for given shop and script"
+      description: "Retrieve all discount rules for given shop and script"
+      operationId: "getDiscountRules"
+      parameters:
+        - in: path
+          name: scriptId
+          required: true
+          description: script id
+          schema:
+            type: string
+        - in: path
+          name: shopId
+          required: true
+          description: shopId
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  $ref: '#/components/schemas/DiscountRuleMap'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  
+  /events/{scriptId}/{shopId}/available-discount-rules:
+    get:
+      tags:
+      - "event"
+      summary: "Retrieve available discount rules"
+      description: "Retrieve available discount rules."
+      operationId: "getAvailableDiscountRules"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: scriptId
+          required: true
+          description: script id
+          schema:
+            type: string
+        - in: path
+          name: shopId
+          required: true
+          description: shopId
+          schema:
+            type: string
+        - in: query
+          name: startTime
+          description: start time
+          schema:
+            type: string
+            format: date-time
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  $ref: '#/components/schemas/DiscountRuleMap'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /events/{eventId}:
     get:
       tags:
@@ -783,50 +865,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PriceWeeklySchema'
-        default:
-          description: "Invalid input"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-
-  /events/available-discount-rules:
-    get:
-      tags:
-      - "event"
-      summary: "Retrieve available discount rules"
-      description: "Retrieve available discount rules."
-      operationId: "getAvailableDiscountRules"
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: query
-          name: scriptId
-          description: script id
-          schema:
-            type: string
-        - in: query
-          name: shopId
-          required: true
-          description: shopId
-          schema:
-            type: string
-        - in: query
-          name: startTime
-          description: start time
-          schema:
-            type: string
-            format: date-time
-      responses:
-        200:
-          description: "Success"
-          content:
-            application/json:
-              schema:
-                type: "array"
-                items:
-                  type: "object"
-                  $ref: '#/components/schemas/DiscountRuleMap'
         default:
           description: "Invalid input"
           content:

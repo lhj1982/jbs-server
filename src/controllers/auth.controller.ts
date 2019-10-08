@@ -37,7 +37,7 @@ export class AuthController {
           if (openId === 'opcf_0En_ukxF-NVT67ceAyFWfJw') {
             roles.push(role1._id);
           }
-          const user = await UsersRepo.saveOrUpdateUser({
+          await UsersRepo.saveOrUpdateUser({
             openId,
             unionId,
             sessionKey,
@@ -52,6 +52,7 @@ export class AuthController {
             status: 'active',
             roles
           });
+          const user = await UsersRepo.findOne({ openId });
           // create a token string
           // console.log(this.getTokenPayload);
           // console.log(user._id);

@@ -9,7 +9,7 @@ class UsersRepo {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     return await User.where({ _id: id })
       .findOne()
-      .populate('roles', ['_id', 'name', 'permissions'])
+      .populate('roles', ['name', 'permissions'])
       .exec();
   }
 
@@ -24,6 +24,7 @@ class UsersRepo {
   async findOne(params) {
     return await User.where(params)
       .findOne()
+      .populate('roles', ['name'])
       .exec();
   }
 

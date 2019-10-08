@@ -30,7 +30,7 @@ class DiscountRulesMapRepo {
         $elemMatch: { from: { $lte: time }, to: { $gte: time } }
       };
     }
-    console.log(discountRuleCondition);
+    // console.log(discountRuleCondition);
     return await DiscountRuleMap.find(condition)
       .populate('script', ['_id', 'key', 'name'])
       .populate('shop', ['_id', 'key', 'name'])

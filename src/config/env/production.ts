@@ -1,7 +1,7 @@
 module.exports = {
   server: {
     port: 3000,
-    entrypoint: `http://api.boogoogoo.com:3000`
+    entrypoint: `https://api.boogoogoo.com`
   },
   appId: 'wx2d3cdf121a317007',
   appSecret: '842c453f9d2976a618df2c7dc54e93b8',

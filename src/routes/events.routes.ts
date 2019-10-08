@@ -7,7 +7,6 @@ export class EventsRoutes {
   eventsController: EventsController = new EventsController();
 
   routes(app): void {
-    app.route('/events/available-discount-rules').get(verifyToken, this.eventsController.getAvailableDiscountRules);
     app.route('/events/calendar/:date').get(this.eventsController.getEventsByDate);
     app.route('/events/get-events-count-by-date').get(this.eventsController.getEventsCountByDate);
     app.route('/events/price-schema').get(this.eventsController.getPriceWeeklySchema);
@@ -23,6 +22,8 @@ export class EventsRoutes {
       // }, this.eventsController.getEvents)
       .post(verifyToken, permit({ domain: 'event', operations: ['create'] }), this.eventsController.addEvent);
     app.route('/events/:scriptId/:shopId').get(this.eventsController.getEventsByScriptAndShop);
+    app.route('/events/:scriptId/:shopId/discount-rules').get(this.eventsController.getEventDiscountRolesByScriptAndShop);
+    app.route('/events/:scriptId/:shopId/available-discount-rules').get(verifyToken, this.eventsController.getAvailableDiscountRules);
     app
       .route('/events/:eventId')
       .get(verifyToken, this.eventsController.getEventDetails)

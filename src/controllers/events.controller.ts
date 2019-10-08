@@ -465,8 +465,28 @@ export class EventsController extends BaseController {
     }
   };
 
+  getEventDiscountRolesByScriptAndShop = async (req: Request, res: Response, next: NextFunction) => {
+    const { scriptId, shopId } = req.params;
+    if (!shopId) {
+      next(new ResourceNotFoundException('Shop', shopId));
+      return;
+    }
+    if (!scriptId) {
+      next(new ResourceNotFoundException('Script', scriptId));
+      return;
+    }
+
+    const availableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId);
+    // console.log(availableDiscountRules);
+    res.json({
+      code: 'SUCCESS',
+      data: availableDiscountRules
+    });
+  };
+
   getAvailableDiscountRules = async (req: Request, res: Response, next: NextFunction) => {
-    const { scriptId, shopId, startTime } = req.query;
+    const { scriptId, shopId } = req.params;
+    const { startTime } = req.query;
     const { loggedInUser } = res.locals;
     if (!shopId) {
       next(new ResourceNotFoundException('Shop', shopId));
@@ -485,7 +505,7 @@ export class EventsController extends BaseController {
     });
   };
 
-  generateAvailableDiscountRules = async (scriptId, shopId, startTime) => {
+  generateAvailableDiscountRules = async (scriptId: string, shopId: string, startTime: string = undefined) => {
     const availableDiscountRulesRaw = await this.getAvailableDiscountRulesFromDB(scriptId, shopId, startTime);
     // console.log(availableDiscountRulesRaw);
     const availableDiscountRules = availableDiscountRulesRaw
@@ -501,7 +521,7 @@ export class EventsController extends BaseController {
     return availableDiscountRules;
   };
 
-  getAvailableDiscountRulesFromDB = async (scriptId, shopId, startTime) => {
+  getAvailableDiscountRulesFromDB = async (scriptId: string, shopId: string, startTime: string = undefined) => {
     let result = await DiscountRulesMapRepo.findByShopAndScript(shopId, scriptId, startTime);
     if (result.length === 0) {
       result = await DiscountRulesMapRepo.findByShopAndScript(shopId, undefined, startTime);

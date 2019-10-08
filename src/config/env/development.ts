@@ -3,8 +3,8 @@ module.exports = {
     port: 3000,
     entrypoint: `http://localhost:3000`
   },
-  appId: 'wx67080218c81daab6',
-  appSecret: 'f714576304cbae30e6976ecc82beb84a',
+  appId: 'wx2d3cdf121a317007',
+  appSecret: '842c453f9d2976a618df2c7dc54e93b8',
   logDir: __dirname + '/../../logs',
   dbUri: 'mongodb://mongo0:27017,mongo1:27017,mongo2:27017/jbs?replicaSet=rs0&slaveOk=true',
   jwt: {
