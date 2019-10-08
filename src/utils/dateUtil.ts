@@ -1,10 +1,10 @@
 import * as moment from 'moment';
 
-const string2Date = (dateStr: string, convertToUTC = true) => {
+const string2Date = (dateStr: string, convertToUTC = true, pattern = 'YYYY-MM-DD') => {
   if (convertToUTC) {
-    return moment('2014-02-27').utc();
+    return moment(dateStr, pattern).utc();
   } else {
-    return moment('2014-02-27');
+    return moment(dateStr);
   }
 };
 

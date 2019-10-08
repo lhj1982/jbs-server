@@ -10,7 +10,7 @@ import { UserSchema } from './models/user.model';
 import { EventSchema } from './models/event.model';
 import { EventUserSchema } from './models/eventUser.model';
 import { EventCommissionSchema } from './models/eventCommissions.model';
-import { MessageStatusSchema } from './models/messageStatus.model';
+import { NotificationSchema } from './models/notification.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -20,7 +20,7 @@ const Shop = mongoose.model('Shop', ShopSchema, 'shops');
 const Script = mongoose.model('Script', ScriptSchema, 'scripts');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
 const EventCommission = mongoose.model('EventCommission', EventCommissionSchema, 'eventCommissions');
-const MessageStatus = mongoose.model('MessageStatus', MessageStatusSchema, 'messagesStatus');
+const Notification = mongoose.model('Notification', NotificationSchema, 'notifications');
 
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';
@@ -28,6 +28,7 @@ import { ScriptsRoutes } from './routes/scripts.routes';
 import { AuthRoutes } from './routes/auth.routes';
 import { EventsRoutes } from './routes/events.routes';
 import { PricesRoutes } from './routes/prices.routes';
+import { NotificationsRoutes } from './routes/notifications.routes';
 import errorMiddleware from './middleware/error.middleare';
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
@@ -45,6 +46,7 @@ class App {
   scriptsRoutes: ScriptsRoutes = new ScriptsRoutes();
   eventsRoutes: EventsRoutes = new EventsRoutes();
   pricesRoutes: PricesRoutes = new PricesRoutes();
+  notificationsRoutes: NotificationsRoutes = new NotificationsRoutes();
   // mongoUrl: string = 'mongodb://localhost/CRMdb';
   mongoUrl: string = config.dbUri;
 
@@ -60,6 +62,7 @@ class App {
     this.scriptsRoutes.routes(this.app);
     this.eventsRoutes.routes(this.app);
     this.pricesRoutes.routes(this.app);
+    this.notificationsRoutes.routes(this.app);
     this.app.use(errorMiddleware);
   }
 

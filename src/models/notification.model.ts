@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-export const MessageStatusSchema = new Schema({
+export const NotificationSchema = new Schema({
   taskId: {
     type: String,
     required: 'Task id is required'
