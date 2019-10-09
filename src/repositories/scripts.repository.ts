@@ -1,7 +1,9 @@
 import * as mongoose from 'mongoose';
 import { escapeRegex } from '../utils/stringUtil';
 import { ScriptSchema } from '../models/script.model';
+import { DiscountRuleMapSchema } from '../models/discountRuleMap.model';
 const Script = mongoose.model('Script', ScriptSchema);
+const DiscountRuleMap = mongoose.model('DiscountRuleMap', DiscountRuleMapSchema, 'discountRulesMap');
 mongoose.set('useFindAndModify', false);
 
 class ScriptsRepo {
@@ -47,6 +49,22 @@ class ScriptsRepo {
     return await Script.where(params)
       .findOne()
       .exec();
+  }
+
+  async findByDiscountRule(discountRule) {
+    const { _id } = discountRule;
+    const discountRulesMap = await DiscountRuleMap.find({ discountRule: _id })
+      .populate('shop')
+      .populate('discountRule')
+      .populate({
+        path: 'script',
+        populate: [{ path: 'shops' }, { path: 'events' }]
+      })
+      .exec();
+
+    return discountRulesMap.map(_ => {
+      return _.script;
+    });
   }
 
   async saveOrUpdate(script) {

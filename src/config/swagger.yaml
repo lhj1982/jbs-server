@@ -176,6 +176,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
   
+  /scripts/feed:
+    get:
+      tags:
+      - "script"
+      summary: "Get script feed"
+      operationId: "getScriptFeed"
+      parameters:
+        - in: query
+          name: discountKey
+          description: discount key
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: limit
+          description: limit
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfScripts'
+        default:
+          description: 'Default response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /shops:
     get:
       tags:

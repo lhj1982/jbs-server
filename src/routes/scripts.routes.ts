@@ -23,6 +23,8 @@ export class ScriptsRoutes {
       }, this.scriptsController.getScripts)
 
       .post(verifyToken, permit({ domain: 'user', operations: ['create'] }), this.scriptsController.addScript);
+
+    app.route('/scripts/feed').get(this.scriptsController.getScriptsFeed);
     app.route('/scripts/:scriptId').get(this.scriptsController.getScript);
   }
 }

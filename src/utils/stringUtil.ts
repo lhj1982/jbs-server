@@ -17,4 +17,8 @@ const randomSerialNumber = (serialLength = 20) => {
   }
   return randomSerial;
 };
-export { escapeRegex, randomSerialNumber };
+
+const getRandomInt = max => {
+  return Math.floor(Math.random() * Math.floor(max));
+};
+export { escapeRegex, randomSerialNumber, getRandomInt };
