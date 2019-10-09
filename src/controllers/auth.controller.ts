@@ -37,7 +37,7 @@ export class AuthController {
           if (openId === 'opcf_0En_ukxF-NVT67ceAyFWfJw') {
             roles.push(role1._id);
           }
-          await UsersRepo.saveOrUpdateUser({
+          const userToUpdate = {
             openId,
             unionId,
             sessionKey,
@@ -51,14 +51,46 @@ export class AuthController {
             language,
             status: 'active',
             roles
-          });
+          };
+          // update user info only if there is no data.
           const user = await UsersRepo.findOne({ openId });
+          if (user) {
+            if (user.nickName) {
+              userToUpdate.nickName = user.nickName;
+            }
+            if (user.description) {
+              userToUpdate.description = user.description;
+            }
+            if (user.avatarUrl) {
+              userToUpdate.avatarUrl = user.avatarUrl;
+            }
+            if (user.gender) {
+              userToUpdate.gender = user.gender;
+            }
+            if (user.country) {
+              userToUpdate.country = user.country;
+            }
+            if (user.province) {
+              userToUpdate.province = user.province;
+            }
+            if (user.city) {
+              userToUpdate.city = user.city;
+            }
+            if (user.language) {
+              userToUpdate.language = user.language;
+            }
+            if (user.roles) {
+              userToUpdate.roles = user.roles;
+            }
+          }
+          await UsersRepo.saveOrUpdateUser(userToUpdate);
+          const newUser = await UsersRepo.findOne({ openId });
           // create a token string
           // console.log(this.getTokenPayload);
           // console.log(user._id);
-          const token = jwt.sign(this.getTokenPayload(user), config.jwt.secret);
+          const token = jwt.sign(this.getTokenPayload(newUser), config.jwt.secret);
           // console.log(token);
-          res.json({ openId, token, user });
+          res.json({ openId, token, newUser });
         } else {
           throw new Error(`Cannot get sessionKey, errorCode: ${errorCode}`);
         }

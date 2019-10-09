@@ -59,6 +59,9 @@ export const UserSchema = new Schema(
     age: {
       type: Number
     },
+    ageTag: {
+      type: String
+    },
     gender: {
       type: String,
       enum: ['male', 'female']

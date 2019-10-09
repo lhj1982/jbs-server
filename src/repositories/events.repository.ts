@@ -28,13 +28,13 @@ class EventsRepo extends CommonRepo {
       .findOne()
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
-      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
+      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
       .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
         populate: {
           path: 'user',
-          select: '_id nickName avatarUrl gender country province city language'
+          select: '_id nickName avatarUrl gender country province city language mobile wechatId ageTag'
         },
         select: '_id source status mobile wechatId createdAt'
       })
@@ -72,7 +72,7 @@ class EventsRepo extends CommonRepo {
     const pagedEvents = await Event.find(condition)
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
-      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
+      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
       .populate('commissions')
       .populate({
         path: 'members',
@@ -95,7 +95,7 @@ class EventsRepo extends CommonRepo {
     })
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
-      .populate('hostUser', ['_id', 'nickName', 'mobile'])
+      .populate('hostUser', ['_id', 'nickName', 'mobile', 'wechatId', 'ageTag'])
       .sort({ startTime: 1 })
       .exec();
   }
@@ -151,21 +151,21 @@ class EventsRepo extends CommonRepo {
         match: { status: { $in: ['unpaid', 'paid'] } },
         populate: {
           path: 'user',
-          select: '_id nickName avatarUrl gender country province city language'
+          select: '_id nickName avatarUrl gender country province city language mobile wechatId ageTag'
         },
         select: '_id source status mobile wechatId createdAt'
       })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
       .exec();
     const eventsUserJoined = (await Event.find()
-      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
+      .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
       .populate({
         path: 'members',
         match: { user: userId, status: { $in: ['unpaid', 'paid'] } },
         select: 'nickName avatarUrl gender country province city language',
         populate: {
           path: 'user',
-          select: '_id nickName avatarUrl gender country province city language'
+          select: '_id nickName avatarUrl gender country province city language mobile wechatId ageTag'
         }
       })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])

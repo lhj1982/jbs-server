@@ -19,6 +19,8 @@ tags:
   description: "Access to script events"
 - name: "user"
   description: "Operations about user"
+- name: "notification"
+  description: "Notifications"
 
 servers:
   - url: http://localhost:3000
@@ -939,6 +941,12 @@ paths:
             schema:
               type: "object"
               properties:
+                nickName:
+                  type: "string"
+                gender:
+                  type: "string"
+                city:
+                  type: "string"
                 description:
                   type: "string"
                 mobile:
@@ -948,6 +956,8 @@ paths:
                 email:
                   type: "string"
                 avatarImage:
+                  type: "string"
+                ageTag:
                   type: "string"
       parameters:
         - in: path
@@ -1017,6 +1027,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
       
+  /notifications/sms-send-callback:
+    post:
+      tags:
+      - "notification"
+      summary: "Retrieve sms notification send report"
+      description: "Retrieve sms notification send report."
+      operationId: "smsSendCallback"
+      requestBody:
+        description: "Request object"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                reports:
+                  type: "string"
+              example:
+                reports: "180828100924138386,13912345678,0, DELIVRD, 00000020140805135416, 20181125112640; 180828100924138386,13912345678,0, DELIVRD, 00000020140805135416, 20181125112640"
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme

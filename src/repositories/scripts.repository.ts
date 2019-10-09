@@ -14,7 +14,7 @@ class ScriptsRepo {
         match: { status: { $in: ['ready'] } },
         populate: {
           path: 'hostUser',
-          select: 'nickName avatarUrl gender country province city language'
+          select: 'nickName avatarUrl gender country province city language mobile wechatId ageTag'
         },
         options: { sort: { startTime: -1 } }
       })

@@ -56,14 +56,18 @@ export class UsersController {
         next(new ResourceNotFoundException('User', userId));
         return;
       }
-      const { description, email, mobile, wechatId, company, avatarImage } = req.body;
+      const { nickName, gender, description, city, email, mobile, wechatId, company, avatarImage, ageTag } = req.body;
       const userToUpdate = Object.assign(user, {
+        nickName,
+        gender,
+        city,
         description,
         email,
         mobile,
         wechatId,
         company,
-        avatarImage
+        avatarImage,
+        ageTag
       });
       const updatedUser = await UsersRepo.saveOrUpdateUser(user);
       res.json({ code: 'SUCCESS', data: updatedUser });
