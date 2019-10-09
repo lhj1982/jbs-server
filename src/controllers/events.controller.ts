@@ -220,7 +220,7 @@ export class EventsController extends BaseController {
    * @param {NextFunction} next [description]
    */
   updateEvent = async (req: Request, res: Response, next: NextFunction) => {
-    const { numberOfOfflinePersons, hostComment } = req.body;
+    const { numberOfOfflinePersons, hostComment, price, startTime } = req.body;
     const { loggedInUser } = res.locals;
     const { eventId } = req.params;
     const event = await EventsRepo.findById(eventId);
@@ -235,6 +235,22 @@ export class EventsController extends BaseController {
     if (hostComment) {
       updateData['hostComment'] = hostComment;
     }
+    if (price) {
+      updateData['price'] = price;
+    }
+    if (startTime) {
+      updateData['startTime'] = formatDate(startTime, config.eventDateFormatParse);
+    }
+    const {
+      script: { id: scriptId },
+      shop: { id: shopId }
+    } = event;
+    const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
+    let discountRule = undefined;
+    if (applicableDiscountRules.length > 0) {
+      discountRule = applicableDiscountRules[0]._id;
+    }
+    // updateData['discountRule'] = discountRule;
     const eventToUpdate = Object.assign(event, updateData);
     const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
     res.json({ code: 'SUCCESS', data: newEvent });

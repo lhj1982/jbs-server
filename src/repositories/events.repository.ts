@@ -96,6 +96,7 @@ class EventsRepo extends CommonRepo {
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
       .populate('hostUser', ['_id', 'nickName', 'mobile', 'wechatId', 'ageTag'])
+      .populate('script')
       .sort({ startTime: 1 })
       .exec();
   }
@@ -126,8 +127,12 @@ class EventsRepo extends CommonRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { shop, script, startTime, endTime, hostUser } = event;
-    return await Event.findOneAndUpdate({ shop, script, startTime, endTime, hostUser }, event, options).exec();
+    const { id: eventId, shop, script, startTime, endTime, hostUser } = event;
+    if (eventId) {
+      return await Event.findOneAndUpdate({ _id: eventId }, event, options).exec();
+    } else {
+      return await Event.findOneAndUpdate({ shop, script, startTime, endTime, hostUser }, event, options).exec();
+    }
   }
 
   async findDiscountRulesByShopAndScript(shopId: string, scriptId?: string) {
@@ -156,6 +161,8 @@ class EventsRepo extends CommonRepo {
         select: '_id source status mobile wechatId createdAt'
       })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .populate('script')
+      .sort({ startTime: 1 })
       .exec();
     const eventsUserJoined = (await Event.find()
       .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
@@ -169,6 +176,8 @@ class EventsRepo extends CommonRepo {
         }
       })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .populate('script')
+      .sort({ startTime: 1 })
       .exec()).filter(event => {
       const { members } = event;
       return members.length > 0;
