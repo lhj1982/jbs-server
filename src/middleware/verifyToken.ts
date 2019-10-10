@@ -22,9 +22,11 @@ const verifyToken = (req, res, next) => {
       return;
       // return res.status(401).end();
     }
-    const userId = decoded.sub;
+    const { sub: userId, iat: issuedAt, exp: expiredAt } = decoded;
     // console.log(decoded);
     // check if a user exists
+    res.locals.tokenIssuedAt = issuedAt;
+    res.locals.tokenExpiredAt = expiredAt;
     try {
       const user = await UsersRepo.findById(userId);
       res.locals.loggedInUser = user;

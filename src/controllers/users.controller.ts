@@ -85,6 +85,19 @@ export class UsersController {
     res.json({ code: 'SUCCESS', data: events });
   };
 
+  getTokenStatus = async (req: Request, res: Response, next: NextFunction) => {
+    const { tokenIssuedAt, tokenExpiredAt, loggedInUser } = res.locals;
+    res.json({
+      code: 'SUCCESSS',
+      data: {
+        tokenIssuedAt,
+        tokenExpiredAt,
+        userId: loggedInUser.id,
+        openId: loggedInUser.openId
+      }
+    });
+  };
+
   // getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
   //   const { loggedInUser } = res.locals;
   //   if (!loggedInUser) {

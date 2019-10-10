@@ -42,6 +42,11 @@ export class PricesController extends BaseController {
     res.json({ code: 'SUCCESS', data: newPriceWeeklySchema });
   };
 
+  getDiscountRules = async (req: Request, res: Response, next: NextFunction) => {
+    const discountRules = await PricesRepo.findDiscountRules();
+    res.json({ code: 'SUCCESS', data: discountRules });
+  };
+
   addDiscountRule = async (req: Request, res: Response, next: NextFunction) => {
     const { key, description, timeDescription, timeSpan, days, discount } = req.body;
     const discountRule = await PricesRepo.saveOrUpdateDiscountRule({

@@ -9,6 +9,9 @@ export class PricesRoutes {
   routes(app): void {
     //
     app.route('/prices/price-schema').post(verifyToken, permit({ domain: 'price-schema', operations: ['create'] }), this.pricesController.addPriceSchema);
-    app.route('/discount-rules').post(verifyToken, this.pricesController.addDiscountRule);
+    app
+      .route('/discount-rules')
+      .get(verifyToken, this.pricesController.getDiscountRules)
+      .post(verifyToken, this.pricesController.addDiscountRule);
   }
 }

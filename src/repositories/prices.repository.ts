@@ -13,6 +13,10 @@ class PricesRepo {
       .exec();
   }
 
+  async findDiscountRules() {
+    return await DiscountRule.find().exec();
+  }
+
   async saveOrUpdatePriceSchema(priceSchemaObj) {
     const { script, shop, priceSchema } = priceSchemaObj;
     const options = {

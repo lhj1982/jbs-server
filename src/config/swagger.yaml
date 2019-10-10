@@ -19,6 +19,8 @@ tags:
   description: "Access to script events"
 - name: "user"
   description: "Operations about user"
+- name: "discountRule"
+  description: "Operations about discount rules"
 - name: "notification"
   description: "Notifications"
 
@@ -1039,6 +1041,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+  /profile/token-status:
+    get:
+      tags:
+      - "user"
+      summary: "Get token status of logged in user"
+      description: "Get token status of logged in user."
+      operationId: "getTokenStatus"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  issuedAt:
+                    type: "number"
+                    format: "int32"
+                  expiredAt:
+                    type: "number"
+                    format: "int32"
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
   
   /profile/my-events:
     get:
@@ -1064,7 +1095,90 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-      
+  
+  /discount-rules:
+    get:
+      tags:
+      - "discountRule"
+      summary: "Retrieve available discount rules"
+      description: "Retrieve available discount rules."
+      operationId: "getDiscountRules"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/DiscountRule'
+    post:
+      tags:
+      - "discountRule"
+      summary: "Add new discount rule"
+      description: "Add new discount rule."
+      operationId: "AddDiscountRule"
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - key
+                - description
+                - timeDescription
+                - timeSpan
+                - days
+                - discount
+              properties:
+                key:
+                  type: "string"
+                description:
+                  type: "string"
+                timeDescription:
+                  type: "string"
+                timeSpan:
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      from:
+                        type: "string"
+                      to:
+                        type: "string"
+                days:
+                  type: "array"
+                  items:
+                    type: "integer"
+                    format: "int32"
+                discount:
+                  type: "object"
+                  properties:
+                    host:
+                      type: "integer"
+                      format: "int32"
+                    participator:
+                      type: "integer"
+                      format: "int32"
+      response:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                $ref: '#/components/schemas/DiscountRule'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /notifications/sms-send-callback:
     post:
       tags:
@@ -1084,6 +1198,21 @@ paths:
                   type: "string"
               example:
                 reports: "180828100924138386,13912345678,0, DELIVRD, 00000020140805135416, 20181125112640; 180828100924138386,13912345678,0, DELIVRD, 00000020140805135416, 20181125112640"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "string"
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
