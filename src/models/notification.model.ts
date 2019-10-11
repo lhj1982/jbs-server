@@ -6,25 +6,50 @@ export const NotificationSchema = new Schema({
     type: String,
     required: 'Task id is required'
   },
+  eventType: {
+    type: String,
+    enum: ['event_created', 'event_joined', 'event_completed']
+  },
+  objectId: {
+    type: String
+  },
   message: {
     type: String,
     required: 'Message is required'
   },
-  mobiles: [
+  recipients: [
     {
       type: String
     }
   ],
-  statusCode: {
-    type: String
-  },
   status: {
+    type: String,
+    enum: ['created', 'sent', 'delivered'],
+    default: 'created'
+  },
+  error: {
     type: String
   },
-  serialNumber: {
-    type: String
-  },
-  sendDate: {
-    type: Date
-  }
+  reports: [
+    {
+      taskId: {
+        type: String
+      },
+      recipient: {
+        type: String
+      },
+      statusCode: {
+        type: String
+      },
+      status: {
+        type: String
+      },
+      serialNumber: {
+        type: String
+      },
+      sendDate: {
+        type: Date
+      }
+    }
+  ]
 });

@@ -411,7 +411,6 @@ paths:
                 - shopId
                 - scriptId
                 - startTime
-                - endTime
                 - hostUserId
                 - hostUserMobile
                 - hostUserWechatId
@@ -422,9 +421,6 @@ paths:
                 scriptId:
                   type: "string"
                 startTime:
-                  type: "string"
-                  format: 'date-time'
-                endTime:
                   type: "string"
                   format: 'date-time'
                 hostUserId:
@@ -449,7 +445,6 @@ paths:
                 shopId: '1234'
                 scriptId: '1234'
                 startTime: '2019-01-01 12:00:00'
-                endTime: '2019-01-01 12:00:00'
                 hostUserId: '2323'
                 hostUserMobile: 'test'
                 hostUserWechatId: 'test'

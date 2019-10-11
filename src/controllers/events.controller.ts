@@ -16,7 +16,7 @@ import {
 } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import config from '../config';
-import { string2Date, formatDate, addDays } from '../utils/dateUtil';
+import { string2Date, formatDate, addDays, add } from '../utils/dateUtil';
 // import * as _ from 'lodash';
 
 export class EventsController extends BaseController {
@@ -110,6 +110,10 @@ export class EventsController extends BaseController {
       next(new InvalidRequestException('AddEvent', ['hostUserWechatId']));
       return;
     }
+    if (!startTime) {
+      next(new InvalidRequestException('AddEvent', ['startTime']));
+      return;
+    }
     // if (!numberOfPersons) {
     //   next(new InvalidRequestException('AddEvent', ['numberOfPersons']));
     //   return;
@@ -145,12 +149,15 @@ export class EventsController extends BaseController {
     const minNumberOfAvailableSpots = minNumberOfPersons - numberOfOfflinePersons;
     const maxNumberOfAvailableSpots = maxNumberOfPersons - numberOfOfflinePersons;
     const numberOfParticipators = 0;
-    const dtStartTime = formatDate(startTime, config.eventDateFormatParse);
-    const dtEndTime = formatDate(endTime, config.eventDateFormatParse);
+    let newEvent;
     const session = await EventsRepo.getSession();
     session.startTransaction();
-    let newEvent;
     try {
+      const { duration } = script;
+
+      const dtStartTime = formatDate(startTime, config.eventDateFormatParse);
+      const dtEndTime = add(startTime, duration, 'm');
+
       const opts = { session };
       const { mobile } = loggedInUser;
       // update user mobile if user does not have mobile
@@ -579,9 +586,11 @@ export class EventsController extends BaseController {
       const opts = { session };
       const eventToUpdate = Object.assign(newEvent, { status });
       newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
+      newEvent = await EventsRepo.findById(eventId);
       const eventCommissions = this.generateEventCommission(newEvent, eventUsers);
-
-      await EventsRepo.saveEventCommissions(eventCommissions, opts);
+      if (eventCommissions) {
+      	await EventsRepo.saveEventCommissions(eventCommissions, opts);
+      }
 
       await session.commitTransaction();
       await EventsRepo.endSession();

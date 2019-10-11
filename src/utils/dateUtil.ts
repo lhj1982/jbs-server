@@ -20,6 +20,10 @@ const addDays = (fromDate: string, daysToAdd: number) => {
   return formatDate(fromDate).add(daysToAdd, 'days');
 };
 
+const add = (fromDate: string, unitsToAdd: number, unit: moment.unitOfTime.DurationConstructor = 'days') => {
+  return formatDate(fromDate).add(unitsToAdd, unit);
+};
+
 const getDay = (dateStr: string) => {
   const date = moment(dateStr);
   const weekDay = date.day();
@@ -35,4 +39,4 @@ const getTime = (dateStr: string) => {
   return date.format('HH:mm');
 };
 
-export { string2Date, formatDate, addDays, getDay, getTime };
+export { string2Date, formatDate, addDays, add, getDay, getTime };
