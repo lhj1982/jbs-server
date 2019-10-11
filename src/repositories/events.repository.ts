@@ -22,7 +22,7 @@ class EventsRepo extends CommonRepo {
     super.endSession();
   }
 
-  async findById(id: string, filter = { status: ['ready'] }) {
+  async findById(id: string, filter = { status: ['ready', 'completed'] }) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     const { status } = filter;
     return await Event.where({ _id: id, status: { $in: status } })
@@ -101,6 +101,7 @@ class EventsRepo extends CommonRepo {
         $in: status
       };
     }
+    // console.log(condition);
     return await Event.find(condition)
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
@@ -157,8 +158,15 @@ class EventsRepo extends CommonRepo {
     }).exec();
   }
 
-  async findEventsByUser(userId: string) {
-    const myHostEvents = await Event.find({ hostUser: userId })
+  async findEventsByUser(userId: string, filter) {
+    const condition = { hostUser: userId };
+    const { status } = filter;
+    if (status) {
+      condition['status'] = {
+        $in: status
+      };
+    }
+    const myHostEvents = await Event.find(condition)
       .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language'])
       .populate({
         path: 'members',
@@ -173,7 +181,7 @@ class EventsRepo extends CommonRepo {
       .populate('script')
       .sort({ startTime: 1 })
       .exec();
-    const eventsUserJoined = (await Event.find()
+    const eventsUserJoined = (await Event.find({ status: { $in: status } })
       .populate('hostUser', ['_id', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
       .populate({
         path: 'members',

@@ -38,12 +38,20 @@ export class UsersController {
 
   getUserDetails = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
+    const { status } = req.query;
+    // default status filter
+    let statusArr = ['ready', 'completed'];
+    if (status) {
+      statusArr = status.split(',');
+    }
     const user = await UsersRepo.findById(userId);
     if (!user) {
       next(new ResourceNotFoundException('User', userId));
       return;
     }
-    const events = await EventsRepo.findEventsByUser(userId);
+    const events = await EventsRepo.findEventsByUser(userId, {
+      status: statusArr
+    });
     const response = Object.assign(user.toObject(), { events });
     res.json({ code: 'SUCCESS', data: response });
   };
@@ -81,7 +89,15 @@ export class UsersController {
     if (!loggedInUser) {
       next(new AccessDeinedException(''));
     }
-    const events = await EventsRepo.findEventsByUser(loggedInUser._id);
+    const { status } = req.query;
+    // default status filter
+    let statusArr = ['ready', 'completed'];
+    if (status) {
+      statusArr = status.split(',');
+    }
+    const events = await EventsRepo.findEventsByUser(loggedInUser._id, {
+      status: statusArr
+    });
     res.json({ code: 'SUCCESS', data: events });
   };
 

@@ -67,7 +67,7 @@ export class EventsController extends BaseController {
       const { date } = req.params;
       const { status } = req.query;
       // default status filter
-      let statusArr = ['ready', 'complete'];
+      let statusArr = ['ready', 'completed'];
       if (status) {
         statusArr = status.split(',');
       }
@@ -219,7 +219,7 @@ export class EventsController extends BaseController {
     } catch (err) {
       await session.abortTransaction();
       await EventsRepo.endSession();
-      throw err;
+      next(err);
     }
     // get participators for given event
     const eventUsers = await EventUsersRepo.findByEvent(newEvent.id);
@@ -351,29 +351,33 @@ export class EventsController extends BaseController {
     } catch (err) {
       await session.abortTransaction();
       await EventsRepo.endSession();
-      throw err;
+      next(err);
     }
   };
 
   getEventDetails = async (req: Request, res: Response, next: NextFunction) => {
-    const { eventId } = req.params;
-    let event = await EventsRepo.findById(eventId);
-    // get participators for given event
-    const eventUsers = await EventUsersRepo.findByEvent(eventId);
-    await this.updateEventParticpantsNumber(event, eventUsers);
-    event = await EventsRepo.findById(eventId);
-    if (!event) {
-      next(new ResourceNotFoundException('Event', eventId));
-      return;
+    try {
+      const { eventId } = req.params;
+      let event = await EventsRepo.findById(eventId);
+      // get participators for given event
+      const eventUsers = await EventUsersRepo.findByEvent(eventId);
+      await this.updateEventParticpantsNumber(event, eventUsers);
+      event = await EventsRepo.findById(eventId);
+      if (!event) {
+        next(new ResourceNotFoundException('Event', eventId));
+        return;
+      }
+      const { _id: scriptId } = event.script;
+      const { _id: shopId } = event.shop;
+      const priceWeeklySchema = await EventsRepo.findPriceWeeklySchemaByEvent(scriptId, shopId);
+      const resp = Object.assign(event, { priceWeeklySchema });
+      res.json({
+        code: 'SUCCESS',
+        data: resp
+      });
+    } catch (err) {
+      next(err);
     }
-    const { _id: scriptId } = event.script;
-    const { _id: shopId } = event.shop;
-    const priceWeeklySchema = await EventsRepo.findPriceWeeklySchemaByEvent(scriptId, shopId);
-    const resp = Object.assign(event, { priceWeeklySchema });
-    res.json({
-      code: 'SUCCESS',
-      data: resp
-    });
   };
 
   getPriceWeeklySchema = async (req: Request, res: Response, next: NextFunction) => {
@@ -441,7 +445,7 @@ export class EventsController extends BaseController {
     } catch (err) {
       await session.abortTransaction();
       await EventsRepo.endSession();
-      throw err;
+      next(err);
     }
   };
 
@@ -492,7 +496,7 @@ export class EventsController extends BaseController {
     } catch (err) {
       await session.abortTransaction();
       await EventsRepo.endSession();
-      throw err;
+      next(err);
     }
   };
 
@@ -589,7 +593,7 @@ export class EventsController extends BaseController {
       newEvent = await EventsRepo.findById(eventId);
       const eventCommissions = this.generateEventCommission(newEvent, eventUsers);
       if (eventCommissions) {
-      	await EventsRepo.saveEventCommissions(eventCommissions, opts);
+        await EventsRepo.saveEventCommissions(eventCommissions, opts);
       }
 
       await session.commitTransaction();
@@ -598,7 +602,7 @@ export class EventsController extends BaseController {
     } catch (err) {
       await session.abortTransaction();
       await EventsRepo.endSession();
-      throw err;
+      next(err);
     }
   };
 

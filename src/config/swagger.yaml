@@ -674,7 +674,7 @@ paths:
           schema:
             type: string
           example:
-            status: ready,complete
+            status: ready,completed
       responses:
         200:
           description: "Success"
@@ -960,7 +960,7 @@ paths:
           schema:
             type: string
           example:
-            status: ready,complete
+            status: ready,completed
       responses:
         200:
           description: "Success"
