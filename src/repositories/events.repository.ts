@@ -5,6 +5,7 @@ import { PriceWeeklySchemaSchema } from '../models/priceWeeklySchema.model';
 import { DiscountRuleSchema } from '../models/discountRule.model';
 import { EventCommissionSchema } from '../models/eventCommissions.model';
 import { CommonRepo } from './common.repository';
+import * as moment from 'moment';
 const Event = mongoose.model('Event', EventSchema, 'events');
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
@@ -86,13 +87,20 @@ class EventsRepo extends CommonRepo {
     return { pagination, data: pagedEvents };
   }
 
-  async findByDate(fromDate, toDate) {
-    return await Event.find({
+  async findByDate(fromDate: moment.Moment, toDate: moment.Moment, filter) {
+    const condition = {
       startTime: {
         $gte: fromDate,
         $lte: toDate
       }
-    })
+    };
+    const { status } = filter;
+    if (status) {
+      condition['status'] = {
+        $in: status
+      };
+    }
+    return await Event.find(condition)
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
       .populate('hostUser', ['_id', 'nickName', 'mobile', 'wechatId', 'ageTag'])

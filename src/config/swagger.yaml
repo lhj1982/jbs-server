@@ -673,6 +673,13 @@ paths:
           schema:
             type: string
             format: date
+        - in: query
+          name: status
+          description: status to include, if multiple status, separate by comma
+          schema:
+            type: string
+          example:
+            status: ready,complete
       responses:
         200:
           description: "Success"
@@ -952,6 +959,13 @@ paths:
           description: user id
           schema:
             type: "string"
+        - in: query
+          name: status
+          description: status to include, if multiple status, separate by comma
+          schema:
+            type: string
+          example:
+            status: ready,complete
       responses:
         200:
           description: "Success"
@@ -1080,6 +1094,14 @@ paths:
       operationId: "getMyEvents"
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          description: status to include, if multiple status, separate by comma
+          schema:
+            type: string
+          example:
+            status: ready,complete
       responses:
         200:
           description: "Success"

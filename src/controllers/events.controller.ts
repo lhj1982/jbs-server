@@ -65,10 +65,18 @@ export class EventsController extends BaseController {
       const offset = 0;
       const limit = 100;
       const { date } = req.params;
+      const { status } = req.query;
+      // default status filter
+      let statusArr = ['ready', 'complete'];
+      if (status) {
+        statusArr = status.split(',');
+      }
       const from = formatDate(date);
       const to = addDays(date, 1);
       console.log(`Find event between ${from} and ${to}...`);
-      const result = await EventsRepo.findByDate(from, to);
+      const result = await EventsRepo.findByDate(from, to, {
+        status: statusArr
+      });
       res.json({ code: 'SUCCESS', data: result });
     } catch (err) {
       console.error(err);
@@ -157,7 +165,7 @@ export class EventsController extends BaseController {
       const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
       let discountRule = undefined;
       if (applicableDiscountRules.length > 0) {
-        discountRule = applicableDiscountRules[0]._id;
+        discountRule = applicableDiscountRules[0];
       }
 
       newEvent = await EventsRepo.saveOrUpdate(
