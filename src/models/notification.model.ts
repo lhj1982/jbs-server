@@ -10,6 +10,9 @@ export const NotificationSchema = new Schema({
     type: String,
     enum: ['event_created', 'event_joined', 'event_completed']
   },
+  audience: {
+    type: String // shop, host or participator
+  },
   objectId: {
     type: String
   },
@@ -22,6 +25,9 @@ export const NotificationSchema = new Schema({
       type: String
     }
   ],
+  serialNumber: {
+    type: String
+  },
   status: {
     type: String,
     enum: ['created', 'sent', 'delivered'],

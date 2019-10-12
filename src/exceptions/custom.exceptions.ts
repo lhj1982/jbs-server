@@ -46,4 +46,19 @@ class EventCannotCompleteException extends HttpException {
   }
 }
 
-export { AuthorizationException, AccessDeinedException, ResourceNotFoundException, InvalidRequestException, ResourceAlreadyExist, EventIsFullBookedException, EventCannotCompleteException };
+class EventCannotCancelException extends HttpException {
+  constructor(id: string) {
+    super(500, 'event_cannot_cancel', `Event ${id} cannot cancel`);
+  }
+}
+
+export {
+  AuthorizationException,
+  AccessDeinedException,
+  ResourceNotFoundException,
+  InvalidRequestException,
+  ResourceAlreadyExist,
+  EventIsFullBookedException,
+  EventCannotCompleteException,
+  EventCannotCancelException
+};

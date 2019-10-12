@@ -12,6 +12,8 @@ export class EventsRoutes {
     app.route('/events/price-schema').get(this.eventsController.getPriceWeeklySchema);
     app.route('/events/discount-rules').get(verifyToken, this.eventsController.getDiscountRules);
 
+    // This is api to go through all events and update status if it's expired or complete
+    app.route('/events/update-status').post(verifyToken, this.eventsController.updateStatus);
     app
       .route('/events')
       // .get((req: Request, res: Response, next: NextFunction) => {
@@ -32,6 +34,7 @@ export class EventsRoutes {
     app.route('/events/:eventId/users/cancel').put(verifyToken, permit({ domain: 'event-user', operations: ['update'] }), this.eventsController.cancelEventUser);
     app.route('/events/:eventId/users/update-status').put(verifyToken, permit({ domain: 'event-user', operations: ['update'] }), this.eventsController.updateEventUserStatus);
 
+    app.route('/events/:eventId/cancel').put(verifyToken, permit({ domain: 'event', operations: ['update'] }), this.eventsController.cancelEvent);
     app.route('/events/:eventId/complete').put(verifyToken, permit({ domain: 'event', operations: ['update'] }), this.eventsController.completeEvent);
   }
 }

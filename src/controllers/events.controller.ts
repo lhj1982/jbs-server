@@ -12,9 +12,11 @@ import {
   ResourceNotFoundException,
   AccessDeinedException,
   EventIsFullBookedException,
-  EventCannotCompleteException
+  EventCannotCompleteException,
+  EventCannotCancelException
 } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
+import MessageService from '../services/message.service';
 import config from '../config';
 import { string2Date, formatDate, addDays, add } from '../utils/dateUtil';
 // import * as _ from 'lodash';
@@ -198,7 +200,7 @@ export class EventsController extends BaseController {
         },
         opts
       );
-
+      console.log(newEvent);
       if (isHostJoin) {
         const newEventUser = await EventUsersRepo.saveOrUpdate(
           {
@@ -214,6 +216,10 @@ export class EventsController extends BaseController {
           opts
         );
       }
+      newEvent = Object.assign(newEvent.toObject(), { shop, script });
+      console.log(newEvent);
+      // save notifications in db and send sms if necessary
+      await MessageService.saveNewEventNotifications(newEvent, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
     } catch (err) {
@@ -564,6 +570,24 @@ export class EventsController extends BaseController {
     return result;
   };
 
+  cancelEvent = async (req: Request, res: Response, next: NextFunction) => {
+    const { eventId } = req.params;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    const { status: currentStatus } = event;
+    if (currentStatus === 'complelted') {
+      next(new EventCannotCancelException(eventId));
+      return;
+    }
+    const status = 'cancelled';
+    const eventToUpdate = Object.assign(event.toObject(), { status });
+    const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate);
+    res.json({ code: 'SUCCESS', data: newEvent });
+  };
+
   completeEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
     const event = await EventsRepo.findById(eventId);
@@ -685,5 +709,19 @@ export class EventsController extends BaseController {
     const { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons, minNumberOfPersons, maxNumberOfPersons } = event;
     const numberOfOnlinePersons = eventUsers.length;
     return allPaid && numberOfOnlinePersons + numberOfOfflinePersons >= minNumberOfPersons && numberOfOnlinePersons + numberOfOfflinePersons <= maxNumberOfPersons;
+  };
+
+  /**
+   * Update event status to expired if endTime is past.
+   *
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
+  updateStatus = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const response = await EventsRepo.updateExpiredEvents();
+    const { nModified } = response;
+    res.json({ code: 'SUCCESS', data: `${nModified} record(s) are updated` });
   };
 }

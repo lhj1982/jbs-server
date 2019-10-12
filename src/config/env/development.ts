@@ -22,6 +22,7 @@ module.exports = {
     secretKey: 'Ebwd-HQi_HPQuJD7yK62ooZUVxG3aVI80g73NCBF'
   },
   sms: {
+    templates: {},
     enabled: false,
     spCode: '1470',
     loginName: 'dyfhpy',

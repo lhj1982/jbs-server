@@ -6,6 +6,7 @@ import { DiscountRuleSchema } from '../models/discountRule.model';
 import { EventCommissionSchema } from '../models/eventCommissions.model';
 import { CommonRepo } from './common.repository';
 import * as moment from 'moment';
+import { nowDate } from '../utils/dateUtil';
 const Event = mongoose.model('Event', EventSchema, 'events');
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
@@ -200,6 +201,19 @@ class EventsRepo extends CommonRepo {
       return members.length > 0;
     });
     return myHostEvents.concat(eventsUserJoined);
+  }
+
+  async updateExpiredEvents(opt: object = {}) {
+    const now = nowDate();
+    console.log(now);
+
+    const condition = {
+      endTime: { $lt: now },
+      status: 'ready'
+    };
+    return await Event.updateMany(condition, {
+      $set: { status: 'expired' }
+    }).exec();
   }
 }
 export default new EventsRepo();

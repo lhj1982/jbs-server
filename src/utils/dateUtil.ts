@@ -1,5 +1,13 @@
 import * as moment from 'moment';
 
+const nowDate = (convertToUTC = true) => {
+  if (convertToUTC) {
+    return moment(new Date()).utc();
+  } else {
+    return moment(new Date());
+  }
+};
+
 const string2Date = (dateStr: string, convertToUTC = true, pattern = 'YYYY-MM-DD') => {
   if (convertToUTC) {
     return moment(dateStr, pattern).utc();
@@ -39,4 +47,4 @@ const getTime = (dateStr: string) => {
   return date.format('HH:mm');
 };
 
-export { string2Date, formatDate, addDays, add, getDay, getTime };
+export { string2Date, formatDate, addDays, add, getDay, getTime, nowDate };

@@ -27,7 +27,8 @@ export class NotificationsController {
           message = notification.message;
         }
         const notificationToUpdate = Object.assign({ message }, report);
-        await NotificationsRepo.saveOrUpdate(notificationToUpdate);
+        logger.info(`Sms report: ${notificationToUpdate}`);
+        // await NotificationsRepo.saveOrUpdate(notificationToUpdate);
       });
     }
     res.json({ code: 'SUCCESS' });
