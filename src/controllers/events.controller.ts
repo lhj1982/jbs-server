@@ -369,6 +369,10 @@ export class EventsController extends BaseController {
     try {
       const { eventId } = req.params;
       let event = await EventsRepo.findById(eventId);
+      if (!event) {
+        next(new ResourceNotFoundException('Event', eventId));
+        return;
+      }
       // get participators for given event
       const eventUsers = await EventUsersRepo.findByEvent(eventId);
       await this.updateEventParticpantsNumber(event, eventUsers);

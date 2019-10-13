@@ -11,7 +11,7 @@ const { spCode, loginName, password } = config.sms;
 class MessageService {
   async sendMessage(message: string, recipients: string[], serialNumber: string) {
     const numbers = recipients.join(',');
-    // numbers = '13651976276';
+    // numbers = '15001890141';
     const encodedMessage = encodeURIComponent(message);
     try {
       const {
@@ -42,11 +42,16 @@ class MessageService {
    */
   async saveCompleteEventNotifications(event, options) {
     const notifications = [];
-    notifications.push(this.createNotifications(event, 'event_completed', 'shop'));
-    const response = await NotificationRepository.saveNotifications(notifications, options);
+    try {
+      notifications.push(await this.createNotifications(event, 'event_completed', 'shop'));
+      console.log(notifications);
+      const response = await NotificationRepository.saveNotifications(notifications, options);
 
-    await this.sendNewEventMessages(notifications, options);
-    return response;
+      await this.sendNewEventMessages(notifications, options);
+      return response;
+    } catch (err) {
+      throw err;
+    }
   }
 
   /**
@@ -58,8 +63,8 @@ class MessageService {
   async saveNewEventNotifications(event, options) {
     const notifications = [];
     try {
-      notifications.push(this.createNotifications(event, 'event_created', 'shop'));
-      notifications.push(this.createNotifications(event, 'event_created', 'host'));
+      notifications.push(await this.createNotifications(event, 'event_created', 'shop'));
+      notifications.push(await this.createNotifications(event, 'event_created', 'host'));
       const response = await NotificationRepository.saveNotifications(notifications, options);
 
       await this.sendNewEventMessages(notifications, options);
@@ -78,7 +83,7 @@ class MessageService {
     }
   }
 
-  createNotifications(event, eventType: string, audience: string) {
+  async createNotifications(event, eventType: string, audience: string) {
     const notifications = [];
     const {
       sms: { templates }
@@ -94,8 +99,8 @@ class MessageService {
       case 'event_completed':
         const { event_completed } = templates;
         shopMessageTemplate = event_completed[audience];
-        const commissionText = this.generateCommissionDetailContext(event);
-        shopMessageTemplate = replacePlacehoder(shopMessageTemplate, ['commissionDetails'], { commissionDetails: commissionText });
+        const commissionText = await this.generateCommissionDetailContext(event);
+        shopMessageTemplate = this.updateMessageTemplate(shopMessageTemplate, ['commissionDetails'], { event, commissionDetails: commissionText });
         break;
       case 'event_joined':
         const { event_joined } = templates;
@@ -123,28 +128,39 @@ class MessageService {
   }
 
   async generateCommissionDetailContext(event) {
+    // console.log(event);
+    const { commissions } = event;
+    if (commissions.length === 0) {
+      return '';
+    }
+
+    const commission = commissions[0];
+
     const {
-      commissionss: {
+      commissions: {
         host: { user: hostUserId, amount: hostCommission },
         participators
       }
-    } = event;
+    } = commission;
     const hostUser = await UsersRepository.findById(hostUserId);
     const { hostName, hostWechatId } = hostUser;
-    const hostMessageTemplate = '<hostName>(<hostWechatId>)<hostCommission>元';
+    const hostMessageTemplate = '召集人 <hostName>(<hostWechatId>) <hostCommission>元';
     const hostMessage = this.updateMessageTemplate(hostMessageTemplate, ['hostName', 'hostWechatId', 'hostCommission'], { event, hostCommission });
     let participatorMessage = '';
     for (let i = 0; i < participators.length; i++) {
       const participator = participators[i];
       const { user: userId, amount: participatorCommission } = participator;
-      const participatorMessageTemplate = `${i + 1}. <participatorName>(<participatorWechatId>)<participatorCommission>元 `;
+      const participatorUser = await UsersRepository.findById(userId);
+      const { nickName, wechatId } = participatorUser;
+      const participatorMessageTemplate = `${i + 1}. <participatorName>(<participatorWechatId>) <participatorCommission>元 `;
       const participatorMessagePart = this.updateMessageTemplate(participatorMessageTemplate, ['participatorName', 'participatorWechatId', 'participatorCommission'], {
         event,
-        participatorCommission
+        participatorCommission,
+        participatorName: nickName,
+        participatorWechatId: wechatId
       });
       participatorMessage = participatorMessage + participatorMessagePart;
     }
-
     return hostMessage + ' ' + participatorMessage;
   }
 
@@ -161,7 +177,7 @@ class MessageService {
           script: { name: scriptName },
           startTime
         } = replacements.event;
-        const { hostCommission, participatorCommission, commissionDetails } = replacements;
+        const { hostCommission, participatorName, participatorWechatId, participatorCommission, commissionDetails } = replacements;
         switch (placeholder) {
           case 'shopWechatId':
             message = replacePlacehoder(message, placeholder, shopWechatId);
@@ -187,10 +203,19 @@ class MessageService {
           case 'commissionDetails':
             message = replacePlacehoder(message, placeholder, commissionDetails);
             break;
+          case 'participatorName':
+            message = replacePlacehoder(message, placeholder, participatorName);
+            break;
+          case 'participatorWechatId':
+            message = replacePlacehoder(message, placeholder, participatorWechatId);
+            break;
+          case 'participatorCommission':
+            message = replacePlacehoder(message, placeholder, participatorCommission);
+            break;
         }
       }
     } catch (err) {
-      logger.error(`Error generating message from template ${messageTemplate}`);
+      logger.error(`Error generating message from template ${messageTemplate}, ${err.stack}`);
     } finally {
       return message;
     }
