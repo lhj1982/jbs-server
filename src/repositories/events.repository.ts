@@ -41,7 +41,9 @@ class EventsRepo extends CommonRepo {
         select: '_id source status mobile wechatId createdAt'
       })
       .populate('discountRule')
-      .populate('commissions')
+      .populate({
+        path: 'commissions'
+      })
       .exec();
   }
 

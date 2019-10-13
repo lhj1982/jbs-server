@@ -52,7 +52,6 @@ export class ScriptsController extends BaseController {
     if (!limit) {
       limit = 6;
     }
-
     const allScripts = await ScriptsRepo.findByDiscountRule(discountRule);
     // console.log(allScripts.length);
     const scripts = this.getRandomScripts(allScripts, limit);

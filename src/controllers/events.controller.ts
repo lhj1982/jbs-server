@@ -200,7 +200,7 @@ export class EventsController extends BaseController {
         },
         opts
       );
-      console.log(newEvent);
+      // console.log(newEvent);
       if (isHostJoin) {
         const newEventUser = await EventUsersRepo.saveOrUpdate(
           {
@@ -216,8 +216,12 @@ export class EventsController extends BaseController {
           opts
         );
       }
-      newEvent = Object.assign(newEvent.toObject(), { shop, script });
-      console.log(newEvent);
+      newEvent = Object.assign(newEvent.toObject(), {
+        shop,
+        script,
+        hostUser: loggedInUser
+      });
+      // console.log(newEvent);
       // save notifications in db and send sms if necessary
       await MessageService.saveNewEventNotifications(newEvent, opts);
       await session.commitTransaction();
@@ -619,6 +623,8 @@ export class EventsController extends BaseController {
       if (eventCommissions) {
         await EventsRepo.saveEventCommissions(eventCommissions, opts);
       }
+
+      await MessageService.saveCompleteEventNotifications(newEvent, opts);
 
       await session.commitTransaction();
       await EventsRepo.endSession();

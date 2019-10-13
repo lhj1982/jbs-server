@@ -40,4 +40,27 @@ const replacePlacehoder = (message, placeholder, replacement) => {
   const re = new RegExp(replace, 'gi');
   return message.replace(re, replacement);
 };
-export { escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder };
+
+const isMobileNumber = phone => {
+  let flag = false;
+  let message = '';
+  const myreg = /^(((13[0-9]{1})|(14[0-9]{1})|(17[0-9]{1})|(15[0-3]{1})|(15[4-9]{1})|(18[0-9]{1})|(199))+\d{8})$/;
+  if (phone == '') {
+    // console.log("手机号码不能为空");
+    message = '手机号码不能为空！';
+  } else if (phone.length != 11) {
+    //console.log("请输入11位手机号码！");
+    message = '请输入11位手机号码！';
+  } else if (!myreg.test(phone)) {
+    //console.log("请输入有效的手机号码！");
+    message = '请输入有效的手机号码！';
+  } else {
+    flag = true;
+  }
+  if (message != '') {
+    // alert(message);
+  }
+  return { valid: flag, message };
+};
+
+export { escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder, isMobileNumber };

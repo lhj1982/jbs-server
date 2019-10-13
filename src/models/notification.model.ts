@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 export const NotificationSchema = new Schema({
-  taskId: {
+  taskid: {
     type: String,
     required: 'Task id is required'
   },
@@ -33,12 +33,22 @@ export const NotificationSchema = new Schema({
     enum: ['created', 'sent', 'delivered'],
     default: 'created'
   },
+  result: {
+    type: String
+  },
+  description: {
+    type: String
+  },
   error: {
     type: String
   },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
   reports: [
     {
-      taskId: {
+      taskid: {
         type: String
       },
       recipient: {

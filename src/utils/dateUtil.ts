@@ -24,6 +24,10 @@ const formatDate = (dateStr: string, convertToUTC = true) => {
   }
 };
 
+const date2String = (date: Date, pattern = 'YYYY-MM-DD HH:mm') => {
+  return moment(date).format(pattern);
+};
+
 const addDays = (fromDate: string, daysToAdd: number) => {
   return formatDate(fromDate).add(daysToAdd, 'days');
 };
@@ -47,4 +51,4 @@ const getTime = (dateStr: string) => {
   return date.format('HH:mm');
 };
 
-export { string2Date, formatDate, addDays, add, getDay, getTime, nowDate };
+export { string2Date, formatDate, addDays, add, getDay, getTime, nowDate, date2String };

@@ -50,7 +50,8 @@ class NotificationsRepo {
     };
 
     const { eventType, audience, objectId, recipients } = notification;
-    const resp = await Notification.findOneAndUpdate({ eventType, audience, objectId, recipients }, { $set: notification }, options).exec();
+    console.log(`Update status ${JSON.stringify(notification)}`);
+    const resp = await Notification.findOneAndUpdate({ eventType, audience, objectId, recipients }, notification, options).exec();
 
     return resp;
   }

@@ -54,17 +54,45 @@ class ScriptsRepo {
   async findByDiscountRule(discountRule) {
     const { _id } = discountRule;
     const discountRulesMap = await DiscountRuleMap.find({ discountRule: _id })
-      .populate('shop')
+      .populate({
+        path: 'shop',
+        populate: {
+          path: 'scripts'
+        }
+      })
       .populate('discountRule')
       .populate({
         path: 'script',
         populate: [{ path: 'shops' }, { path: 'events' }]
       })
       .exec();
+      // console.log(discountRulesMap);
+    
+    let scripts =  [];
 
-    return discountRulesMap.map(_ => {
-      return _.script;
-    });
+    for (let i=0; i<discountRulesMap.length; i++) {
+      const discountRuleMap = discountRulesMap[i];
+      const {script, shop: {scripts: scriptsInShop}} = discountRuleMap;
+      if (script) {
+        scripts.push(script);
+      }
+      if (scriptsInShop && scriptsInShop.length>0) {
+        scripts = [...scripts, ...scriptsInShop];
+      }
+    }
+    // discountRulesMap.map(_ => {
+    //   const {shop: {scripts}} = _;
+    //   return scripts;
+    // });
+    // console.log(typeof discountInShopScripts);
+    // console.log(discountInShopScripts.flat());
+
+    // const discountInScripts =  discountRulesMap.map(_ => {
+    //   return _.script;
+    // }).filter(_=>{return _!=null});
+
+    // console.log(scripts);
+    return scripts;
   }
 
   async saveOrUpdate(script) {
