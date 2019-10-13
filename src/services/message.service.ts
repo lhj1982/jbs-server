@@ -11,7 +11,6 @@ const { spCode, loginName, password } = config.sms;
 class MessageService {
   async sendMessage(message: string, recipients: string[], serialNumber: string) {
     const numbers = recipients.join(',');
-    // numbers = '15001890141';
     const encodedMessage = encodeURIComponent(message);
     try {
       const {
@@ -89,28 +88,49 @@ class MessageService {
       sms: { templates }
     } = config;
     let shopMessageTemplate = undefined;
+    let recipient = undefined;
     // console.log(eventType);
     // console.log(templates);
     switch (eventType) {
       case 'event_created':
         const { event_created } = templates;
         shopMessageTemplate = event_created[audience];
+        if (audience === 'shop') {
+          const { shop: { mobile }} = event;
+          recipient = mobile;
+        } else if (audience === 'host') {
+          const { hostUserMobile } = event;
+          recipient = hostUserMobile;
+        }
         break;
       case 'event_completed':
         const { event_completed } = templates;
         shopMessageTemplate = event_completed[audience];
         const commissionText = await this.generateCommissionDetailContext(event);
         shopMessageTemplate = this.updateMessageTemplate(shopMessageTemplate, ['commissionDetails'], { event, commissionDetails: commissionText });
+        if (audience === 'shop') {
+          const { shop: { mobile } } = event;
+          recipient = mobile;
+        } else if (audience === 'host') {
+          const { hostUserMobile } = event;
+          recipient = hostUserMobile;
+        }
         break;
       case 'event_joined':
         const { event_joined } = templates;
         shopMessageTemplate = event_joined[audience];
         break;
     }
+
+    if (!recipient) {
+      throw new Error(`Cannot find recipient by eventType ${eventType}, audience ${audience}, event ${event.id}`);
+      return;
+    }
     // const eventType = 'event_created';
     // const audience = 'shop';
     if (!shopMessageTemplate) {
-      throw new Error(`Cannot find message template by eventType ${eventType}, audience ${audience}`);
+      throw new Error(`Cannot find message template by eventType ${eventType}, audience ${audience}, event ${event.id}`);
+      return;
     }
     const {
       id: objectId,
@@ -123,13 +143,13 @@ class MessageService {
       audience,
       objectId,
       message: this.updateMessageTemplate(shopMessageTemplate, config.sms.placeholders, { event }),
-      recipients: [mobile]
+      recipients: [recipient]
     };
   }
 
   async generateCommissionDetailContext(event) {
     // console.log(event);
-    const { commissions } = event;
+    const { commissions, members } = event;
     if (commissions.length === 0) {
       return '';
     }
@@ -144,14 +164,15 @@ class MessageService {
     } = commission;
     const hostUser = await UsersRepository.findById(hostUserId);
     const { hostName, hostWechatId } = hostUser;
-    const hostMessageTemplate = '召集人 <hostName>(<hostWechatId>) <hostCommission>元';
+    const hostMessageTemplate = '发起人 <hostName>(<hostWechatId>) <hostCommission>元';
     const hostMessage = this.updateMessageTemplate(hostMessageTemplate, ['hostName', 'hostWechatId', 'hostCommission'], { event, hostCommission });
     let participatorMessage = '';
     for (let i = 0; i < participators.length; i++) {
       const participator = participators[i];
       const { user: userId, amount: participatorCommission } = participator;
       const participatorUser = await UsersRepository.findById(userId);
-      const { nickName, wechatId } = participatorUser;
+      const {nickName} = participatorUser;
+      const { wechatId } = this.getParticipatorUser(members, userId);
       const participatorMessageTemplate = `${i + 1}. <participatorName>(<participatorWechatId>) <participatorCommission>元 `;
       const participatorMessagePart = this.updateMessageTemplate(participatorMessageTemplate, ['participatorName', 'participatorWechatId', 'participatorCommission'], {
         event,
@@ -162,6 +183,23 @@ class MessageService {
       participatorMessage = participatorMessage + participatorMessagePart;
     }
     return hostMessage + ' ' + participatorMessage;
+  }
+
+  /**
+   * Find member info by id.
+   * 
+   * @param {[type]} eventUsers [description]
+   * @param {string} userId     [description]
+   */
+  getParticipatorUser(eventUsers, userId: string) {
+    for (let i=0; i<eventUsers.length; i++) {
+      const eventUser = eventUsers[i];
+      const {user: {_id: eventUserId}} = eventUser;
+      if (eventUserId.toString() == userId) {
+        return eventUser;
+      }
+    }
+    return undefined;
   }
 
   // 【不咕咕】拼团成功！<shopName>，《<scriptName>》[<startTime>]拼团成功，请锁场！感谢<hostName>（微信号）的辛勤组团，根据不咕咕返现规则，您需要依次返现给①<hostName>（微信号）xxx元；②[参加者]（微信号）xx元；③[参加者]（微信号）xx元；④[参加者]（微信号）xx元；⑤[参加者]（微信号）xx元… 若有疑问，请联系不咕咕官方微信。
