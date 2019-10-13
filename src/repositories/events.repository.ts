@@ -202,7 +202,23 @@ class EventsRepo extends CommonRepo {
       const { members } = event;
       return members.length > 0;
     });
-    return myHostEvents.concat(eventsUserJoined);
+
+    const userEvents = myHostEvents;
+    for (let i = 0; i < eventsUserJoined.length; i++) {
+      const event1 = eventsUserJoined[i];
+      let duplicated = false;
+      for (let j = 0; j < userEvents.length; j++) {
+        const event2 = userEvents[j];
+        if (event2.id === event1) {
+          duplicated = true;
+          break;
+        }
+      }
+      if (!duplicated) {
+        userEvents.push(event1);
+      }
+    }
+    return userEvents;
   }
 
   async updateExpiredEvents(opt: object = {}) {

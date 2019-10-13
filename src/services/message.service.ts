@@ -1,5 +1,6 @@
 import config from '../config';
 import { randomSerialNumber } from '../utils/stringUtil';
+import UsersRepository from '../repositories/users.repository';
 import NotificationRepository from '../repositories/notifications.repository';
 const axios = require('axios');
 import logger from '../utils/logger';
@@ -93,6 +94,8 @@ class MessageService {
       case 'event_completed':
         const { event_completed } = templates;
         shopMessageTemplate = event_completed[audience];
+        const commissionText = this.generateCommissionDetailContext(event);
+        shopMessageTemplate = replacePlacehoder(shopMessageTemplate, ['commissionDetails'], { commissionDetails: commissionText });
         break;
       case 'event_joined':
         const { event_joined } = templates;
@@ -119,12 +122,23 @@ class MessageService {
     };
   }
 
-  generateCommissionDetailContext(event) {
+  async generateCommissionDetailContext(event) {
     const {
-      commissionss: { host, participators }
+      commissionss: {
+        host: { user: hostUserId, amount: hostCommission },
+        participators
+      }
     } = event;
-    const hostMessageTemplate = '<hostName>(<hostWeChatId>)<commission>元';
-    // const hostMessage = this.updateMessageTemplate(hostMessageTemplate, config.sms.placeholders, { commission });
+    const hostUser = await UsersRepository.findById(hostUserId);
+    const { hostName, hostWechatId } = hostUser;
+    const hostMessageTemplate = '<hostName>(<hostWechatId>)<hostCommission>元';
+    const hostMessage = this.updateMessageTemplate(hostMessageTemplate, ['hostName', 'hostWechatId', 'hostCommission'], { event, hostCommission });
+    for (let i = 0; i < participators.length; i++) {
+      const participator = participators[i];
+      const { user: userId, amount: participatorCommission } = participator;
+      const participatorMessageTemplate = '<participatorName>(<participatorWechatId>)<participatorCommission>元';
+      const hostMessage = this.updateMessageTemplate(hostMessageTemplate, ['participatorName', 'participatorWechatId', 'participatorCommission'], { event, participatorCommission });
+    }
   }
 
   // 【不咕咕】拼团成功！<shopName>，《<scriptName>》[<startTime>]拼团成功，请锁场！感谢<hostName>（微信号）的辛勤组团，根据不咕咕返现规则，您需要依次返现给①<hostName>（微信号）xxx元；②[参加者]（微信号）xx元；③[参加者]（微信号）xx元；④[参加者]（微信号）xx元；⑤[参加者]（微信号）xx元… 若有疑问，请联系不咕咕官方微信。
@@ -140,6 +154,7 @@ class MessageService {
           script: { name: scriptName },
           startTime
         } = replacements.event;
+        const { hostCommission, participatorCommission, commissionDetails } = replacements;
         switch (placeholder) {
           case 'shopWechatId':
             message = replacePlacehoder(message, placeholder, shopWechatId);
@@ -158,6 +173,12 @@ class MessageService {
             break;
           case 'startTime':
             message = replacePlacehoder(message, placeholder, date2String(startTime));
+            break;
+          case 'hostCommission':
+            message = replacePlacehoder(message, placeholder, hostCommission);
+            break;
+          case 'commissionDetails':
+            message = replacePlacehoder(message, placeholder, commissionDetails);
             break;
         }
       }

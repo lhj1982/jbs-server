@@ -6,7 +6,19 @@ export default {
   },
   eventDateFormatParse: 'YYYY-MM-DD HH:mm:ss.SSSZ',
   sms: {
-    placeholders: ['shopName', 'hostName', 'hostWechatId', 'scriptName', 'startTime', 'participatorName', 'participatorWechatId', 'shopWechatId', 'commissionDetails'],
+    placeholders: [
+      'shopName',
+      'hostName',
+      'hostWechatId',
+      'scriptName',
+      'startTime',
+      'participatorName',
+      'participatorWechatId',
+      'shopWechatId',
+      'hostCommission',
+      'participatorCommission',
+      'commissionDetails'
+    ],
     templates: {
       event_created: {
         shop:
