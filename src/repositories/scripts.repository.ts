@@ -52,14 +52,16 @@ class ScriptsRepo {
   }
 
   /**
-   * Find all scripts by given discount rule.
+   * Find all scripts by given discount rules.
    * It can be a rule applied directly on a script or scripts belongs to a shop which applies a certain rule.
    *
    * @param {[type]} discountRule [description]
    */
-  async findByDiscountRule(discountRule) {
-    const { _id } = discountRule;
-    const discountRulesMap = await DiscountRuleMap.find({ discountRule: _id })
+  async findByDiscountRules(discountRules) {
+    const ids = discountRules.map(_ => _._id);
+    const discountRulesMap = await DiscountRuleMap.find({
+      discountRule: { $in: ids }
+    })
       .populate({
         path: 'shop',
         populate: {

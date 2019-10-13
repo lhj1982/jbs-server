@@ -44,19 +44,27 @@ export class ScriptsController extends BaseController {
     const { discountKey } = req.query;
     let { limit } = req.query;
     // console.log(discountKey);
-    const discountRule = await DiscountRulesRepo.findByKey(discountKey);
-    if (!discountRule) {
-      next(new ResourceNotFoundException('DiscountRule', discountKey));
-      return;
-    }
-    if (!limit) {
-      limit = 6;
-    }
-    const allScripts = await ScriptsRepo.findByDiscountRule(discountRule);
-    // console.log(allScripts.length);
-    const scripts = this.getRandomScripts(allScripts, limit);
+    const discountRules = [];
+    try {
+      const discountKeys = discountKey.split(',');
+      for (let i = 0; i < discountKeys.length; i++) {
+        const discountRule = await DiscountRulesRepo.findByKey(discountKeys[i]);
+        if (discountRule) {
+          discountRules.push(discountRule);
+        }
+      }
 
-    res.json({ code: 'SUCCESS', data: scripts });
+      if (!limit) {
+        limit = 6;
+      }
+      const allScripts = await ScriptsRepo.findByDiscountRules(discountRules);
+      // console.log(allScripts.length);
+      const scripts = this.getRandomScripts(allScripts, limit);
+
+      res.json({ code: 'SUCCESS', data: scripts });
+    } catch (err) {
+      next(err);
+    }
   };
 
   addScript = async (req: Request, res: Response, next: NextFunction) => {

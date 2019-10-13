@@ -209,7 +209,7 @@ class EventsRepo extends CommonRepo {
       let duplicated = false;
       for (let j = 0; j < userEvents.length; j++) {
         const event2 = userEvents[j];
-        if (event2.id === event1) {
+        if (event2.id === event1.id) {
           duplicated = true;
           break;
         }

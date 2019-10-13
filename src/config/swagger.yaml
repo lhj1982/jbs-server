@@ -187,7 +187,7 @@ paths:
       parameters:
         - in: query
           name: discountKey
-          description: discount key
+          description: discount keys, multiple keys separated by comma.
           required: true
           schema:
             type: string

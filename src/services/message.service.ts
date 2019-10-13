@@ -133,12 +133,19 @@ class MessageService {
     const { hostName, hostWechatId } = hostUser;
     const hostMessageTemplate = '<hostName>(<hostWechatId>)<hostCommission>元';
     const hostMessage = this.updateMessageTemplate(hostMessageTemplate, ['hostName', 'hostWechatId', 'hostCommission'], { event, hostCommission });
+    let participatorMessage = '';
     for (let i = 0; i < participators.length; i++) {
       const participator = participators[i];
       const { user: userId, amount: participatorCommission } = participator;
-      const participatorMessageTemplate = '<participatorName>(<participatorWechatId>)<participatorCommission>元';
-      const hostMessage = this.updateMessageTemplate(hostMessageTemplate, ['participatorName', 'participatorWechatId', 'participatorCommission'], { event, participatorCommission });
+      const participatorMessageTemplate = `${i + 1}. <participatorName>(<participatorWechatId>)<participatorCommission>元 `;
+      const participatorMessagePart = this.updateMessageTemplate(participatorMessageTemplate, ['participatorName', 'participatorWechatId', 'participatorCommission'], {
+        event,
+        participatorCommission
+      });
+      participatorMessage = participatorMessage + participatorMessagePart;
     }
+
+    return hostMessage + ' ' + participatorMessage;
   }
 
   // 【不咕咕】拼团成功！<shopName>，《<scriptName>》[<startTime>]拼团成功，请锁场！感谢<hostName>（微信号）的辛勤组团，根据不咕咕返现规则，您需要依次返现给①<hostName>（微信号）xxx元；②[参加者]（微信号）xx元；③[参加者]（微信号）xx元；④[参加者]（微信号）xx元；⑤[参加者]（微信号）xx元… 若有疑问，请联系不咕咕官方微信。
