@@ -56,12 +56,16 @@ class MessageService {
    */
   async saveNewEventNotifications(event, options) {
     const notifications = [];
-    notifications.push(this.createNotifications(event, 'event_created', 'shop'));
-    notifications.push(this.createNotifications(event, 'event_created', 'host'));
-    const response = await NotificationRepository.saveNotifications(notifications, options);
+    try {
+      notifications.push(this.createNotifications(event, 'event_created', 'shop'));
+      notifications.push(this.createNotifications(event, 'event_created', 'host'));
+      const response = await NotificationRepository.saveNotifications(notifications, options);
 
-    await this.sendNewEventMessages(notifications, options);
-    return response;
+      await this.sendNewEventMessages(notifications, options);
+      return response;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async sendNewEventMessages(notifications, options) {
@@ -79,6 +83,8 @@ class MessageService {
       sms: { templates }
     } = config;
     let shopMessageTemplate = undefined;
+    // console.log(eventType);
+    // console.log(templates);
     switch (eventType) {
       case 'event_created':
         const { event_created } = templates;
@@ -95,7 +101,7 @@ class MessageService {
     }
     // const eventType = 'event_created';
     // const audience = 'shop';
-    if (shopMessageTemplate) {
+    if (!shopMessageTemplate) {
       throw new Error(`Cannot find message template by eventType ${eventType}, audience ${audience}`);
     }
     const {
@@ -111,6 +117,14 @@ class MessageService {
       message: this.updateMessageTemplate(shopMessageTemplate, config.sms.placeholders, { event }),
       recipients: [mobile]
     };
+  }
+
+  generateCommissionDetailContext(event) {
+    const {
+      commissionss: { host, participators }
+    } = event;
+    const hostMessageTemplate = '<hostName>(<hostWeChatId>)<commission>元';
+    // const hostMessage = this.updateMessageTemplate(hostMessageTemplate, config.sms.placeholders, { commission });
   }
 
   // 【不咕咕】拼团成功！<shopName>，《<scriptName>》[<startTime>]拼团成功，请锁场！感谢<hostName>（微信号）的辛勤组团，根据不咕咕返现规则，您需要依次返现给①<hostName>（微信号）xxx元；②[参加者]（微信号）xx元；③[参加者]（微信号）xx元；④[参加者]（微信号）xx元；⑤[参加者]（微信号）xx元… 若有疑问，请联系不咕咕官方微信。

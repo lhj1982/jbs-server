@@ -51,6 +51,12 @@ class ScriptsRepo {
       .exec();
   }
 
+  /**
+   * Find all scripts by given discount rule.
+   * It can be a rule applied directly on a script or scripts belongs to a shop which applies a certain rule.
+   *
+   * @param {[type]} discountRule [description]
+   */
   async findByDiscountRule(discountRule) {
     const { _id } = discountRule;
     const discountRulesMap = await DiscountRuleMap.find({ discountRule: _id })
@@ -66,32 +72,22 @@ class ScriptsRepo {
         populate: [{ path: 'shops' }, { path: 'events' }]
       })
       .exec();
-      // console.log(discountRulesMap);
-    
-    let scripts =  [];
+    // console.log(discountRulesMap);
 
-    for (let i=0; i<discountRulesMap.length; i++) {
+    let scripts = [];
+    for (let i = 0; i < discountRulesMap.length; i++) {
       const discountRuleMap = discountRulesMap[i];
-      const {script, shop: {scripts: scriptsInShop}} = discountRuleMap;
+      const {
+        script,
+        shop: { scripts: scriptsInShop }
+      } = discountRuleMap;
       if (script) {
         scripts.push(script);
       }
-      if (scriptsInShop && scriptsInShop.length>0) {
+      if (scriptsInShop && scriptsInShop.length > 0) {
         scripts = [...scripts, ...scriptsInShop];
       }
     }
-    // discountRulesMap.map(_ => {
-    //   const {shop: {scripts}} = _;
-    //   return scripts;
-    // });
-    // console.log(typeof discountInShopScripts);
-    // console.log(discountInShopScripts.flat());
-
-    // const discountInScripts =  discountRulesMap.map(_ => {
-    //   return _.script;
-    // }).filter(_=>{return _!=null});
-
-    // console.log(scripts);
     return scripts;
   }
 
