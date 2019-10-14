@@ -20,12 +20,15 @@ class DiscountRulesMapRepo {
     if (startTime) {
       const weekDay = getDay(startTime);
       const time = getTime(startTime);
+      // console.log(startTime);
+      // console.log(weekDay);
+      // console.log(time);
       {
         days: {
           all: [weekDay];
         }
       }
-      // discountRuleCondition['days'] = { $all: ['5'] };
+      discountRuleCondition['days'] = { $all: [weekDay] };
       discountRuleCondition['timeSpan'] = {
         $elemMatch: { from: { $lte: time }, to: { $gte: time } }
       };
@@ -34,7 +37,12 @@ class DiscountRulesMapRepo {
     return await DiscountRuleMap.find(condition)
       .populate('script', ['_id', 'key', 'name'])
       .populate('shop', ['_id', 'key', 'name'])
-      .populate('discountRule', ['key', 'description', 'timeDescription', 'days', 'timeSpan', 'discount'])
+      // .populate('discountRule', ['key', 'description', 'timeDescription', 'days', 'timeSpan', 'discount'])
+      .populate({
+        path: 'discountRule',
+        match: discountRuleCondition,
+        select: 'key description timeDescription days timeSpan discount'
+      })
       .exec();
   }
 

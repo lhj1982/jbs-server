@@ -27,7 +27,7 @@ export default {
         shop:
           '【不咕咕】<shopName>，<hostName>（<hostWechatId>）发起《<scriptName>》<startTime>拼团。请①联系TA；②捎上不咕咕小boo建立当场群；③在<hostName>的努力下，你会陆续收到参团人信息，请将他们拉入直至锁场。记得同步信息给<hostName>，让TA更新不咕咕场次。',
         host:
-          '【不咕咕】<hostName>，你发起的<shopName>《<scriptName>》<startTime>已发布。①TA家<shopWechatId>会添加你和其他小伙伴；②你需要同步支付情况到不咕咕；③拼团成功后会按规则处理。要加油分享哦，祝组团成功！'
+          '【不咕咕】<hostName>，你发起的<shopName>《<scriptName>》<startTime>已发布。①TA家<shopWechatId>会添加你和其他小伙伴；②你需要同步支付情况到不咕咕；③拼团成功后会按规则处理。要加油分享哦，祝组团成功！'
       },
       event_joined: {
         shop: '【不咕咕】<participatorName>（<participatorWechatId>）想加入《<scriptName>》[<startTime>]，请将TA拉至活动群完成支付，并同步给该场<hostName>（<hostWechatId>）。',

@@ -96,7 +96,9 @@ class MessageService {
         const { event_created } = templates;
         shopMessageTemplate = event_created[audience];
         if (audience === 'shop') {
-          const { shop: { mobile }} = event;
+          const {
+            shop: { mobile }
+          } = event;
           recipient = mobile;
         } else if (audience === 'host') {
           const { hostUserMobile } = event;
@@ -109,7 +111,9 @@ class MessageService {
         const commissionText = await this.generateCommissionDetailContext(event);
         shopMessageTemplate = this.updateMessageTemplate(shopMessageTemplate, ['commissionDetails'], { event, commissionDetails: commissionText });
         if (audience === 'shop') {
-          const { shop: { mobile } } = event;
+          const {
+            shop: { mobile }
+          } = event;
           recipient = mobile;
         } else if (audience === 'host') {
           const { hostUserMobile } = event;
@@ -171,7 +175,7 @@ class MessageService {
       const participator = participators[i];
       const { user: userId, amount: participatorCommission } = participator;
       const participatorUser = await UsersRepository.findById(userId);
-      const {nickName} = participatorUser;
+      const { nickName } = participatorUser;
       const { wechatId } = this.getParticipatorUser(members, userId);
       const participatorMessageTemplate = `${i + 1}. <participatorName>(<participatorWechatId>) <participatorCommission>元 `;
       const participatorMessagePart = this.updateMessageTemplate(participatorMessageTemplate, ['participatorName', 'participatorWechatId', 'participatorCommission'], {
@@ -187,14 +191,16 @@ class MessageService {
 
   /**
    * Find member info by id.
-   * 
+   *
    * @param {[type]} eventUsers [description]
    * @param {string} userId     [description]
    */
   getParticipatorUser(eventUsers, userId: string) {
-    for (let i=0; i<eventUsers.length; i++) {
+    for (let i = 0; i < eventUsers.length; i++) {
       const eventUser = eventUsers[i];
-      const {user: {_id: eventUserId}} = eventUser;
+      const {
+        user: { _id: eventUserId }
+      } = eventUser;
       if (eventUserId.toString() == userId) {
         return eventUser;
       }
