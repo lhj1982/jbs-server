@@ -3,8 +3,8 @@ module.exports = {
     port: 3000,
     entrypoint: `https://api.boogoogoo.com`
   },
-  appId: 'wx2d3cdf121a317007',
-  appSecret: '842c453f9d2976a618df2c7dc54e93b8',
+  appId: 'wxf59749a45686779c',
+  appSecret: '2553af7112c7911bc3bea91da887dc8c',
   logDir: '/data/log/jbs-server',
   dbUri: 'mongodb://mongo0:27017,mongo1:27017,mongo2:27017/jbs?replicaSet=rs0&slaveOk=true',
   jwt: {
