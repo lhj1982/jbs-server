@@ -354,6 +354,9 @@ export class EventsController extends BaseController {
         },
         opts
       );
+      const event = await EventsRepo.findById(eventId);
+      // save notifications in db and send sms if necessary
+      await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
 
       await session.commitTransaction();
       await EventsRepo.endSession();

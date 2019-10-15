@@ -5,7 +5,7 @@ import NotificationRepository from '../repositories/notifications.repository';
 const axios = require('axios');
 import logger from '../utils/logger';
 import { date2String } from '../utils/dateUtil';
-import { queryStringToJSON, replacePlacehoder } from '../utils/stringUtil';
+import { queryStringToJSON, replacePlacehoder, isMobileNumber } from '../utils/stringUtil';
 
 const { spCode, loginName, password } = config.sms;
 class MessageService {
@@ -35,6 +35,26 @@ class MessageService {
   }
 
   /**
+   * Save notifications when a user joins an event.
+   *
+   * @param {[type]} eventUser [description]
+   * @param {[type]} options   [description]
+   */
+  async saveNewJoinEventNotifications(event, eventUser, options) {
+    const notifications = [];
+    try {
+      notifications.push(await this.createNotifications(event, eventUser, 'event_joined', 'shop'));
+      // console.log(notifications);
+      const response = await NotificationRepository.saveNotifications(notifications, options);
+
+      await this.sendNewEventMessages(notifications, options);
+      return response;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  /**
    * [saveCompleteEventNotifications description]
    * @param {[type]} event   [description]
    * @param {[type]} options [description]
@@ -42,8 +62,8 @@ class MessageService {
   async saveCompleteEventNotifications(event, options) {
     const notifications = [];
     try {
-      notifications.push(await this.createNotifications(event, 'event_completed', 'shop'));
-      console.log(notifications);
+      notifications.push(await this.createNotifications(event, null, 'event_completed', 'shop'));
+      // console.log(notifications);
       const response = await NotificationRepository.saveNotifications(notifications, options);
 
       await this.sendNewEventMessages(notifications, options);
@@ -62,8 +82,8 @@ class MessageService {
   async saveNewEventNotifications(event, options) {
     const notifications = [];
     try {
-      notifications.push(await this.createNotifications(event, 'event_created', 'shop'));
-      notifications.push(await this.createNotifications(event, 'event_created', 'host'));
+      notifications.push(await this.createNotifications(event, null, 'event_created', 'shop'));
+      // notifications.push(await this.createNotifications(event, 'event_created', 'host'));
       const response = await NotificationRepository.saveNotifications(notifications, options);
 
       await this.sendNewEventMessages(notifications, options);
@@ -82,7 +102,7 @@ class MessageService {
     }
   }
 
-  async createNotifications(event, eventType: string, audience: string) {
+  async createNotifications(event, eventUser, eventType: string, audience: string) {
     const notifications = [];
     const {
       sms: { templates }
@@ -123,11 +143,24 @@ class MessageService {
       case 'event_joined':
         const { event_joined } = templates;
         shopMessageTemplate = event_joined[audience];
+        if (audience === 'shop') {
+          const {
+            shop: { mobile }
+          } = event;
+          recipient = mobile;
+        } else if (audience === 'participator') {
+          const { mobile } = eventUser;
+          recipient = mobile;
+        }
         break;
     }
 
     if (!recipient) {
       throw new Error(`Cannot find recipient by eventType ${eventType}, audience ${audience}, event ${event.id}`);
+      return;
+    }
+    if (!isMobileNumber(recipient)) {
+      throw new Error(`${recipient} is not a valid mobile number`);
       return;
     }
     // const eventType = 'event_created';
@@ -140,13 +173,16 @@ class MessageService {
       id: objectId,
       shop: { mobile }
     } = event;
+    const { wechatId: participatorWechatId, user: userId } = eventUser;
+    const participator = await UsersRepository.findById(userId);
+    const { nickName: participatorName } = participator;
     const status = 'created';
     return {
       serialNumber: randomSerialNumber(),
       eventType,
       audience,
       objectId,
-      message: this.updateMessageTemplate(shopMessageTemplate, config.sms.placeholders, { event }),
+      message: this.updateMessageTemplate(shopMessageTemplate, config.sms.placeholders, { event, participatorName, participatorWechatId }),
       recipients: [recipient]
     };
   }
