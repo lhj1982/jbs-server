@@ -438,6 +438,9 @@ export class EventsController extends BaseController {
       next(new ResourceNotFoundException('Event', eventId));
       return;
     }
+    const {
+      hostUser: { id: hostUserId }
+    } = event;
     const { loggedInUser } = res.locals;
     const { userId, status } = req.body;
     if (status != 'cancelled') {
@@ -445,8 +448,8 @@ export class EventsController extends BaseController {
       return;
     }
 
-    if (userId != loggedInUser.id) {
-      next(new AccessDeinedException(userId, 'You can only cancel your own booking'));
+    if (hostUserId != loggedInUser.id) {
+      next(new AccessDeinedException(loggedInUser.id, 'Only host can cancel booking.'));
     }
 
     const session = await EventsRepo.getSession();
@@ -593,6 +596,15 @@ export class EventsController extends BaseController {
       next(new EventCannotCancelException(eventId));
       return;
     }
+
+    const { loggedInUser } = res.locals;
+    const { hostUser } = event;
+    const { id: hostUserId } = hostUser;
+    const { id: loggedInUserId } = loggedInUser;
+    if (loggedInUser.id != hostUser.id) {
+      next(new AccessDeinedException(loggedInUser._id, 'Only host can cancel event'));
+      return;
+    }
     const status = 'cancelled';
     const eventToUpdate = Object.assign(event.toObject(), { status });
     const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate);
@@ -608,6 +620,15 @@ export class EventsController extends BaseController {
     }
     const { status } = req.body;
     const { loggedInUser } = res.locals;
+
+    const { hostUser } = event;
+    const { id: hostUserId } = hostUser;
+    const { id: loggedInUserId } = loggedInUser;
+    if (loggedInUser.id != hostUser.id) {
+      next(new AccessDeinedException(loggedInUser._id, 'Only host can complete event'));
+      return;
+    }
+
     if (['completed'].indexOf(status) == -1) {
       next(new InvalidRequestException('Event', ['status']));
       return;

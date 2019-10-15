@@ -31,7 +31,7 @@ export default {
       },
       event_joined: {
         // 【不咕咕】[参与人]/[参与人微信号] 想加入《剧本》[具体时间]，请将TA拉至活动群，并同步状态给发起人[发起人]/发起人微信号。
-        shop: '【不咕咕】<participatorName>（<participatorWechatId>）想加入《<scriptName>》<startTime>，请将TA拉至活动群，并同步状态给发起人<hostName>/（<hostWechatId>）。',
+        shop: '【不咕咕】<participatorName>（<participatorWechatId>）想加入《<scriptName>》<startTime>，请将TA拉至活动群，并同步状态给发起人<hostName>（<hostWechatId>）。',
         host: '【不咕咕】<hostName>，一名新玩伴想参加<shopName>《<scriptName>》[<startTime>]，店家会将TA拉入活动群，请追踪支付情况并更新至不咕咕。',
         participator: '【不咕咕】<participatorName>，欢迎加⼊入<shopName>《<scriptName>》[<startTime>]，店家将会添 加你的微信完成⽀支付。请记住店家号[<shopWechatId>]。'
       },
