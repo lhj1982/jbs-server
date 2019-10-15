@@ -43,7 +43,7 @@ class MessageService {
   async saveNewJoinEventNotifications(event, eventUser, options) {
     const notifications = [];
     try {
-      notifications.push(await this.createNotifications(event, eventUser, 'event_joined', 'shop'));
+      notifications.push(await this.createNotifications({ event, eventUser }, 'event_joined', 'shop'));
       // console.log(notifications);
       const response = await NotificationRepository.saveNotifications(notifications, options);
 
@@ -56,13 +56,14 @@ class MessageService {
 
   /**
    * [saveCompleteEventNotifications description]
-   * @param {[type]} event   [description]
-   * @param {[type]} options [description]
+   * @param {[type]} event              [description]
+   * @param {[type]} eventCommissions   [description]
+   * @param {[type]} options            [description]
    */
-  async saveCompleteEventNotifications(event, options) {
+  async saveCompleteEventNotifications(event, eventCommissions, options) {
     const notifications = [];
     try {
-      notifications.push(await this.createNotifications(event, null, 'event_completed', 'shop'));
+      notifications.push(await this.createNotifications({ event, eventCommissions}, 'event_completed', 'shop'));
       // console.log(notifications);
       const response = await NotificationRepository.saveNotifications(notifications, options);
 
@@ -82,8 +83,8 @@ class MessageService {
   async saveNewEventNotifications(event, options) {
     const notifications = [];
     try {
-      notifications.push(await this.createNotifications(event, null, 'event_created', 'shop'));
-      // notifications.push(await this.createNotifications(event, 'event_created', 'host'));
+      notifications.push(await this.createNotifications({ event }, 'event_created', 'shop'));
+      notifications.push(await this.createNotifications({ event }, 'event_created', 'host'));
       const response = await NotificationRepository.saveNotifications(notifications, options);
 
       await this.sendNewEventMessages(notifications, options);
@@ -102,7 +103,9 @@ class MessageService {
     }
   }
 
-  async createNotifications(event, eventUser, eventType: string, audience: string) {
+  async createNotifications(object: any, eventType: string, audience: string) {
+    logger.info(`Create notification for eventType: ${eventType}, audience: ${audience}`);
+    const { event, eventUser, eventCommissions } = object;
     const notifications = [];
     const {
       sms: { templates }
@@ -128,7 +131,8 @@ class MessageService {
       case 'event_completed':
         const { event_completed } = templates;
         shopMessageTemplate = event_completed[audience];
-        const commissionText = await this.generateCommissionDetailContext(event);
+        const commissionText = await this.generateCommissionDetailContext(event, eventCommissions);
+        logger.info(`commission text ${commissionText}`);
         shopMessageTemplate = this.updateMessageTemplate(shopMessageTemplate, ['commissionDetails'], { event, commissionDetails: commissionText });
         if (audience === 'shop') {
           const {
@@ -173,9 +177,15 @@ class MessageService {
       id: objectId,
       shop: { mobile }
     } = event;
-    const { wechatId: participatorWechatId, user: userId } = eventUser;
-    const participator = await UsersRepository.findById(userId);
-    const { nickName: participatorName } = participator;
+    let participatorWechatId,
+      participatorName = undefined;
+    if (eventUser) {
+      const { wechatId, user: userId } = eventUser;
+      const participator = await UsersRepository.findById(userId);
+      const { nickName } = participator;
+      participatorName = nickName;
+      participatorWechatId = wechatId;
+    }
     const status = 'created';
     return {
       serialNumber: randomSerialNumber(),
@@ -187,14 +197,13 @@ class MessageService {
     };
   }
 
-  async generateCommissionDetailContext(event) {
-    // console.log(event);
-    const { commissions, members } = event;
-    if (commissions.length === 0) {
+  async generateCommissionDetailContext(event, commission) {
+    const { members } = event;
+    if (!commission) {
       return '';
     }
 
-    const commission = commissions[0];
+    // const commission = commissions[0];
 
     const {
       commissions: {
@@ -204,16 +213,17 @@ class MessageService {
     } = commission;
     const hostUser = await UsersRepository.findById(hostUserId);
     const { hostName, hostWechatId } = hostUser;
-    const hostMessageTemplate = '发起人 <hostName>(<hostWechatId>) <hostCommission>元';
+    const hostMessageTemplate = '发起人 <hostName> <hostCommission>元';
     const hostMessage = this.updateMessageTemplate(hostMessageTemplate, ['hostName', 'hostWechatId', 'hostCommission'], { event, hostCommission });
     let participatorMessage = '';
     for (let i = 0; i < participators.length; i++) {
       const participator = participators[i];
-      const { user: userId, amount: participatorCommission } = participator;
+      // console.log(participator);
+      const { user: {_id:userId}, amount: participatorCommission } = participator;
       const participatorUser = await UsersRepository.findById(userId);
       const { nickName } = participatorUser;
       const { wechatId } = this.getParticipatorUser(members, userId);
-      const participatorMessageTemplate = `${i + 1}. <participatorName>(<participatorWechatId>) <participatorCommission>元 `;
+      const participatorMessageTemplate = `${i + 1}) <participatorName> <participatorCommission>元 `;
       const participatorMessagePart = this.updateMessageTemplate(participatorMessageTemplate, ['participatorName', 'participatorWechatId', 'participatorCommission'], {
         event,
         participatorCommission,
@@ -237,7 +247,9 @@ class MessageService {
       const {
         user: { _id: eventUserId }
       } = eventUser;
-      if (eventUserId.toString() == userId) {
+      // console.log(typeof eventUserId + ', ' + eventUserId);
+      // console.log(typeof userId + ', ' + userId);
+      if (eventUserId.toString() == userId.toString()) {
         return eventUser;
       }
     }

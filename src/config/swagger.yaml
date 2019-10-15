@@ -707,7 +707,6 @@ paths:
               required:
                 - userId
                 - source
-                - mobile
                 - wechatId
               properties:
                 userId:

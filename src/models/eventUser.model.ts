@@ -17,8 +17,7 @@ export const EventUserSchema = new Schema(
       type: String
     },
     mobile: {
-      type: String,
-      required: 'Mobile cannot be empty'
+      type: String
     },
     wechatId: {
       type: String,

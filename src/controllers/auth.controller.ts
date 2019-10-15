@@ -52,7 +52,7 @@ export class AuthController {
             status: 'active',
             roles
           };
-          // update user info only if there is no data.
+          // update user info only if there is no data from wechat.
           const user = await UsersRepo.findOne({ openId });
           if (user) {
             if (user.nickName) {

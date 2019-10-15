@@ -68,6 +68,34 @@ db.users.update({openId: "opcf_0En_ukxF-NVT67ceAyFWfJw"}, {$set: {roles: [Object
 
 # API 
 
+## Error codes
+
+```json
+{
+	status: 200,
+	code: <code>,
+	message: <message>,
+	data: <data>
+}
+```
+
+Available error codes:
+
+unauthorized
+access_denied
+user_not_found
+script_not_found
+shop_not_found
+event_not_found
+invalid_request
+user_already_exist
+shop_already_exist
+script_already_exist
+event_fully_booked
+event_cannot_complete
+event_cannot_cancel
+unknown_error
+
 ```
 
 ## users

@@ -161,15 +161,12 @@ export class EventsController extends BaseController {
       const dtEndTime = add(startTime, duration, 'm');
 
       const opts = { session };
-      const { mobile } = loggedInUser;
-      // update user mobile if user does not have mobile
-      if (!mobile) {
-        const userToUpdate = Object.assign(loggedInUser, {
-          mobile: hostUserMobile
-        });
-
-        await UsersRepo.saveOrUpdateUser(userToUpdate, opts);
-      }
+      // update host user mobile and wechat if user does not have mobile
+      const userToUpdate = Object.assign(hostUser, {
+        mobile: hostUserMobile,
+        wechatId: hostUserWechatId
+      });
+      await UsersRepo.saveOrUpdateUser(userToUpdate, opts);
 
       const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
       let discountRule = undefined;
@@ -200,6 +197,7 @@ export class EventsController extends BaseController {
         },
         opts
       );
+
       // console.log(newEvent);
       if (isHostJoin) {
         const newEventUser = await EventUsersRepo.saveOrUpdate(
@@ -354,6 +352,11 @@ export class EventsController extends BaseController {
         },
         opts
       );
+      const user = await UsersRepo.findById(userId);
+      const userToUpdate = Object.assign(user, {
+        wechatId
+      });
+      await UsersRepo.saveOrUpdateUser(user);
       const event = await EventsRepo.findById(eventId);
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
@@ -648,11 +651,12 @@ export class EventsController extends BaseController {
       newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       newEvent = await EventsRepo.findById(eventId);
       const eventCommissions = this.generateEventCommission(newEvent, eventUsers);
+      // console.log(eventCommissions);
       if (eventCommissions) {
         await EventsRepo.saveEventCommissions(eventCommissions, opts);
       }
 
-      await MessageService.saveCompleteEventNotifications(newEvent, opts);
+      await MessageService.saveCompleteEventNotifications(newEvent, eventCommissions, opts);
 
       await session.commitTransaction();
       await EventsRepo.endSession();
@@ -667,6 +671,7 @@ export class EventsController extends BaseController {
   generateEventCommission = (event, eventUsers) => {
     const { discountRule, hostUser, price } = event;
     const totalAmount = price * eventUsers.length;
+    console.log(discountRule);
     if (discountRule) {
       const { discount } = discountRule;
       const { host, participator } = discount;
@@ -713,7 +718,13 @@ export class EventsController extends BaseController {
     }
     numberOfParticipators = eventUsers.length;
     minNumberOfAvailableSpots = minNumberOfPersons - numberOfParticipators - numberOfOfflinePersons;
+    if (minNumberOfAvailableSpots < 0) {
+      minNumberOfAvailableSpots = 0;
+    }
     maxNumberOfAvailableSpots = maxNumberOfPersons - numberOfParticipators - numberOfOfflinePersons;
+    if (maxNumberOfAvailableSpots < 0) {
+      maxNumberOfAvailableSpots = 0;
+    }
     const eventToUpdate = Object.assign(event, {
       minNumberOfAvailableSpots,
       maxNumberOfAvailableSpots,
@@ -740,8 +751,10 @@ export class EventsController extends BaseController {
         break;
       }
     }
+    // console.log(allPaid);
     const { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons, minNumberOfPersons, maxNumberOfPersons } = event;
     const numberOfOnlinePersons = eventUsers.length;
+    // console.log(numberOfOnlinePersons + ', ' + numberOfOfflinePersons + ', ' + minNumberOfPersons + ', ' + maxNumberOfPersons);
     return allPaid && numberOfOnlinePersons + numberOfOfflinePersons >= minNumberOfPersons && numberOfOnlinePersons + numberOfOfflinePersons <= maxNumberOfPersons;
   };
 
