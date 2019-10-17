@@ -1,4 +1,20 @@
 const crypto = require('crypto');
+const algorithm = 'aes-256-ctr';
+const password = '>aXjR>&ht,Du5w^Z';
+
+const encrypt = text => {
+  const cipher = crypto.createCipher(algorithm, password);
+  let crypted = cipher.update(text, 'utf8', 'hex');
+  crypted += cipher.final('hex');
+  return crypted;
+};
+
+const decrypt = text => {
+  const decipher = crypto.createDecipher(algorithm, password);
+  let dec = decipher.update(text, 'hex', 'utf8');
+  dec += decipher.final('utf8');
+  return dec;
+};
 
 const escapeRegex = text => {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -6,6 +22,20 @@ const escapeRegex = text => {
 
 const randomSerialNumber = (serialLength = 20) => {
   const chars = '1234567890';
+
+  let randomSerial = '';
+  let randomNumber;
+
+  for (let i = 0; i < serialLength; i = i + 1) {
+    randomNumber = Math.floor(Math.random() * chars.length);
+
+    randomSerial += chars.substring(randomNumber, randomNumber + 1);
+  }
+  return randomSerial;
+};
+
+const getRandomString = (serialLength = 16) => {
+  const chars = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   let randomSerial = '';
   let randomNumber;
@@ -63,4 +93,4 @@ const isMobileNumber = phone => {
   return { valid: flag, message };
 };
 
-export { escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder, isMobileNumber };
+export { escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder, isMobileNumber, getRandomString };

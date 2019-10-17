@@ -63,7 +63,7 @@ class MessageService {
   async saveCompleteEventNotifications(event, eventCommissions, options) {
     const notifications = [];
     try {
-      notifications.push(await this.createNotifications({ event, eventCommissions}, 'event_completed', 'shop'));
+      notifications.push(await this.createNotifications({ event, eventCommissions }, 'event_completed', 'shop'));
       // console.log(notifications);
       const response = await NotificationRepository.saveNotifications(notifications, options);
 
@@ -219,7 +219,10 @@ class MessageService {
     for (let i = 0; i < participators.length; i++) {
       const participator = participators[i];
       // console.log(participator);
-      const { user: {_id:userId}, amount: participatorCommission } = participator;
+      const {
+        user: { _id: userId },
+        amount: participatorCommission
+      } = participator;
       const participatorUser = await UsersRepository.findById(userId);
       const { nickName } = participatorUser;
       const { wechatId } = this.getParticipatorUser(members, userId);

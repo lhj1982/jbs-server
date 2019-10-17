@@ -2,6 +2,11 @@ import * as mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 export const NotificationSchema = new Schema({
+  // key is used for identify a search key of a notification message
+  key: {
+    type: String,
+    required: 'Key is required'
+  },
   taskid: {
     type: String,
     required: 'Task id is required'

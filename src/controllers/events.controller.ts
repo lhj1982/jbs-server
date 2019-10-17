@@ -90,8 +90,7 @@ export class EventsController extends BaseController {
 
   addEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons, price, hostUserMobile, hostUserWechatId } = req.body;
-    let { isHostJoin } = req.body;
-    let { numberOfOfflinePersons } = req.body;
+    let { numberOfOfflinePersons, isHostJoin } = req.body;
     if (!scriptId) {
       next(new InvalidRequestException('AddEvent', ['scriptId']));
       return;
@@ -144,9 +143,13 @@ export class EventsController extends BaseController {
     if (!numberOfOfflinePersons) {
       numberOfOfflinePersons = 0;
     }
-    if (!isHostJoin) {
+    // console.log(typeof isHostJoin !== 'undefined');
+    if (typeof isHostJoin === 'undefined') {
       isHostJoin = true;
     }
+    // if (!isHostJoin) {
+    //   isHostJoin = true;
+    // }
     const { loggedInUser } = res.locals;
     const minNumberOfAvailableSpots = minNumberOfPersons - numberOfOfflinePersons;
     const maxNumberOfAvailableSpots = maxNumberOfPersons - numberOfOfflinePersons;

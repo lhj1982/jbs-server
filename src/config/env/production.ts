@@ -23,7 +23,7 @@ module.exports = {
   },
   sms: {
     templates: {},
-    enabled: true,
+    enabled: false,
     spCode: '1470',
     loginName: 'dyfhpy',
     password: '123456'
