@@ -35,9 +35,9 @@ class ResourceAlreadyExist extends HttpException {
 }
 
 class UserIsBlacklistedException extends HttpException {
-constructor(eventId: string, userId: string) {
+  constructor(eventId: string, userId: string) {
     super(500, 'user_is_blacklisted', `User ${userId} is blacklisted in event ${eventId}`);
-  }	
+  }
 }
 
 class EventIsFullBookedException extends HttpException {

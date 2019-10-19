@@ -112,7 +112,7 @@ class MessageService {
     } = config;
     let shopMessageTemplate = undefined;
     let smsMessageTemplate = undefined;
-    const recipient = '13651976276';
+    let recipient = '18116469554';
     const serialNumber = randomSerialNumber();
     const url = `${config.server.entrypoint}/notifications/${serialNumber}`;
     // console.log(eventType);
@@ -129,9 +129,10 @@ class MessageService {
         //   } = event;
         //   recipient = mobile;
         // } else if (audience === 'host') {
-        //   const { hostUserMobile } = event;
-        //   recipient = hostUserMobile;
-        // }
+        if (audience === 'host') {
+          const { hostUserMobile } = event;
+          recipient = hostUserMobile;
+        }
         break;
       case 'event_completed':
         const { event_completed } = templates;

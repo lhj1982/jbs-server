@@ -332,15 +332,17 @@ export class EventsController extends BaseController {
     // }
 
     // get participators for given event
-    const eventUsers = await EventUsersRepo.findByEvent(eventId, {status: ['paid', 'unpaid', 'blacklisted']});
+    const eventUsers = await EventUsersRepo.findByEvent(eventId, {
+      status: ['paid', 'unpaid', 'blacklisted']
+    });
     await this.updateEventParticpantsNumber(event, eventUsers);
     if (!this.canJoinEvent(event, eventUsers)) {
       next(new EventIsFullBookedException(eventId));
       return;
     }
     if (this.isBlacklistedUser(userId, eventUsers)) {
-    	next(new UserIsBlacklistedException(eventId, userId));
-    	return;
+      next(new UserIsBlacklistedException(eventId, userId));
+      return;
     }
 
     const session = await EventsRepo.getSession();
@@ -443,20 +445,18 @@ export class EventsController extends BaseController {
    * @param {NextFunction} next [description]
    */
   cancelEventUser = async (req: Request, res: Response, next: NextFunction) => {
-    const session = await EventsRepo.getSession();
-    session.startTransaction();
+    const { eventId } = req.params;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    const {
+      hostUser: { id: hostUserId }
+    } = event;
+    const { loggedInUser } = res.locals;
+    const { userId, status } = req.body;
     try {
-      const { eventId } = req.params;
-      const event = await EventsRepo.findById(eventId);
-      if (!event) {
-        next(new ResourceNotFoundException('Event', eventId));
-        return;
-      }
-      const {
-        hostUser: { id: hostUserId }
-      } = event;
-      const { loggedInUser } = res.locals;
-      const { userId, status } = req.body;
       if (status != 'cancelled' && status != 'blacklisted') {
         next(new InvalidRequestException('EventUser', ['status']));
         return;
@@ -471,7 +471,13 @@ export class EventsController extends BaseController {
         next(new AccessDeinedException(loggedInUser.id, 'Only host can blacklist user'));
         return;
       }
+    } catch (err) {
+      next(err);
+    }
 
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
       const opts = { session };
       const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
       const eventUserToUpdate = Object.assign(eventUser, { status: status });
@@ -756,18 +762,21 @@ export class EventsController extends BaseController {
   };
 
   isBlacklistedUser = (userId, eventUsers) => {
-  	let blacklisted = false;
-  	for (let i = 0; i < eventUsers.length; i++) {
+    let blacklisted = false;
+    for (let i = 0; i < eventUsers.length; i++) {
       const eventUser = eventUsers[i];
-      const { status, user: {id: existingUserId} } = eventUser;
+      const {
+        status,
+        user: { id: existingUserId }
+      } = eventUser;
       // console.log(userId + ', ' + existingUserId + ', ' + status);
       if (status === 'blacklisted' && existingUserId === userId) {
         blacklisted = true;
         break;
       }
     }
-  	return blacklisted;
-  }
+    return blacklisted;
+  };
 
   canCompleteEvent = (event, eventUsers) => {
     let allPaid = true;
