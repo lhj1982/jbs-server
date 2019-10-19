@@ -30,38 +30,42 @@ class ScriptsRepo {
     let condition = {};
     let shopCondition = {};
     if (keyword) {
-      const shops = await ShopsRepo.find({offset:0, limit: 100, keyword});
-      const {pagination: {total}, data} = shops;
+      const shops = await ShopsRepo.find({ offset: 0, limit: 100, keyword });
+      const {
+        pagination: { total },
+        data
+      } = shops;
       // console.log(shops);
-      const shopIds = data.map(_=>_._id);
+      const shopIds = data.map(_ => _._id);
       // if no shop info found, search script name, desc and tags
 
       if (shopIds.length === 0) {
         const regex = new RegExp(escapeRegex(keyword), 'gi');
         condition = {
           $or: [{ name: regex }, { description: regex }, { tags: keyword }, { shops: {} }]
-        };        
+        };
       } else {
         shopCondition = {
-          _id: {$in: shopIds}
+          _id: { $in: shopIds }
         };
       }
     }
     // console.log(condition);
     const rawScripts = await Script.find(condition)
-    .populate({
+      .populate({
         path: 'shops',
         match: shopCondition
       })
-      .populate('discountRuleMap').exec();
+      .populate('discountRuleMap')
+      .exec();
 
-    const filteredScripts = rawScripts.filter(_=> {
-      const {shops} = _;
+    const filteredScripts = rawScripts.filter(_ => {
+      const { shops } = _;
       return shops.length > 0;
     });
     const total = filteredScripts.length;
     const pagination = { offset, limit, total };
-    const pagedScripts = filteredScripts.slice(offset, offset+limit);
+    const pagedScripts = filteredScripts.slice(offset, offset + limit);
     return { pagination, data: pagedScripts };
   }
 

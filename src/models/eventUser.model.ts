@@ -25,7 +25,7 @@ export const EventUserSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['unpaid', 'paid', 'cancelled'],
+      enum: ['unpaid', 'paid', 'cancelled', 'blacklisted'],
       default: 'unpaid'
     },
     createdAt: {

@@ -746,7 +746,7 @@ paths:
       tags:
       - "event"
       summary: "Cancel a user event"
-      description: "User choose not to join a given event"
+      description: "User choose not to join a given event. User can only cancel his own booking, host can cancel others booking, and can blacklist user as well"
       operationId: "cancelEventUser"
       security:
         - bearerAuth: []
@@ -765,6 +765,7 @@ paths:
                   type: "string"
                   enum:
                     - cancelled
+                    - blacklisted
                 userId:
                   type: "string"
       parameters:
@@ -1218,6 +1219,27 @@ paths:
               schema:
                 type: "object"
                 $ref: '#/components/schemas/DiscountRule'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /notifications/{serialNumber}:
+    get:
+      tags:
+      - "notification"
+      summary: "Retrieve sms notification details"
+      description: "Retrieve sms notification details."
+      operationId: "getNotificationBySerialNumber"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "string"
         default:
           description: "Invalid input"
           content:
@@ -1731,8 +1753,9 @@ components:
         source:
           type: "string"
           enum: [online, offline]
-        paid:
-          type: "boolean"
+        status:
+          type: "type"
+          enum: ['unpaid', 'paid', 'cancelled', 'blacklisted']
         createdAt:
           type: "string"
           format: "date-time"
