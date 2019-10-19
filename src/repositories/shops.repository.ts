@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import { ShopSchema } from '../models/shop.model';
+import { escapeRegex } from '../utils/stringUtil';
 const Shop = mongoose.model('Shop', ShopSchema);
 mongoose.set('useFindAndModify', false);
 
@@ -17,7 +18,12 @@ class ShopsRepo {
     const { offset, limit, keyword } = params;
     const total = await Shop.countDocuments({}).exec();
     const pagination = { offset, limit, total };
-    const pagedShops = await Shop.find({})
+    let condition = {};
+    if (keyword) {
+      const regex = new RegExp(escapeRegex(keyword), 'gi');
+      condition = { name: regex };
+    }
+    const pagedShops = await Shop.find(condition)
       .populate('scripts', ['_id', 'name', 'description', 'duration'])
       .skip(offset)
       .limit(limit)

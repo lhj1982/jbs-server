@@ -25,6 +25,9 @@ export const NotificationSchema = new Schema({
     type: String,
     required: 'Message is required'
   },
+  smsMessage: {
+    type: String
+  },
   recipients: [
     {
       type: String

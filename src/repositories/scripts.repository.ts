@@ -2,6 +2,7 @@ import * as mongoose from 'mongoose';
 import { escapeRegex } from '../utils/stringUtil';
 import { ScriptSchema } from '../models/script.model';
 import { DiscountRuleMapSchema } from '../models/discountRuleMap.model';
+import ShopsRepo from '../repositories/shops.repository';
 const Script = mongoose.model('Script', ScriptSchema);
 const DiscountRuleMap = mongoose.model('DiscountRuleMap', DiscountRuleMapSchema, 'discountRulesMap');
 mongoose.set('useFindAndModify', false);
@@ -27,21 +28,40 @@ class ScriptsRepo {
   async find(params) {
     const { offset, limit, keyword } = params;
     let condition = {};
+    let shopCondition = {};
     if (keyword) {
-      const regex = new RegExp(escapeRegex(keyword), 'gi');
-      condition = {
-        $or: [{ name: regex }, { description: regex }, { tags: keyword }]
-      };
+      const shops = await ShopsRepo.find({offset:0, limit: 100, keyword});
+      const {pagination: {total}, data} = shops;
+      // console.log(shops);
+      const shopIds = data.map(_=>_._id);
+      // if no shop info found, search script name, desc and tags
+
+      if (shopIds.length === 0) {
+        const regex = new RegExp(escapeRegex(keyword), 'gi');
+        condition = {
+          $or: [{ name: regex }, { description: regex }, { tags: keyword }, { shops: {} }]
+        };        
+      } else {
+        shopCondition = {
+          _id: {$in: shopIds}
+        };
+      }
     }
     // console.log(condition);
-    const total = await Script.countDocuments(condition).exec();
+    const rawScripts = await Script.find(condition)
+    .populate({
+        path: 'shops',
+        match: shopCondition
+      })
+      .populate('discountRuleMap').exec();
+
+    const filteredScripts = rawScripts.filter(_=> {
+      const {shops} = _;
+      return shops.length > 0;
+    });
+    const total = filteredScripts.length;
     const pagination = { offset, limit, total };
-    const pagedScripts = await Script.find(condition)
-      .populate('shops')
-      .populate('discountRuleMap')
-      .skip(offset)
-      .limit(limit)
-      .exec();
+    const pagedScripts = filteredScripts.slice(offset, offset+limit);
     return { pagination, data: pagedScripts };
   }
 

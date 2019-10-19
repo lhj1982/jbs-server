@@ -34,6 +34,17 @@ export class NotificationsController {
     res.json({ code: 'SUCCESS' });
   };
 
+  getNotification = async (req: Request, res: Response, next: NextFunction) => {
+    const { serialNumber } = req.params;
+    const notification = await NotificationsRepo.findBySerialNumber(serialNumber);
+    if (notification) {
+      const { message } = notification;
+      res.json({ code: 'SUCCESS', data: message });
+    } else {
+      res.json({ code: 'SUCCESS', data: '' });
+    }
+  };
+
   generateSendReports = (reports: string[]) => {
     try {
       return reports.map(_ => {

@@ -11,6 +11,12 @@ class NotificationsRepo {
       .exec();
   }
 
+  async findBySerialNumber(serialNumber: string) {
+    return await Notification.find({ serialNumber })
+      .findOne()
+      .exec();
+  }
+
   async saveOrUpdate(notification) {
     const options = {
       new: true,

@@ -96,8 +96,8 @@ class MessageService {
 
   async sendNewEventMessages(notifications, options) {
     for (let i = 0; i < notifications.length; i++) {
-      const { message, recipients, serialNumber } = notifications[i];
-      const response = await this.sendMessage(message, recipients, serialNumber);
+      const { smsMessage, recipients, serialNumber } = notifications[i];
+      const response = await this.sendMessage(smsMessage, recipients, serialNumber);
       const notificationToUpdate = Object.assign(notifications[i], response);
       await NotificationRepository.updateNotificationStatus(notificationToUpdate, options);
     }
@@ -108,54 +108,63 @@ class MessageService {
     const { event, eventUser, eventCommissions } = object;
     const notifications = [];
     const {
-      sms: { templates }
+      notification: { templates, smsTemplates }
     } = config;
     let shopMessageTemplate = undefined;
-    let recipient = undefined;
+    let smsMessageTemplate = undefined;
+    const recipient = '13651976276';
+    const serialNumber = randomSerialNumber();
+    const url = `${config.server.entrypoint}/notifications/${serialNumber}`;
     // console.log(eventType);
     // console.log(templates);
     switch (eventType) {
       case 'event_created':
         const { event_created } = templates;
+        const { event_created: smsEventCreated } = smsTemplates;
         shopMessageTemplate = event_created[audience];
-        if (audience === 'shop') {
-          const {
-            shop: { mobile }
-          } = event;
-          recipient = mobile;
-        } else if (audience === 'host') {
-          const { hostUserMobile } = event;
-          recipient = hostUserMobile;
-        }
+        smsMessageTemplate = smsEventCreated[audience];
+        // if (audience === 'shop') {
+        //   const {
+        //     shop: { mobile }
+        //   } = event;
+        //   recipient = mobile;
+        // } else if (audience === 'host') {
+        //   const { hostUserMobile } = event;
+        //   recipient = hostUserMobile;
+        // }
         break;
       case 'event_completed':
         const { event_completed } = templates;
+        const { event_completed: smsEventCompleted } = smsTemplates;
         shopMessageTemplate = event_completed[audience];
+        smsMessageTemplate = smsEventCompleted[audience];
         const commissionText = await this.generateCommissionDetailContext(event, eventCommissions);
         logger.info(`commission text ${commissionText}`);
         shopMessageTemplate = this.updateMessageTemplate(shopMessageTemplate, ['commissionDetails'], { event, commissionDetails: commissionText });
-        if (audience === 'shop') {
-          const {
-            shop: { mobile }
-          } = event;
-          recipient = mobile;
-        } else if (audience === 'host') {
-          const { hostUserMobile } = event;
-          recipient = hostUserMobile;
-        }
+        // if (audience === 'shop') {
+        //   const {
+        //     shop: { mobile }
+        //   } = event;
+        //   recipient = mobile;
+        // } else if (audience === 'host') {
+        //   const { hostUserMobile } = event;
+        //   recipient = hostUserMobile;
+        // }
         break;
       case 'event_joined':
         const { event_joined } = templates;
+        const { event_joined: smsEventJoined } = smsTemplates;
         shopMessageTemplate = event_joined[audience];
-        if (audience === 'shop') {
-          const {
-            shop: { mobile }
-          } = event;
-          recipient = mobile;
-        } else if (audience === 'participator') {
-          const { mobile } = eventUser;
-          recipient = mobile;
-        }
+        smsMessageTemplate = smsEventJoined[audience];
+        // if (audience === 'shop') {
+        //   const {
+        //     shop: { mobile }
+        //   } = event;
+        //   recipient = mobile;
+        // } else if (audience === 'participator') {
+        //   const { mobile } = eventUser;
+        //   recipient = mobile;
+        // }
         break;
     }
 
@@ -170,7 +179,11 @@ class MessageService {
     // const eventType = 'event_created';
     // const audience = 'shop';
     if (!shopMessageTemplate) {
-      throw new Error(`Cannot find message template by eventType ${eventType}, audience ${audience}, event ${event.id}`);
+      throw new Error(`Cannot find notification template by eventType ${eventType}, audience ${audience}, event ${event.id}`);
+      return;
+    }
+    if (!smsMessageTemplate) {
+      throw new Error(`Cannot find sms template by eventType ${eventType}, audience ${audience}, event ${event.id}`);
       return;
     }
     const {
@@ -188,11 +201,12 @@ class MessageService {
     }
     const status = 'created';
     return {
-      serialNumber: randomSerialNumber(),
+      serialNumber,
       eventType,
       audience,
       objectId,
-      message: this.updateMessageTemplate(shopMessageTemplate, config.sms.placeholders, { event, participatorName, participatorWechatId }),
+      message: this.updateMessageTemplate(shopMessageTemplate, config.notification.placeholders, { event, participatorName, participatorWechatId }),
+      smsMessage: this.updateMessageTemplate(smsMessageTemplate, config.notification.placeholders, { event, participatorName, participatorWechatId, url }),
       recipients: [recipient]
     };
   }
@@ -213,7 +227,7 @@ class MessageService {
     } = commission;
     const hostUser = await UsersRepository.findById(hostUserId);
     const { hostName, hostWechatId } = hostUser;
-    const hostMessageTemplate = '发起人 <hostName> <hostCommission>元';
+    const hostMessageTemplate = '发起人 <hostName>（<hostWechatId>） <hostCommission>元';
     const hostMessage = this.updateMessageTemplate(hostMessageTemplate, ['hostName', 'hostWechatId', 'hostCommission'], { event, hostCommission });
     let participatorMessage = '';
     for (let i = 0; i < participators.length; i++) {
@@ -226,7 +240,7 @@ class MessageService {
       const participatorUser = await UsersRepository.findById(userId);
       const { nickName } = participatorUser;
       const { wechatId } = this.getParticipatorUser(members, userId);
-      const participatorMessageTemplate = `${i + 1}) <participatorName> <participatorCommission>元 `;
+      const participatorMessageTemplate = `${i + 1}) <participatorName>（<participatorWechatId>） <participatorCommission>元 `;
       const participatorMessagePart = this.updateMessageTemplate(participatorMessageTemplate, ['participatorName', 'participatorWechatId', 'participatorCommission'], {
         event,
         participatorCommission,
@@ -272,7 +286,7 @@ class MessageService {
           script: { name: scriptName },
           startTime
         } = replacements.event;
-        const { hostCommission, participatorName, participatorWechatId, participatorCommission, commissionDetails } = replacements;
+        const { hostCommission, participatorName, participatorWechatId, participatorCommission, commissionDetails, url } = replacements;
         switch (placeholder) {
           case 'shopWechatId':
             message = replacePlacehoder(message, placeholder, shopWechatId);
@@ -306,6 +320,9 @@ class MessageService {
             break;
           case 'participatorCommission':
             message = replacePlacehoder(message, placeholder, participatorCommission);
+            break;
+          case 'url':
+            message = replacePlacehoder(message, placeholder, url);
             break;
         }
       }
