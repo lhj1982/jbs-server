@@ -345,10 +345,10 @@ export class EventsController extends BaseController {
       return;
     }
 
-    const session = await EventsRepo.getSession();
-    session.startTransaction();
+    // const session = await EventsRepo.getSession();
+    // session.startTransaction();
     try {
-      const opts = { session };
+      const opts = {};
       const newEventUser = await EventUsersRepo.saveOrUpdate(
         {
           event: eventId,
@@ -371,12 +371,12 @@ export class EventsController extends BaseController {
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
 
-      await session.commitTransaction();
-      await EventsRepo.endSession();
+      // await session.commitTransaction();
+      // await EventsRepo.endSession();
       res.json({ code: 'SUCCESS', data: newEventUser });
     } catch (err) {
-      await session.abortTransaction();
-      await EventsRepo.endSession();
+      // await session.abortTransaction();
+      // await EventsRepo.endSession();
       next(err);
     }
   };
@@ -462,9 +462,11 @@ export class EventsController extends BaseController {
         return;
       }
 
-      if (hostUserId != loggedInUser.id || userId != loggedInUser.id) {
-        next(new AccessDeinedException(loggedInUser.id, 'You are not a host or you are trying to cancel others booking'));
-        return;
+      if (status === 'cancelled') {
+        if (loggedInUser.id != hostUserId && loggedInUser.id != userId) {
+          next(new AccessDeinedException(loggedInUser.id, 'You are not a host or you are trying to cancel others booking'));
+          return;
+        }
       }
 
       if (status === 'blacklisted' && hostUserId != loggedInUser.id) {

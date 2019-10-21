@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import { NotificationSchema } from '../models/notification.model';
-
+import logger from '../utils/logger';
 const Notification = mongoose.model('Notification', NotificationSchema, 'notifications');
 mongoose.set('useFindAndModify', false);
 
@@ -40,6 +40,7 @@ class NotificationsRepo {
     for (let i = 0; i < notifications.length; i++) {
       const notification = notifications[i];
       const { eventType, audience, objectId, recipients } = notification;
+      logger.info(`Saving notification to db... ${JSON.stringify(notification)}`);
       const resp = await Notification.findOneAndUpdate({ eventType, audience, objectId, recipients }, { $set: notification }, options).exec();
       response.push(resp);
     }

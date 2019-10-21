@@ -29,7 +29,7 @@ class MessageService {
         return { code: 100, description: 'sms disable' };
       }
     } catch (err) {
-      logger.error(err);
+      logger.error(`Error when sending join messages, err: ${err.toString()}, stack: ${err.stack}`);
       throw err;
     }
   }
@@ -50,6 +50,7 @@ class MessageService {
       await this.sendNewEventMessages(notifications, options);
       return response;
     } catch (err) {
+      logger.error(`Error when sending join messages, err: ${err.toString()}, stack: ${err.stack}`);
       throw err;
     }
   }
@@ -70,6 +71,7 @@ class MessageService {
       await this.sendNewEventMessages(notifications, options);
       return response;
     } catch (err) {
+      logger.error(`Error when sending join messages, err: ${err.toString()}, stack: ${err.stack}`);
       throw err;
     }
   }
@@ -90,6 +92,7 @@ class MessageService {
       await this.sendNewEventMessages(notifications, options);
       return response;
     } catch (err) {
+      logger.error(`Error when sending join messages, err: ${err.toString()}, stack: ${err.stack}`);
       throw err;
     }
   }
@@ -110,8 +113,8 @@ class MessageService {
     const {
       notification: { templates, smsTemplates }
     } = config;
-    let shopMessageTemplate = undefined;
-    let smsMessageTemplate = undefined;
+    let shopMessageTemplate = '';
+    let smsMessageTemplate = '';
     let recipient = '18116469554';
     const serialNumber = randomSerialNumber();
     const url = `${config.server.entrypoint}/notifications/${serialNumber}`;
@@ -180,36 +183,40 @@ class MessageService {
     // const eventType = 'event_created';
     // const audience = 'shop';
     if (!shopMessageTemplate) {
-      throw new Error(`Cannot find notification template by eventType ${eventType}, audience ${audience}, event ${event.id}`);
+      logger.error(`Cannot find notification template by eventType ${eventType}, audience ${audience}, event ${event.id}`);
       return;
     }
     if (!smsMessageTemplate) {
-      throw new Error(`Cannot find sms template by eventType ${eventType}, audience ${audience}, event ${event.id}`);
+      logger.error(`Cannot find sms template by eventType ${eventType}, audience ${audience}, event ${event.id}`);
       return;
     }
-    const {
-      id: objectId,
-      shop: { mobile }
-    } = event;
-    let participatorWechatId,
-      participatorName = undefined;
-    if (eventUser) {
-      const { wechatId, user: userId } = eventUser;
-      const participator = await UsersRepository.findById(userId);
-      const { nickName } = participator;
-      participatorName = nickName;
-      participatorWechatId = wechatId;
+    try {
+      const {
+        id: objectId,
+        shop: { mobile }
+      } = event;
+      let participatorWechatId,
+        participatorName = '';
+      if (eventUser) {
+        const { wechatId, user: userId } = eventUser;
+        const participator = await UsersRepository.findById(userId);
+        const { nickName } = participator;
+        participatorName = nickName;
+        participatorWechatId = wechatId;
+      }
+      const status = 'created';
+      return {
+        serialNumber,
+        eventType,
+        audience,
+        objectId,
+        message: this.updateMessageTemplate(shopMessageTemplate, config.notification.placeholders, { event, participatorName, participatorWechatId }),
+        smsMessage: this.updateMessageTemplate(smsMessageTemplate, config.notification.placeholders, { event, participatorName, participatorWechatId, url }),
+        recipients: [recipient]
+      };
+    } catch (err) {
+      throw err;
     }
-    const status = 'created';
-    return {
-      serialNumber,
-      eventType,
-      audience,
-      objectId,
-      message: this.updateMessageTemplate(shopMessageTemplate, config.notification.placeholders, { event, participatorName, participatorWechatId }),
-      smsMessage: this.updateMessageTemplate(smsMessageTemplate, config.notification.placeholders, { event, participatorName, participatorWechatId, url }),
-      recipients: [recipient]
-    };
   }
 
   async generateCommissionDetailContext(event, commission) {

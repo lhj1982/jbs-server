@@ -43,6 +43,28 @@ rs.initiate(config)
 
 rs.reconfig(config,{force: true});
 
+
+# Run
+
+##  Run on local
+```
+npm run dev:watch
+```
+
+## Run on server
+
+```
+npm run start:prod:daemon
+
+or 
+
+npm run restart:prod:daemon
+
+or 
+
+npm run start:prod:single
+```
+
 # WXAPP Login
 
 https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.html
@@ -94,6 +116,7 @@ script_already_exist
 event_fully_booked
 event_cannot_complete
 event_cannot_cancel
+user_is_blacklisted
 unknown_error
 
 ```
