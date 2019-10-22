@@ -55,7 +55,7 @@ export default {
       },
       // 【不咕咕】拼团成功！[店家名]《剧本》[具体时间]拼团成功！请查看 boogoogoo/xxxxxxxxx 并按规则操作！
       event_completed: {
-        shop: '【不咕咕】拼团成功！<shopName>，《<scriptName>》<startTime>拼团成功！请查看<url>并按规则操作！'
+        shop: '【不咕咕】拼团成功！<shopName>，《<scriptName>》<startTime>拼团成功！请查看<url> 并按规则操作！'
         // host: '不咕咕】<hostName>，<shopName>《<scriptName>》<startTime>拼团成功！根据本场返现规则，店家将返回给您xxx元。若有疑问，请联系不咕咕官方微信。',
         // participator: '【不咕咕】<participatorName>，<shopName>《<scriptName>》<startTime>拼团成功！根据本场返现规则，商家将返回给您xx元。若有疑问，请联系不咕咕官方微信。'
       }
