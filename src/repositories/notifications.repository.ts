@@ -39,9 +39,9 @@ class NotificationsRepo {
     const response = [];
     for (let i = 0; i < notifications.length; i++) {
       const notification = notifications[i];
-      const { eventType, audience, objectId, recipients } = notification;
-      logger.info(`Saving notification to db... ${JSON.stringify(notification)}`);
-      const resp = await Notification.findOneAndUpdate({ eventType, audience, objectId, recipients }, { $set: notification }, options).exec();
+      const { serialNumber } = notification;
+      logger.info(`Saving notification to db... serialNumber: ${serialNumber}`);
+      const resp = await Notification.findOneAndUpdate({ serialNumber }, { $set: notification }, options).exec();
       response.push(resp);
     }
     return response;
@@ -56,9 +56,9 @@ class NotificationsRepo {
       returnNewDocument: true
     };
 
-    const { eventType, audience, objectId, recipients } = notification;
+    const { serialNumber } = notification;
     console.log(`Update status ${JSON.stringify(notification)}`);
-    const resp = await Notification.findOneAndUpdate({ eventType, audience, objectId, recipients }, notification, options).exec();
+    const resp = await Notification.findOneAndUpdate({ serialNumber }, notification, options).exec();
 
     return resp;
   }

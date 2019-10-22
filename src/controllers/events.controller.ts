@@ -345,10 +345,10 @@ export class EventsController extends BaseController {
       return;
     }
 
-    // const session = await EventsRepo.getSession();
-    // session.startTransaction();
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
     try {
-      const opts = {};
+      const opts = { session };
       const newEventUser = await EventUsersRepo.saveOrUpdate(
         {
           event: eventId,
@@ -371,12 +371,12 @@ export class EventsController extends BaseController {
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
 
-      // await session.commitTransaction();
-      // await EventsRepo.endSession();
+      await session.commitTransaction();
+      await EventsRepo.endSession();
       res.json({ code: 'SUCCESS', data: newEventUser });
     } catch (err) {
-      // await session.abortTransaction();
-      // await EventsRepo.endSession();
+      await session.abortTransaction();
+      await EventsRepo.endSession();
       next(err);
     }
   };
