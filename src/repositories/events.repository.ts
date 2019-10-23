@@ -59,8 +59,8 @@ class EventsRepo extends CommonRepo {
       .exec();
   }
 
-  async find(params, filter = { status: ['ready'] }) {
-    const { status } = filter;
+  async find(params, filter = { status: ['ready'], availableSpots: -1 }) {
+    const { status, availableSpots } = filter;
     const { offset, limit, keyword, scriptId, shopId } = params;
     const condition = {
       status: { $in: status }
@@ -70,6 +70,9 @@ class EventsRepo extends CommonRepo {
     }
     if (shopId) {
       condition['shop'] = shopId;
+    }
+    if (availableSpots !== -1) {
+      condition['minNumberOfAvailableSpots'] = { $lte: availableSpots, $gt: 0 };
     }
     // console.log(condition);
     const total = await Event.countDocuments(condition).exec();

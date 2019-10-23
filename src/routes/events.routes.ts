@@ -16,6 +16,7 @@ export class EventsRoutes {
     app.route('/events/update-status').post(verifyToken, this.eventsController.updateStatus);
     app
       .route('/events')
+      .get(this.eventsController.getEvents)
       // .get((req: Request, res: Response, next: NextFunction) => {
       //   // middleware
       //   console.log(`Request from: ${req.originalUrl}`);

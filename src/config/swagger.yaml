@@ -365,7 +365,7 @@ paths:
     get:
       tags:
       - "event"
-      summary: "List all events"
+      summary: "List events, apply filter if exist"
       operationId: "listEvents"
       parameters:
         - in: query
@@ -380,6 +380,15 @@ paths:
           schema:
             type: integer
             format: int32
+        - in: query
+          name: filter
+          description: filter to apply, status or availableSpot etc, it has to be a urlencoded json string
+          schema:
+            type: "object"
+            properties:
+              filler:
+                type: "string"
+                description: urlencoded filter json string
       responses:
         200:
           description: "Success"

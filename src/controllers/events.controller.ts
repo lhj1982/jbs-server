@@ -23,23 +23,30 @@ import { string2Date, formatDate, addDays, add } from '../utils/dateUtil';
 // import * as _ from 'lodash';
 
 export class EventsController extends BaseController {
-  getEvents = async (req: Request, res: Response) => {
+  getEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
       let offset = parseInt(req.query.offset);
       let limit = parseInt(req.query.limit);
-      const { keyword } = req.query;
+      const { keyword, filter: filterStr } = req.query;
+      let filterToUpdate = { status: ['ready'], availableSpots: -1 };
+      if (filterStr) {
+        const filter = JSON.parse(decodeURIComponent(filterStr));
+        const { availableSpots } = filter;
+        filterToUpdate = Object.assign(filterToUpdate, { availableSpots });
+      }
       if (!offset) {
         offset = config.query.offset;
       }
       if (!limit) {
         limit = config.query.limit;
       }
-      let result = await EventsRepo.find({ keyword, offset, limit });
+      console.log(filterToUpdate);
+      let result = await EventsRepo.find({ keyword, offset, limit }, filterToUpdate);
       const links = this.generateLinks(result.pagination, req.route.path, '');
       result = Object.assign({}, result, links);
       res.json(result);
     } catch (err) {
-      res.send(err);
+      next(err);
     }
   };
 
