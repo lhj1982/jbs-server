@@ -10,7 +10,7 @@ module.exports = {
   jwt: {
     issuer: 'ademes',
     secret: 'JARF2YXNTA46ZH8F4Q2TBFHWE8DSDJCXAMGQTSSMWZKSPWC8FMWSL9YXU5PELUFN',
-    duration: 7200
+    duration: 2592000
   },
   query: {
     offset: 0,
