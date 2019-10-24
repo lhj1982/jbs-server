@@ -47,6 +47,28 @@ class EventsRepo extends CommonRepo {
       .exec();
   }
 
+  async findByIdSimplified(id: string, filter = { status: ['ready', 'completed'] }) {
+    const { status } = filter;
+    return await Event.where({ _id: id, status: { $in: status } })
+      .findOne()
+      .populate('script')
+      .populate('shop', ['name', 'key'])
+      .populate('hostUser', ['nickName', 'mobile', 'wechatId'])
+      .populate({
+        path: 'members',
+        match: { status: { $in: ['unpaid', 'paid'] } },
+        populate: {
+          path: 'user',
+          select: 'nickName mobile wechatId'
+        },
+        select: 'source status mobile wechatId createdAt'
+      })
+      .populate({
+        path: 'commissions'
+      })
+      .exec();
+  }
+
   async findPriceWeeklySchemaByEvent(scriptId: string, shopId: string) {
     return await PriceWeeklySchema.find(
       {

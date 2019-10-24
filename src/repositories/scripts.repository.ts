@@ -57,6 +57,7 @@ class ScriptsRepo {
         match: shopCondition
       })
       .populate('discountRuleMap')
+      .sort({ priority: -1, key: 1 })
       .exec();
 
     const filteredScripts = rawScripts.filter(_ => {

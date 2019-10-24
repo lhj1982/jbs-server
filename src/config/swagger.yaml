@@ -663,6 +663,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /events/{eventId}/simplified:
+    get:
+      tags:
+      - "event"
+      summary: "Get an event simplified detail info"
+      operationId: "getSimplifiedEventById"
+      parameters:
+        - in: path
+          name: eventId
+          description: event id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetails'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /events/calendar/{date}:
     get:
       tags:

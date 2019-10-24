@@ -417,6 +417,28 @@ export class EventsController extends BaseController {
     }
   };
 
+  getEventDetailsSimplified = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { eventId } = req.params;
+      let event = await EventsRepo.findByIdSimplified(eventId);
+      if (!event) {
+        next(new ResourceNotFoundException('Event', eventId));
+        return;
+      }
+      // get participators for given event
+      const eventUsers = await EventUsersRepo.findByEvent(eventId);
+      await this.updateEventParticpantsNumber(event, eventUsers);
+      event = await EventsRepo.findByIdSimplified(eventId);
+
+      res.json({
+        code: 'SUCCESS',
+        data: event
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   getPriceWeeklySchema = async (req: Request, res: Response, next: NextFunction) => {
     const { scriptId, shopId } = req.query;
     const script = await ScriptsRepo.findById(scriptId);

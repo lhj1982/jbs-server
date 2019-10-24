@@ -24,6 +24,7 @@ export class EventsRoutes {
       //   next();
       // }, this.eventsController.getEvents)
       .post(verifyToken, permit({ domain: 'event', operations: ['create'] }), this.eventsController.addEvent);
+    app.route('/events/:eventId/simplified').get(this.eventsController.getEventDetailsSimplified);
     app.route('/events/:scriptId/:shopId').get(this.eventsController.getEventsByScriptAndShop);
     app.route('/events/:scriptId/:shopId/discount-rules').get(this.eventsController.getEventDiscountRolesByScriptAndShop);
     app.route('/events/:scriptId/:shopId/available-discount-rules').get(verifyToken, this.eventsController.getAvailableDiscountRules);

@@ -27,6 +27,10 @@ export const ScriptSchema = new Schema(
     estimatedPrice: {
       type: String
     },
+    priority: {
+      type: Number,
+      default: 0
+    },
     createdAt: {
       type: Date,
       default: Date.now
