@@ -67,8 +67,7 @@ class App {
   }
 
   allowCrossDomain(req, res, next) {
-    res.header('Access-Control-Allow-Origin', `${config.server.entrypoint}`);
-    res.header('Access-Control-Allow-Origin', `http://detail.boogoogoo.com`);
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Credentials');
     res.header('Access-Control-Allow-Credentials', 'true');

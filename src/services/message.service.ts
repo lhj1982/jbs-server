@@ -109,6 +109,7 @@ class MessageService {
   async createNotifications(object: any, eventType: string, audience: string) {
     logger.info(`Create notification for eventType: ${eventType}, audience: ${audience}`);
     const { event, eventUser, eventCommissions } = object;
+    const { id: eventId } = event;
     const notifications = [];
     const {
       notification: { templates, smsTemplates }
@@ -117,7 +118,7 @@ class MessageService {
     let smsMessageTemplate = '';
     let recipient = '18116469554';
     const serialNumber = randomSerialNumber();
-    const url = `${config.server.entrypoint}/notifications/${serialNumber}`;
+    const url = replacePlacehoder(`${config.notification.url}`, 'eventId', eventId);
     // console.log(eventType);
     // console.log(templates);
     switch (eventType) {
