@@ -638,6 +638,13 @@ export class EventsController extends BaseController {
     return result;
   };
 
+  /**
+   * Only host can cancel event.
+   *
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
   cancelEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
     const event = await EventsRepo.findById(eventId);
@@ -665,6 +672,13 @@ export class EventsController extends BaseController {
     res.json({ code: 'SUCCESS', data: newEvent });
   };
 
+  /**
+   * Only host can complete event.
+   *
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
   completeEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
     const event = await EventsRepo.findById(eventId);
