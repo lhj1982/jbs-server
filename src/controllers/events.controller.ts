@@ -77,7 +77,7 @@ export class EventsController extends BaseController {
       const { date } = req.params;
       const { status } = req.query;
       // default status filter
-      let statusArr = ['ready', 'completed'];
+      let statusArr = ['ready', 'completed', 'expired'];
       if (status) {
         statusArr = status.split(',');
       }

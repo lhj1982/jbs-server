@@ -40,7 +40,7 @@ export class UsersController {
     const { userId } = req.params;
     const { status } = req.query;
     // default status filter
-    let statusArr = ['ready', 'completed'];
+    let statusArr = ['ready', 'completed', 'expired'];
     if (status) {
       statusArr = status.split(',');
     }
@@ -91,7 +91,7 @@ export class UsersController {
     }
     const { status } = req.query;
     // default status filter
-    let statusArr = ['ready', 'completed'];
+    let statusArr = ['ready', 'completed', 'expired'];
     if (status) {
       statusArr = status.split(',');
     }

@@ -23,7 +23,7 @@ class EventsRepo extends CommonRepo {
     super.endSession();
   }
 
-  async findById(id: string, filter = { status: ['ready', 'completed'] }) {
+  async findById(id: string, filter = { status: ['ready', 'completed', 'expired'] }) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     const { status } = filter;
     return await Event.where({ _id: id, status: { $in: status } })
@@ -47,7 +47,7 @@ class EventsRepo extends CommonRepo {
       .exec();
   }
 
-  async findByIdSimplified(id: string, filter = { status: ['ready', 'completed'] }) {
+  async findByIdSimplified(id: string, filter = { status: ['ready', 'completed', 'expired'] }) {
     const { status } = filter;
     return await Event.where({ _id: id, status: { $in: status } })
       .findOne()
@@ -186,7 +186,7 @@ class EventsRepo extends CommonRepo {
     }).exec();
   }
 
-  async findEventsByUser(userId: string, filter) {
+  async findEventsByUser(userId: string, filter: any = { status: ['ready', 'completed', 'expired'] }) {
     const condition = { hostUser: userId };
     const { status } = filter;
     if (status) {
