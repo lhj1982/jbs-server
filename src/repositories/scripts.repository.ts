@@ -27,7 +27,7 @@ class ScriptsRepo {
 
   async find(params) {
     const { offset, limit, keyword } = params;
-    let condition = {};
+    let condition = { status: 'online' };
     let shopCondition = {};
     if (keyword) {
       const shops = await ShopsRepo.find({ offset: 0, limit: 100, keyword });
@@ -41,9 +41,9 @@ class ScriptsRepo {
 
       if (shopIds.length === 0) {
         const regex = new RegExp(escapeRegex(keyword), 'gi');
-        condition = {
+        condition = Object.assign(condition, {
           $or: [{ name: regex }, { description: regex }, { tags: keyword }, { shops: {} }]
-        };
+        });
       } else {
         shopCondition = {
           _id: { $in: shopIds }

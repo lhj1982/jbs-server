@@ -7,7 +7,9 @@ export class EventsRoutes {
   eventsController: EventsController = new EventsController();
 
   routes(app): void {
+    app.route('/events/archive-events').get(verifyToken, permit({ domain: 'event', operations: ['archive'] }), this.eventsController.archiveEvents);
     app.route('/events/calendar/:date').get(this.eventsController.getEventsByDate);
+    app.route('/events/calendar/:date/count').get(this.eventsController.getEventsCountByDate);
     app.route('/events/get-events-count-by-date').get(this.eventsController.getEventsCountByDate);
     app.route('/events/price-schema').get(this.eventsController.getPriceWeeklySchema);
     app.route('/events/discount-rules').get(verifyToken, this.eventsController.getDiscountRules);

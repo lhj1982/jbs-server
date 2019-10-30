@@ -94,7 +94,23 @@ export class EventsController extends BaseController {
     }
   };
 
-  getEventsCountByDate = async (req: Request, res: Response, next: NextFunction) => {};
+  getEventsCountByDate = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let { dayOffset } = req.query;
+      if (!dayOffset) {
+        dayOffset = 3;
+      }
+      // const from = formatDate(date);
+      // console.log(`Find event between ${from} and ${to}...`);
+      // const result = await EventsRepo.findByDate(from, to, {
+      //   status: statusArr
+      // });
+      // res.json({ code: 'SUCCESS', data: result });
+    } catch (err) {
+      console.error(err);
+      res.send(err);
+    }
+  };
 
   addEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons, price, hostUserMobile, hostUserWechatId } = req.body;
@@ -852,5 +868,14 @@ export class EventsController extends BaseController {
     const response = await EventsRepo.updateExpiredEvents();
     const { nModified } = response;
     res.json({ code: 'SUCCESS', data: `${nModified} record(s) are updated` });
+  };
+
+  archiveEvents = async (req: Request, res: Response, next: NextFunction) => {
+    const response = await EventsRepo.archiveEvents();
+    const { nModified: affectedRows } = response;
+    res.json({
+      code: 'SUCCESS',
+      data: `${affectedRows} record(s) has been updated`
+    });
   };
 }

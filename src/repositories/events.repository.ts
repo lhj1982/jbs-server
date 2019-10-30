@@ -258,5 +258,18 @@ class EventsRepo extends CommonRepo {
       $set: { status: 'expired' }
     }).exec();
   }
+
+  async archiveEvents(opt: object = {}) {
+    const options = {
+      ...opt,
+      upsert: false
+    };
+    console.log(nowDate());
+    const condition = {
+      startTime: { $lt: nowDate() },
+      status: { $nin: ['expired', 'cancelled'] }
+    };
+    return await Event.updateMany(condition, { status: 'expired' }, options);
+  }
 }
 export default new EventsRepo();

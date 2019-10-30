@@ -31,6 +31,11 @@ export const ScriptSchema = new Schema(
       type: Number,
       default: 0
     },
+    status: {
+      type: String,
+      enum: ['offline', 'online'],
+      default: 'offline'
+    },
     createdAt: {
       type: Date,
       default: Date.now
