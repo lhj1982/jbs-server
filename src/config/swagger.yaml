@@ -710,7 +710,7 @@ paths:
           schema:
             type: string
           example:
-            status: ready,completed
+            status: ready,completed,expired
       responses:
         200:
           description: "Success"
@@ -718,6 +718,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArrayOfEvents'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /events/calendar/{date}/count:
+    get:
+      tags:
+      - "event"
+      summary: "Get events count of the whole week in which the given date falls"
+      operationId: "getEventsCountByDate"
+      parameters:
+        - in: path
+          name: date
+          description: local date, format: YYYY-MM-DD
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: status
+          description: status to include, if multiple status, separate by comma
+          schema:
+            type: string
+          example:
+            status: ready,completed,expired
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    startDate:
+                      type: "string"
+                    numberOfEvents:
+                      type: "integer"
+                      format: "int32"
         default:
           description: "Invalid input"
           content:

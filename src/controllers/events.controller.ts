@@ -94,18 +94,28 @@ export class EventsController extends BaseController {
     }
   };
 
+  /**
+   * Get number of events, group by date of the whole week, by given date.
+   *
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
   getEventsCountByDate = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let { dayOffset } = req.query;
-      if (!dayOffset) {
-        dayOffset = 3;
+      const { date: dateStr } = req.params;
+      const { status } = req.query;
+      let statusArr = ['ready', 'completed', 'expired'];
+      if (status) {
+        statusArr = status.split(',');
       }
-      // const from = formatDate(date);
-      // console.log(`Find event between ${from} and ${to}...`);
-      // const result = await EventsRepo.findByDate(from, to, {
-      //   status: statusArr
-      // });
-      // res.json({ code: 'SUCCESS', data: result });
+      const date = string2Date(dateStr);
+      const dateArr = [date.clone().day(-1), date.clone().day(0), date.clone().day(1), date.clone().day(2), date.clone().day(3), date.clone().day(4), date.clone().day(5)];
+      console.log(`Find event count for ${dateArr}...`);
+      const result = await EventsRepo.findEventsCountByDates(dateArr, {
+        status: statusArr
+      });
+      res.json({ code: 'SUCCESS', data: result });
     } catch (err) {
       console.error(err);
       res.send(err);

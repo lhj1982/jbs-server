@@ -116,7 +116,7 @@ class EventsRepo extends CommonRepo {
     return { pagination, data: pagedEvents };
   }
 
-  async findByDate(fromDate: moment.Moment, toDate: moment.Moment, filter) {
+  async findByDate(fromDate: moment.Moment, toDate: moment.Moment, filter: any = { status: ['ready', 'completed', 'expired'] }) {
     const condition = {
       startTime: {
         $gte: fromDate,
@@ -137,6 +137,49 @@ class EventsRepo extends CommonRepo {
       .populate('script')
       .sort({ startTime: 1 })
       .exec();
+  }
+
+  async findEventsCountByDates(dateArr: moment.Moment[], filter: any = { status: ['ready', 'completed', 'expired'] }) {
+    const dayOfYearInArr = dateArr.map(_ => {
+      return _.dayOfYear();
+    });
+    // console.log(dayOfYearInArr);
+    return await Event.aggregate([
+      {
+        $project: {
+          _id: 1,
+          startTime: 1,
+          status: 1,
+          dayOfYear: { $dayOfYear: { date: '$startTime', timezone: '+08:00' } },
+          startDate: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: '$startTime',
+              timezone: '+08:00'
+            }
+          }
+        }
+      },
+      {
+        $match: { status: 'expired', dayOfYear: { $in: dayOfYearInArr } }
+      },
+      {
+        $group: {
+          _id: '$startDate',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      },
+      {
+        $project: {
+          _id: 0,
+          startDate: '$_id',
+          numberOfEvents: '$count'
+        }
+      }
+    ]).exec();
   }
 
   async findOne(params) {
