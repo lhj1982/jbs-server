@@ -15,7 +15,7 @@ export class EventsRoutes {
     app.route('/events/discount-rules').get(verifyToken, this.eventsController.getDiscountRules);
 
     // This is api to go through all events and update status if it's expired or complete
-    app.route('/events/update-status').post(verifyToken, this.eventsController.updateStatus);
+    // app.route('/events/update-status').post(verifyToken, this.eventsController.updateStatus);
     app
       .route('/events')
       .get(this.eventsController.getEvents)

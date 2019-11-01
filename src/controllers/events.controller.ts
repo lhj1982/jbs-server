@@ -20,6 +20,7 @@ import { BaseController } from './base.controller';
 import MessageService from '../services/message.service';
 import config from '../config';
 import { string2Date, formatDate, addDays, add } from '../utils/dateUtil';
+import logger from '../utils/logger';
 // import * as _ from 'lodash';
 
 export class EventsController extends BaseController {
@@ -866,23 +867,32 @@ export class EventsController extends BaseController {
     return allPaid && numberOfOnlinePersons + numberOfOfflinePersons >= minNumberOfPersons && numberOfOnlinePersons + numberOfOfflinePersons <= maxNumberOfPersons;
   };
 
+  // /**
+  //  * Update event status to expired if endTime is past.
+  //  *
+  //  * @param {Request}      req  [description]
+  //  * @param {Response}     res  [description]
+  //  * @param {NextFunction} next [description]
+  //  */
+  // updateStatus = async (req: Request, res: Response, next: NextFunction) => {
+  //   const { loggedInUser } = res.locals;
+  //   const response = await EventsRepo.updateExpiredEvents();
+  //   const { nModified } = response;
+  //   res.json({ code: 'SUCCESS', data: `${nModified} record(s) are updated` });
+  // };
+
   /**
-   * Update event status to expired if endTime is past.
+   * Archive events which startTime is past and not full.
    *
    * @param {Request}      req  [description]
    * @param {Response}     res  [description]
    * @param {NextFunction} next [description]
    */
-  updateStatus = async (req: Request, res: Response, next: NextFunction) => {
-    const { loggedInUser } = res.locals;
-    const response = await EventsRepo.updateExpiredEvents();
-    const { nModified } = response;
-    res.json({ code: 'SUCCESS', data: `${nModified} record(s) are updated` });
-  };
-
   archiveEvents = async (req: Request, res: Response, next: NextFunction) => {
     const response = await EventsRepo.archiveEvents();
-    const { nModified: affectedRows } = response;
+    // console.log(response);
+    const { eventIds, affectedRows } = response;
+    logger.info(`${affectedRows} record(s) has been updated, data: ${eventIds}`);
     res.json({
       code: 'SUCCESS',
       data: `${affectedRows} record(s) has been updated`

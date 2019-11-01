@@ -289,30 +289,43 @@ class EventsRepo extends CommonRepo {
     return userEvents;
   }
 
-  async updateExpiredEvents(opt: object = {}) {
-    const now = nowDate();
-    console.log(now);
+  // async updateExpiredEvents(opt: object = {}) {
+  //   const now = nowDate();
+  //   console.log(now);
 
-    const condition = {
-      endTime: { $lt: now },
-      status: 'ready'
-    };
-    return await Event.updateMany(condition, {
-      $set: { status: 'expired' }
-    }).exec();
-  }
+  //   const condition = {
+  //     endTime: { $lt: now },
+  //     status: 'ready'
+  //   };
+  //   return await Event.findAndModify(condition, {
+  //     $set: { status: 'expired' }
+  //   }).exec();
+  // }
 
+  /**
+   * Only archive event when
+   * 1. startTime is past
+   * 2. status is ready
+   * 3. not full
+   * @param {object = {}} opt [description]
+   */
   async archiveEvents(opt: object = {}) {
     const options = {
       ...opt,
-      upsert: false
+      upsert: false,
+      new: true
     };
     console.log(nowDate());
     const condition = {
       startTime: { $lt: nowDate() },
-      status: { $nin: ['expired', 'cancelled'] }
+      status: { $in: ['ready'] },
+      minNumberOfAvailableSpots: { $gt: 0 }
     };
-    return await Event.updateMany(condition, { status: 'expired' }, options);
+    const events = await Event.find(condition).exec();
+    const eventIds = events.map(_ => _.id);
+    const response = await Event.updateMany(condition, { status: 'expired' }, options).exec();
+    const { nModified: affectedRows } = response;
+    return { eventIds, affectedRows };
   }
 }
 export default new EventsRepo();
