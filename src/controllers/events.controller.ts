@@ -96,7 +96,7 @@ export class EventsController extends BaseController {
   };
 
   /**
-   * Get number of events, group by date of the whole week, by given date.
+   * Get number of events by given date in which the whole month it falls. date format: YYYY-MM
    *
    * @param {Request}      req  [description]
    * @param {Response}     res  [description]
@@ -110,10 +110,18 @@ export class EventsController extends BaseController {
       if (status) {
         statusArr = status.split(',');
       }
-      const date = string2Date(dateStr);
-      const dateArr = [date.clone().day(-1), date.clone().day(0), date.clone().day(1), date.clone().day(2), date.clone().day(3), date.clone().day(4), date.clone().day(5)];
-      console.log(`Find event count for ${dateArr}...`);
-      const result = await EventsRepo.findEventsCountByDates(dateArr, {
+      const date = string2Date(dateStr, false, 'YYYY-MM');
+      const from = date
+        .clone()
+        .startOf('month')
+        .utc();
+      const to = date
+        .clone()
+        .endOf('month')
+        .utc();
+      // const dateArr = [date.clone().day(-1), date.clone().day(0), date.clone().day(1), date.clone().day(2), date.clone().day(3), date.clone().day(4), date.clone().day(5)];
+      console.log(`Find event count from ${from} to ${to}...`);
+      const result = await EventsRepo.findEventsCountByDates(from, to, {
         status: statusArr
       });
       res.json({ code: 'SUCCESS', data: result });

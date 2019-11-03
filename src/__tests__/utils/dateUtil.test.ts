@@ -9,3 +9,11 @@ test('test date', () => {
   console.log(d);
   // console.log(date2String(d.toDate()));
 });
+
+test('get first and end of given month', () => {
+  const date = string2Date('2019-04', false, 'YYYY-MM');
+  const firstDay = date.clone().startOf('month');
+  const lastDay = date.clone().endOf('month');
+  console.log(firstDay.utc());
+  console.log(lastDay.utc());
+});

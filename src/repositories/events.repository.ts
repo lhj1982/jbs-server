@@ -139,18 +139,14 @@ class EventsRepo extends CommonRepo {
       .exec();
   }
 
-  async findEventsCountByDates(dateArr: moment.Moment[], filter: any = { status: ['ready', 'completed', 'expired'] }) {
-    const dayOfYearInArr = dateArr.map(_ => {
-      return _.dayOfYear();
-    });
-    // console.log(dayOfYearInArr);
+  async findEventsCountByDates(from: moment.Moment, to: moment.Moment, filter: any = { status: ['ready', 'completed', 'expired'] }) {
+    const { status } = filter;
     return await Event.aggregate([
       {
         $project: {
           _id: 1,
           startTime: 1,
           status: 1,
-          dayOfYear: { $dayOfYear: { date: '$startTime', timezone: '+08:00' } },
           startDate: {
             $dateToString: {
               format: '%Y-%m-%d',
@@ -161,7 +157,10 @@ class EventsRepo extends CommonRepo {
         }
       },
       {
-        $match: { status: 'expired', dayOfYear: { $in: dayOfYearInArr } }
+        $match: {
+          status: { $in: status },
+          startTime: { $gte: from.toDate(), $lte: to.toDate() }
+        }
       },
       {
         $group: {
