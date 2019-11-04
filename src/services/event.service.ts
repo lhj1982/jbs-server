@@ -2,6 +2,7 @@ import config from '../config';
 const axios = require('axios');
 const fs = require('fs');
 import logger from '../utils/logger';
+import FileService from './file.service';
 
 class EventService {
   async getQrCode(eventId: string) {
@@ -16,7 +17,9 @@ class EventService {
         } = response;
         // var data = JSON.parse(body);
         // access_token = data.access_token;
-        return await this.getwxcode(accessToken, eventId);
+        const imageData = await this.getwxcode(accessToken, eventId);
+        const uploadResp = await FileService.uploadFile(`static/events/qrcode/${eventId}.png`, imageData);
+        return uploadResp;
       } catch (err) {
         logger.error(err);
         throw err;
@@ -35,12 +38,13 @@ class EventService {
       width: 100,
       auto_color: false
     };
+    console.log(accessToken);
+    console.log(JSON.stringify(postData));
     // postData = JSON.stringify(postData);
-    const response = await axios.post(`https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${accessToken}`, postData);
+    const response = await axios.post(`https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${accessToken}`, JSON.stringify(postData));
+    // console.log(response);
     const { data } = response;
-
-    data.pipe(fs.createWriteStream(`./public/images/${eventId}.png`));
-    return `./public/images/${eventId}.png`;
+    return data;
   }
 }
 

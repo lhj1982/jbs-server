@@ -1,19 +1,33 @@
 import config from '../config';
+import logger from '../utils/logger';
 const qiniu = require('qiniu');
+//构建私有空间的链接
+const mac = new qiniu.auth.digest.Mac(config.qiniu.accessKey, config.qiniu.secretKey);
 
 class FileService {
-  uploadFile(key: string, localFile: string) {
+  uploadFile(key: string, fileStream: string) {
     return new Promise((resolve, reject) => {
-      const token = this.uptoken(config.qiniu.bucket, key);
-      const extra = new qiniu.io.PutExtra();
+      const qiniuConfig = new qiniu.conf.Config();
+      const formUploader = new qiniu.form_up.FormUploader(qiniuConfig);
+      const putExtra = new qiniu.form_up.PutExtra();
+      const options = {
+        scope: config.qiniu.bucket,
+        // callbackUrl: `${config.server.entrypoint}/notifications/qrcode-upload-callback`, // 这个地方需要一个回调通知接口
+        // callbackBody: 'key=$(key)&hash=$(etag)&bucket=$(bucket)&fsize=$(fsize)&name=$(x:name)'
+      };
+      const putPolicy = new qiniu.rs.PutPolicy(options);
+      const uploadToken = putPolicy.uploadToken(mac);
 
-      qiniu.io.putFile(token, key, localFile, extra, (err, ret) => {
-        if (err) {
-          // 上传成功， 处理返回值
-          reject(err);
+      formUploader.put(uploadToken, key, fileStream, putExtra, (respErr, respBody, respInfo) => {
+        if (respErr) {
+          logger.error(`Error when uploading file key: ${key}, ${respErr.toString()}, stack: ${respErr.stack}`);
+          throw respErr;
+        }
+        if (respInfo.statusCode == 200) {
+          resolve(respBody);
         } else {
-          // 上传失败， 处理返回代码
-          resolve(ret);
+          logger.error(`Error when uploading file key: ${key}, status: ${respInfo.statusCode}, body: ${JSON.stringify(respBody)}`);
+          reject(respBody);
         }
       });
     });
@@ -21,11 +35,6 @@ class FileService {
 
   getFile() {
     return null;
-  }
-
-  uptoken(bucket, key) {
-    const putPolicy = new qiniu.rs.PutPolicy(bucket + ':' + key);
-    return putPolicy.token();
   }
 }
 

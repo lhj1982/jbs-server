@@ -884,6 +884,7 @@ export class EventsController extends BaseController {
     const { eventId } = req.params;
     try {
       const response = await EventService.getQrCode(eventId);
+      // console.log(response);
       res.json({ code: 'SUCCESS', data: response });
     } catch (err) {
       next(err);
