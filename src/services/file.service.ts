@@ -4,19 +4,16 @@ import { Duplex } from 'stream';
 const qiniu = require('qiniu');
 //构建私有空间的链接
 const mac = new qiniu.auth.digest.Mac(config.qiniu.accessKey, config.qiniu.secretKey);
+const qiniuConfig = new qiniu.conf.Config();
 
 class FileService {
   uploadFileBase64(key: string, fileBase64Str: string) {
     return new Promise((resolve, reject) => {
-      const qiniuConfig = new qiniu.conf.Config();
       qiniuConfig.zone = qiniu.zone.Zone_z2;
       const formUploader = new qiniu.form_up.FormUploader(qiniuConfig);
       const putExtra = new qiniu.form_up.PutExtra();
       const options = {
-        scope: config.qiniu.bucket + ':' + key
-        // callbackUrl: `${config.server.entrypoint}/notifications/qrcode-upload-callback`, // 这个地方需要一个回调通知接口
-        //     callbackBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}',
-        // callbackBodyType: 'application/json'
+        scope: config.qiniu.bucket
       };
       const putPolicy = new qiniu.rs.PutPolicy(options);
       const uploadToken = putPolicy.uploadToken(mac);
@@ -47,15 +44,11 @@ class FileService {
 
   uploadFile(key: string, filePath: string) {
     return new Promise((resolve, reject) => {
-      const qiniuConfig = new qiniu.conf.Config();
       qiniuConfig.zone = qiniu.zone.Zone_z2;
       const formUploader = new qiniu.form_up.FormUploader(qiniuConfig);
       const putExtra = new qiniu.form_up.PutExtra();
       const options = {
-        scope: config.qiniu.bucket,
-        callbackUrl: `${config.server.qiniu.event.callbackUrl}`, // 这个地方需要一个回调通知接口
-        callbackBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}',
-        callbackBodyType: 'application/json'
+        scope: config.qiniu.bucket
       };
       const putPolicy = new qiniu.rs.PutPolicy(options);
       const uploadToken = putPolicy.uploadToken(mac);
@@ -75,8 +68,31 @@ class FileService {
     });
   }
 
-  getFile() {
-    return null;
+  getFile(eventId: string, key: string, bucket: string) {
+    return new Promise((resolve, reject) => {
+      const options = {
+        limit: 1,
+        prefix: key
+      };
+      var bucketManager = new qiniu.rs.BucketManager(mac, qiniuConfig);
+      bucketManager.listPrefix(bucket, options, function(err, respBody, respInfo) {
+        if (err) {
+          throw err;
+        }
+        if (respInfo.statusCode == 200) {
+          var items = respBody.items;
+          items.forEach(function(item) {
+            const respBody = {
+              hash: item.hash,
+              key: item.key
+            }
+            resolve(respBody);
+          });
+        } else {
+          reject(respBody);
+        }
+      });
+    })
   }
 }
 

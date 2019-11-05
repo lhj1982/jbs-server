@@ -7,47 +7,44 @@ import { pp } from '../utils/stringUtil';
 
 class EventService {
   async getQrCode(eventId: string) {
-    const time2 = 0,
+      const time2 = 0,
       accessToken = '';
-    const time1 = new Date().getTime();
-    if (!time2 && time1 - time2 > 7000) {
-      try {
-        const response = await axios.get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appId}&secret=${config.appSecret}`);
-        const {
-          data: { access_token: accessToken }
-        } = response;
-        const imageData = await this.getwxcode(accessToken, eventId);
-
-        // can return this string directly to client as well
-        const base64Str = Buffer.from(imageData, 'binary').toString('base64');
-        const key = `${config.qiniu.event.qrcodeKeyPrefix}/${eventId}.png`;
-        const uploadResp = await FileService.uploadFileBase64(key, base64Str);
-
-        // const outputFilename = `./tmp/${eventId}.png`;
-        // fs.writeFileSync(outputFilename, imageData);
-        // const uploadResp = await FileService.uploadFile(`static/images/events/qrcode/${eventId}.png`, outputFilename);
-        logger.info(`Uploading file succeed, key: ${key}, ${pp(uploadResp)}`);
-        return uploadResp;
-      } catch (err) {
-        logger.error(err);
-        throw err;
+      const time1 = new Date().getTime();
+      if (!time2 && time1 - time2 > 7000) {
+        try {
+          const response = await axios.get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appId}&secret=${config.appSecret}`);
+          const {
+            data: { access_token: accessToken }
+          } = response;
+          const imageData = await this.getwxcode(accessToken, eventId);
+          const base64Str = Buffer.from(imageData, 'binary').toString('base64');
+          const uploadResp = await FileService.uploadFileBase64(`static/images/events/qrcode/${eventId}.png`, base64Str);
+          return uploadResp;
+        } catch (err) {
+          // 如果文件已经存在直接返回存在的文件
+          if (err.error == 'file exists') {
+            const key = `static/images/events/qrcode/${eventId}.png`
+            const uploadResp = await FileService.getFile(eventId, key, config.qiniu.bucket)
+            return uploadResp
+          } else {
+            logger.error(err);
+            throw err;
+          }
+        }
+      } else {
+        return await this.getwxcode(accessToken, eventId);
       }
-    } else {
-      return await this.getwxcode(accessToken, eventId);
-    }
+    // }
   }
 
   async getwxcode(accessToken: string, eventId: string) {
     //方法2： 利用request模块发起请求
     const postData = {
       page: 'pages/event_detail', //二维码默认打开小程序页面
-      // scene: "5dafcd0853aa5e56395ff465",//打开页面时携带的参数
       scene: eventId,
       width: 100,
       auto_color: false
     };
-    console.log(accessToken);
-    console.log(JSON.stringify(postData));
     // postData = JSON.stringify(postData);
     const response = await axios({
       responseType: 'arraybuffer',
@@ -58,7 +55,6 @@ class EventService {
       },
       data: JSON.stringify(postData)
     });
-    // console.log(response);
     const { data } = response;
     return data;
   }
