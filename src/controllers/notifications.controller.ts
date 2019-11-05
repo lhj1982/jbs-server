@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { string2Date } from '../utils/dateUtil';
+import { pp } from '../utils/stringUtil';
 import logger from '../utils/logger';
 import NotificationsRepo from '../repositories/notifications.repository';
 
@@ -18,18 +19,29 @@ export class NotificationsController {
     logger.info(`Receive message status report, data: ${reports}`);
     const reportsItems = reports.split(';');
     const sendReports = this.generateSendReports(reportsItems);
+    // console.log(sendReports);
+    let notification = undefined;
+    let foundNotification = 0;
     if (sendReports) {
-      sendReports.forEach(async report => {
-        const { taskId } = report;
-        const notification = await NotificationsRepo.findByTaskId(taskId);
-        let message = undefined;
+      for (let i = 0; i < sendReports.length; i++) {
+        const report = sendReports[i];
+        const { taskid } = report;
+        notification = await NotificationsRepo.findByTaskId(taskid);
         if (notification) {
-          message = notification.message;
+          foundNotification = 1;
+          break;
         }
-        const notificationToUpdate = Object.assign({ message }, report);
-        logger.info(`Sms report: ${notificationToUpdate}`);
-        // await NotificationsRepo.saveOrUpdate(notificationToUpdate);
-      });
+      }
+      if (!foundNotification) {
+        logger.warn(`No notification is found, taskid: ${pp(sendReports)}`);
+      } else {
+        const notificationToUpdate = Object.assign(notification.toObject(), {
+          reports: sendReports
+        });
+        await NotificationsRepo.saveOrUpdate(notificationToUpdate);
+        const { taskid } = notification;
+        logger.info(`Update notification status succeed, taskid: ${taskid}`);
+      }
     }
     res.json({ code: 'SUCCESS' });
   };
@@ -47,16 +59,31 @@ export class NotificationsController {
 
   generateSendReports = (reports: string[]) => {
     try {
-      return reports.map(_ => {
-        const splittedReportItem = _.split(',');
-        const taskId = splittedReportItem[0];
-        const mobiles = [splittedReportItem[1]];
-        const statusCode = splittedReportItem[2];
-        const status = splittedReportItem[3];
-        const serialNumber = splittedReportItem[4];
-        const sendDate = string2Date(splittedReportItem[5], true, 'YYYYMMDDHHmmss');
-        return { taskId, mobiles, statusCode, status, serialNumber, sendDate };
-      });
+      return reports
+        .map(_ => {
+          if (_) {
+            const splittedReportItem = _.split(',');
+            const taskid = splittedReportItem[0];
+            const recipient = splittedReportItem[1];
+            const statusCode = splittedReportItem[2];
+            const status = splittedReportItem[3];
+            const serialNumber = splittedReportItem[4];
+            const sendDate = string2Date(splittedReportItem[5], true, 'YYYYMMDDHHmmss');
+            return {
+              taskid,
+              recipient,
+              statusCode,
+              status,
+              serialNumber,
+              sendDate
+            };
+          } else {
+            return null;
+          }
+        })
+        .filter(_ => {
+          return _ != null;
+        });
     } catch (err) {
       logger.error(`${err.toString()}, stack: ${err.stack}`);
       return undefined;

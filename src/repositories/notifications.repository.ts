@@ -6,7 +6,7 @@ mongoose.set('useFindAndModify', false);
 
 class NotificationsRepo {
   async findByTaskId(taskId: string) {
-    return await Notification.find({ taskId })
+    return await Notification.find({ taskid: taskId })
       .findOne()
       .exec();
   }
@@ -24,8 +24,8 @@ class NotificationsRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { taskId } = notification;
-    return await Notification.findOneAndUpdate({ taskId }, notification, options).exec();
+    const { taskid } = notification;
+    return await Notification.findOneAndUpdate({ taskid }, notification, options).exec();
   }
 
   async saveNotifications(notifications, opts = {}) {

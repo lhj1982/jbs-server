@@ -2,6 +2,10 @@ const crypto = require('crypto');
 const algorithm = 'aes-256-ctr';
 const password = '>aXjR>&ht,Du5w^Z';
 
+const pp = string => {
+  return JSON.stringify(string);
+};
+
 const encrypt = text => {
   const cipher = crypto.createCipher(algorithm, password);
   let crypted = cipher.update(text, 'utf8', 'hex');
@@ -93,4 +97,4 @@ const isMobileNumber = phone => {
   return { valid: flag, message };
 };
 
-export { escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder, isMobileNumber, getRandomString };
+export { pp, escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder, isMobileNumber, getRandomString };
