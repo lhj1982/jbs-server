@@ -15,10 +15,15 @@ class EventService {
         const {
           data: { access_token: accessToken }
         } = response;
-        // var data = JSON.parse(body);
-        // access_token = data.access_token;
         const imageData = await this.getwxcode(accessToken, eventId);
-        const uploadResp = await FileService.uploadFile(`static/events/qrcode/${eventId}.png`, imageData);
+
+        // can return this string directly to client as well
+        const base64Str = Buffer.from(imageData, 'binary').toString('base64');
+        const uploadResp = await FileService.uploadFileBase64(`static/images/events/qrcode/${eventId}.png`, base64Str);
+
+        // const outputFilename = `./tmp/${eventId}.png`;
+        // fs.writeFileSync(outputFilename, imageData);
+        // const uploadResp = await FileService.uploadFile(`static/images/events/qrcode/${eventId}.png`, outputFilename);
         return uploadResp;
       } catch (err) {
         logger.error(err);
@@ -41,7 +46,15 @@ class EventService {
     console.log(accessToken);
     console.log(JSON.stringify(postData));
     // postData = JSON.stringify(postData);
-    const response = await axios.post(`https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${accessToken}`, JSON.stringify(postData));
+    const response = await axios({
+      responseType: 'arraybuffer',
+      method: 'POST',
+      url: `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${accessToken}`,
+      headers: {
+        'Content-Type': 'image/png'
+      },
+      data: JSON.stringify(postData)
+    });
     // console.log(response);
     const { data } = response;
     return data;

@@ -64,8 +64,8 @@ export class NotificationsController {
   };
 
   getQrcodeUploadStatus = async (req: Request, res: Response, next: NextFunction) => {
-  	const { data } = req.body;
-  	logger.info(`QRcode upload callback, ${data}`);
-  	res.json({ code: 'SUCCESS' });
+    const { data } = req.body;
+    logger.info(`QRcode upload callback, ${data}`);
+    res.json({ code: 'SUCCESS' });
   };
 }
