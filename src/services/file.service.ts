@@ -13,7 +13,7 @@ class FileService {
       const formUploader = new qiniu.form_up.FormUploader(qiniuConfig);
       const putExtra = new qiniu.form_up.PutExtra();
       const options = {
-        scope: config.qiniu.bucket
+        scope: config.qiniu.bucket + ':' + key
         // callbackUrl: `${config.server.entrypoint}/notifications/qrcode-upload-callback`, // 这个地方需要一个回调通知接口
         //     callbackBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}',
         // callbackBodyType: 'application/json'
@@ -52,10 +52,10 @@ class FileService {
       const formUploader = new qiniu.form_up.FormUploader(qiniuConfig);
       const putExtra = new qiniu.form_up.PutExtra();
       const options = {
-        scope: config.qiniu.bucket
-        // callbackUrl: `${config.server.entrypoint}/notifications/qrcode-upload-callback`, // 这个地方需要一个回调通知接口
-        //     callbackBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}',
-        // callbackBodyType: 'application/json'
+        scope: config.qiniu.bucket,
+        callbackUrl: `${config.server.qiniu.event.callbackUrl}`, // 这个地方需要一个回调通知接口
+        callbackBody: '{"key":"$(key)","hash":"$(etag)","fsize":$(fsize),"bucket":"$(bucket)","name":"$(x:name)"}',
+        callbackBodyType: 'application/json'
       };
       const putPolicy = new qiniu.rs.PutPolicy(options);
       const uploadToken = putPolicy.uploadToken(mac);

@@ -3,6 +3,7 @@ const axios = require('axios');
 const fs = require('fs');
 import logger from '../utils/logger';
 import FileService from './file.service';
+import { pp } from '../utils/stringUtil';
 
 class EventService {
   async getQrCode(eventId: string) {
@@ -19,11 +20,13 @@ class EventService {
 
         // can return this string directly to client as well
         const base64Str = Buffer.from(imageData, 'binary').toString('base64');
-        const uploadResp = await FileService.uploadFileBase64(`static/images/events/qrcode/${eventId}.png`, base64Str);
+        const key = `${config.qiniu.event.qrcodeKeyPrefix}/${eventId}.png`;
+        const uploadResp = await FileService.uploadFileBase64(key, base64Str);
 
         // const outputFilename = `./tmp/${eventId}.png`;
         // fs.writeFileSync(outputFilename, imageData);
         // const uploadResp = await FileService.uploadFile(`static/images/events/qrcode/${eventId}.png`, outputFilename);
+        logger.info(`Uploading file succeed, key: ${key}, ${pp(uploadResp)}`);
         return uploadResp;
       } catch (err) {
         logger.error(err);
