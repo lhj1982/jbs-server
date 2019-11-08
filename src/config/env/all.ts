@@ -6,7 +6,7 @@ export default {
   },
   eventDateFormatParse: 'YYYY-MM-DD HH:mm:ss.SSSZ',
   notification: {
-    url: 'http://detail.boogoogoo.com:10080?<eventId>',
+    url: 'https://detail.boogoogoo.com?<eventId>',
     placeholders: [
       'shopName',
       'hostName',

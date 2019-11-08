@@ -1965,6 +1965,9 @@ components:
           type: "string"
         taskid:
           type: "string"
+        read:
+          type: "boolean"
+          default: false
         reports:
           type: "array"
           items:
