@@ -9,7 +9,7 @@ info:
   license:
     name: MIT
 tags:
-- name: "oauth"
+- name: "auth"
   description: "User authentication and authorization"
 - name: "script"
   description: "Access to scripts"
@@ -35,10 +35,10 @@ paths:
   /oauth/login:
     post:
       tags:
-      - oauth
-      summary: "Authorize user"
+      - auth
+      summary: "Authorize user via wechat"
       description: ""
-      operationId: "authrozieUser"
+      operationId: "authrozieUserByWechat"
       requestBody: 
         description: Request content
         required: true
@@ -46,6 +46,35 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OauthLogin'
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/OauthResponse'
+        default:
+          description: "Invalid input"
+  /auth/login:
+    post:
+      tags:
+      - auth
+      summary: "Authorize user using username and passsword"
+      description: ""
+      operationId: "authrozieUserByUsernameAndPassword"
+      requestBody: 
+        description: Request content
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                username:
+                  type: "string"
+                password:
+                  type: "string"
+                  format: "password"
       responses:
         200:
           description: "Success"
@@ -1334,6 +1363,40 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /notifications:
+    get:
+      tags:
+      - "notification"
+      summary: "Retrieve notifications list"
+      description: "Retrieve notifications list. Required permission: notifications.read"
+      operationId: "getNotifications"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: offset
+          description: The number of items to skip before starting to collect the result set
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          description: The numbers of items to return
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "string"
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationsResponse'
+
   /notifications/{serialNumber}:
     get:
       tags:
@@ -1870,7 +1933,68 @@ components:
         createdAt:
           type: "string"
           format: "date-time"
-      
+    Notification:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        serialNumber:
+          type: "string"
+        createdAt:
+          type: "string"
+          format: "date-time"
+        audience:
+          type: "string"
+        eventType:
+          type: "string"
+        objectId:
+          type: "string"
+        recipients:
+          type: "array"
+          items:
+            type: "string"
+        message:
+          type: "string"
+        smsMessage:
+          type: "string"
+        status:
+          type: "string"
+        description:
+          type: "string"
+        result:
+          type: "string"
+        taskid:
+          type: "string"
+        reports:
+          type: "array"
+          items:
+            taskid:
+              type: "string"
+            recipient:
+              type: "string"
+            statusCode:
+              type: "string"
+            status:
+              type: "string"
+            serialNumber:
+              type: "string"
+            sendDate:
+              type: "string"
+              format: "date-time"
+    ArrayOfNotifications:
+      type: "array"
+      items:
+        $ref: '#/components/schemas/Notification'
+    
+    NotificationsResponse:
+      allOf: 
+        - $ref: '#/components/schemas/PaginatedDataResponse'
+        - 
+          type: "object"
+          properties:
+            data:
+              $ref: '#/components/schemas/ArrayOfNotifications'
+
     PaginatedDataResponse:
       type: "object"
       properties:

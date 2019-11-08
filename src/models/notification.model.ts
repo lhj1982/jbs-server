@@ -54,6 +54,10 @@ export const NotificationSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  read: {
+    type: Boolean,
+    default: false
+  },
   reports: [
     {
       taskid: {

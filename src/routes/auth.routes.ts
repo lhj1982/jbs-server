@@ -12,5 +12,7 @@ export class AuthRoutes {
       // console.log(`Request type: ${req.method}`);
       next();
     }, this.authController.login);
+
+    app.route('/auth/login').post(this.authController.loginWithUserNameAndPassword);
   }
 }

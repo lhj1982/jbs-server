@@ -19,6 +19,9 @@ export const UserSchema = new Schema(
       type: String,
       required: 'UserName is required'
     },
+    username: {
+      type: String
+    },
     password: {
       type: String
       // required: 'Password is required'

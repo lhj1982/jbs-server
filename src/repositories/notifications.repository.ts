@@ -11,6 +11,20 @@ class NotificationsRepo {
       .exec();
   }
 
+  async find(params) {
+    const { offset, limit } = params;
+    const condition = {};
+    // console.log(condition);
+    const notifications = await Notification.find(condition)
+      .sort({ createdAt: -1 })
+      .exec();
+
+    const total = notifications.length;
+    const pagination = { offset, limit, total };
+    const pagedNotifications = notifications.slice(offset, offset + limit);
+    return { pagination, data: pagedNotifications };
+  }
+
   async findBySerialNumber(serialNumber: string) {
     return await Notification.find({ serialNumber })
       .findOne()

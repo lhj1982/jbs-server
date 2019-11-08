@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import { UserSchema } from '../models/user.model';
 import EventUsersRepo from './eventUsers.repository';
+import * as passwordHash from 'password-hash';
 const User = mongoose.model('User', UserSchema);
 mongoose.set('useFindAndModify', false);
 
@@ -10,6 +11,7 @@ class UsersRepo {
     return await User.where({ _id: id })
       .findOne()
       .populate('roles', ['name', 'permissions'])
+      .select('-password')
       .exec();
   }
 
@@ -25,7 +27,20 @@ class UsersRepo {
     return await User.where(params)
       .findOne()
       .populate('roles', ['name'])
+      .select('-password')
       .exec();
+  }
+
+  async findByUserNameAndPassword(username, password) {
+    const user = await User.where({ username })
+      .findOne()
+      .exec();
+    if (user) {
+      if (passwordHash.verify(password, user.password)) {
+        return user;
+      }
+    }
+    return null;
   }
 
   async saveAccessToken(user) {

@@ -3,8 +3,30 @@ import { string2Date } from '../utils/dateUtil';
 import { pp } from '../utils/stringUtil';
 import logger from '../utils/logger';
 import NotificationsRepo from '../repositories/notifications.repository';
+import { BaseController } from './base.controller';
+import config from '../config';
 
-export class NotificationsController {
+export class NotificationsController extends BaseController {
+  getNotifications = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let offset = parseInt(req.query.offset);
+      let limit = parseInt(req.query.limit);
+      const { keyword } = req.query;
+      if (!offset) {
+        offset = config.query.offset;
+      }
+      if (!limit) {
+        limit = config.query.limit;
+      }
+      let result = await NotificationsRepo.find({ offset, limit });
+      const links = this.generateLinks(result.pagination, req.route.path, '');
+      result = Object.assign({}, result, links);
+      res.json(result);
+    } catch (err) {
+      res.send(err);
+    }
+  };
+
   /**
    * Get message status report pushed by vendor.
    * report example is

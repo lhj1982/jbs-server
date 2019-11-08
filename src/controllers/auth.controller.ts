@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import AuthApi from '../api/auth';
 import UsersRepo from '../repositories/users.repository';
 import RolesRepo from '../repositories/roles.repository';
-import { InvalidRequestException } from '../exceptions/custom.exceptions';
+import { InvalidRequestException, WrongCredentialException } from '../exceptions/custom.exceptions';
 import * as moment from 'moment';
 import * as jwt from 'jsonwebtoken';
 import config from '../config';
@@ -98,6 +98,30 @@ export class AuthController {
         throw new Error(`Unknown login type, ${type}`);
       }
       // const contact = await UsersRepo.find({});
+    } catch (err) {
+      res.send(err);
+    }
+  };
+
+  loginWithUserNameAndPassword = async (req: Request, res: Response, next: NextFunction) => {
+    const { username, password } = req.body;
+    if (!username) {
+      next(new InvalidRequestException('Auth', ['username']));
+      return;
+    }
+    if (!password) {
+      next(new InvalidRequestException('Auth', ['password']));
+      return;
+    }
+    try {
+      const user = await UsersRepo.findByUserNameAndPassword(username, password);
+      console.log(user);
+      if (!user) {
+        next(new WrongCredentialException(username, password));
+        return;
+      }
+      const token = jwt.sign(this.getTokenPayload(user), config.jwt.secret);
+      res.json({ token, user });
     } catch (err) {
       res.send(err);
     }

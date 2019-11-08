@@ -6,6 +6,12 @@ class AuthorizationException extends HttpException {
   }
 }
 
+class WrongCredentialException extends HttpException {
+  constructor(username: string, password: string) {
+    super(401, 'unauthorized', `Wrong login credential, ${username}, ${password}`);
+  }
+}
+
 class AccessDeinedException extends HttpException {
   constructor(id: string, message = '') {
     if (message) {
@@ -24,7 +30,7 @@ class ResourceNotFoundException extends HttpException {
 
 class InvalidRequestException extends HttpException {
   constructor(service: string, attributes: string[]) {
-    super(404, `invalid_request`, `Invalid request for attribute(s) ${attributes} in ${service}`);
+    super(400, `invalid_request`, `Invalid request for attribute(s) ${attributes} in ${service}`);
   }
 }
 
@@ -60,6 +66,7 @@ class EventCannotCancelException extends HttpException {
 
 export {
   AuthorizationException,
+  WrongCredentialException,
   AccessDeinedException,
   ResourceNotFoundException,
   InvalidRequestException,
