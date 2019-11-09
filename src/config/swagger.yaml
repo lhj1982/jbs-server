@@ -1195,6 +1195,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
+  /users/{userId}/block:
+    put:
+      tags:
+      - "user"
+      summary: "Block user"
+      description: "Block user by given userId. Required permission: user.block"
+      operationId: "blockUserById"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: user id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                
   /profile:
     get:
       tags:
@@ -1573,6 +1604,9 @@ components:
           items:
             type: "object"
             $ref: '#/components/schemas/Role'
+        status:
+          type: "string"
+          enum: ['active', 'inactive', 'blocked']
       xml:
         name: "User"
     

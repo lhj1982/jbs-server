@@ -85,7 +85,12 @@ export const UserSchema = new Schema(
       type: Date,
       default: Date.now
     },
-    roles: [{ type: Schema.Types.ObjectId, ref: 'Role' }]
+    roles: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
+    status: {
+      type: String,
+      enum: ['active', 'inactive', 'blocked'],
+      default: 'inactive'
+    }
   },
   { toJSON: { virtuals: true } }
 );

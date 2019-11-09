@@ -31,7 +31,7 @@ export class UsersController {
     const { userId } = req.params;
     const { loggedInUser } = res.locals;
     if (userId && userId != loggedInUser.id) {
-      next(new AccessDeinedException(''));
+      next(new AccessDeinedException(userId, 'You can only show your own profile'));
     }
     res.json({ code: 'SUCCESS', data: loggedInUser });
   };
@@ -88,6 +88,7 @@ export class UsersController {
     const { loggedInUser } = res.locals;
     if (!loggedInUser) {
       next(new AccessDeinedException(''));
+      return;
     }
     const { status } = req.query;
     // default status filter
@@ -112,6 +113,29 @@ export class UsersController {
         openId: loggedInUser.openId
       }
     });
+  };
+
+  blockUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    if (!loggedInUser) {
+      next(new AccessDeinedException(''));
+      return;
+    }
+    try {
+      const { userId } = req.params;
+      const user = await UsersRepo.findById(userId);
+      if (!user) {
+        next(new ResourceNotFoundException('User', userId));
+        return;
+      }
+      const userToUpdate = Object.assign(user.toObject(), {
+        status: 'blocked'
+      });
+      const newUser = await UsersRepo.saveOrUpdateUser(userToUpdate);
+      res.json({ code: 'SUCCESS', data: newUser });
+    } catch (err) {
+      next(err);
+    }
   };
 
   // getUserEvents = async (req: Request, res: Response, next: NextFunction) => {

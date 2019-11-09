@@ -1,3 +1,5 @@
+import logger from '../utils/logger';
+import { pp } from '../utils/stringUtil';
 // middleware for doing role-based permissions
 export default function permit(...allowed) {
   /**
@@ -71,6 +73,7 @@ export default function permit(...allowed) {
     if (loggedInUser && isAllowed(allowedPermissions)) {
       next(); // role is allowed, so continue on the next middleware
     } else {
+      logger.warn(`You are not allowed to perform action ${pp(allowed)}`);
       res.status(403).json({ message: 'Forbidden' }); // user is forbidden
     }
   };

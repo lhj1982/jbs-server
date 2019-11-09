@@ -6,7 +6,7 @@ module.exports = {
   appId: 'wxf59749a45686779c',
   appSecret: '2553af7112c7911bc3bea91da887dc8c',
   logDir: '/data/log/jbs-server',
-  dbUri: 'mongodb://admin:12wed98uh56yhbv@123.206.116.244:27017,123.206.116.244:27018,123.206.116.244:27019/jbs?replicaSet=rs0&maxPoolSize=512&authSource=admin',
+  dbUri: 'mongodb://admin:12wed98uh56yhbv@49.234.63.40:27017,49.234.63.40:27018,49.234.63.40:27019/jbs?replicaSet=rs0&maxPoolSize=512&authSource=admin',
   jwt: {
     issuer: 'ademes',
     secret: 'JARF2YXNTA46ZH8F4Q2TBFHWE8DSDJCXAMGQTSSMWZKSPWC8FMWSL9YXU5PELUFN',

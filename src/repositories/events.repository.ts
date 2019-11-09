@@ -285,7 +285,20 @@ class EventsRepo extends CommonRepo {
         userEvents.push(event1);
       }
     }
-    return userEvents;
+    return userEvents.sort(this.compare);
+  }
+
+  compare(a, b) {
+    // Use toUpperCase() to ignore character casing
+    const { startTime: startTimeA } = a;
+    const { startTime: startTimeB } = b;
+    let comparison = 0;
+    if (startTimeA > startTimeB) {
+      comparison = -1;
+    } else if (startTimeA < startTimeB) {
+      comparison = 1;
+    }
+    return comparison;
   }
 
   // async updateExpiredEvents(opt: object = {}) {
