@@ -7,34 +7,33 @@ import { pp } from '../utils/stringUtil';
 
 class EventService {
   async getQrCode(eventId: string) {
-      const time2 = 0,
+    const time2 = 0,
       accessToken = '';
-      const time1 = new Date().getTime();
-      if (!time2 && time1 - time2 > 7000) {
-        try {
-          const response = await axios.get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appId}&secret=${config.appSecret}`);
-          const {
-            data: { access_token: accessToken }
-          } = response;
-          const imageData = await this.getwxcode(accessToken, eventId);
-          const base64Str = Buffer.from(imageData, 'binary').toString('base64');
-          const uploadResp = await FileService.uploadFileBase64(`static/images/events/qrcode/${eventId}.png`, base64Str);
+    const time1 = new Date().getTime();
+    if (!time2 && time1 - time2 > 7000) {
+      try {
+        const response = await axios.get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appId}&secret=${config.appSecret}`);
+        const {
+          data: { access_token: accessToken }
+        } = response;
+        const imageData = await this.getwxcode(accessToken, eventId);
+
+        const base64Str = Buffer.from(imageData, 'binary').toString('base64');
+        const uploadResp = await FileService.uploadFileBase64(`static/images/events/qrcode/${eventId}.png`, base64Str);
+        return uploadResp;
+      } catch (err) {
+        if (err.error == 'file exists') {
+          const uploadResp = {
+            hash: '',
+            key: `static/images/events/qrcode/${eventId}.png`
+          };
           return uploadResp;
-        } catch (err) {
-          // 如果文件已经存在直接返回存在的文件
-          if (err.error == 'file exists') {
-            const key = `static/images/events/qrcode/${eventId}.png`
-            const uploadResp = await FileService.getFile(eventId, key, config.qiniu.bucket)
-            return uploadResp
-          } else {
-            logger.error(err);
-            throw err;
-          }
         }
-      } else {
-        return await this.getwxcode(accessToken, eventId);
+        logger.error(err);
+        throw err;
       }
-    // }
+      // }
+    }
   }
 
   async getwxcode(accessToken: string, eventId: string) {

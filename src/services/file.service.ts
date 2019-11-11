@@ -74,25 +74,25 @@ class FileService {
         limit: 1,
         prefix: key
       };
-      var bucketManager = new qiniu.rs.BucketManager(mac, qiniuConfig);
+      const bucketManager = new qiniu.rs.BucketManager(mac, qiniuConfig);
       bucketManager.listPrefix(bucket, options, function(err, respBody, respInfo) {
         if (err) {
           throw err;
         }
         if (respInfo.statusCode == 200) {
-          var items = respBody.items;
+          const items = respBody.items;
           items.forEach(function(item) {
             const respBody = {
               hash: item.hash,
               key: item.key
-            }
+            };
             resolve(respBody);
           });
         } else {
           reject(respBody);
         }
       });
-    })
+    });
   }
 }
 
