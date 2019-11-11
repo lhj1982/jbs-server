@@ -11,15 +11,15 @@ export class NotificationsController extends BaseController {
     try {
       let offset = parseInt(req.query.offset);
       let limit = parseInt(req.query.limit);
-      const { keyword } = req.query;
+      const { audience } = req.query;
       if (!offset) {
         offset = config.query.offset;
       }
       if (!limit) {
         limit = config.query.limit;
       }
-      let result = await NotificationsRepo.find({ offset, limit });
-      const links = this.generateLinks(result.pagination, req.route.path, '');
+      let result = await NotificationsRepo.find({ offset, limit, audience});
+      const links = this.generateLinks(result.pagination, req.route.path, 'audience=' + audience);
       result = Object.assign({}, result, links);
       res.json(result);
     } catch (err) {

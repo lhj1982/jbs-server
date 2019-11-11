@@ -12,9 +12,8 @@ class NotificationsRepo {
   }
 
   async find(params) {
-    const { offset, limit } = params;
-    const condition = {};
-    // console.log(condition);
+    const { offset, limit, audience } = params;
+    const condition = {"audience": audience};
     const notifications = await Notification.find(condition)
       .sort({ createdAt: -1 })
       .exec();
@@ -26,7 +25,8 @@ class NotificationsRepo {
   }
 
   async findBySerialNumber(serialNumber: string) {
-    return await Notification.find({ serialNumber })
+    const condition = {"serialNumber": serialNumber}
+    return await Notification.find(condition)
       .findOne()
       .exec();
   }
