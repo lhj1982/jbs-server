@@ -9,6 +9,7 @@ export class NotificationsRoutes {
   routes(app): void {
     //
     app.route('/notifications/sms-send-callback').post(this.notificationsController.getSmsSendReports);
+    app.route('/notifications/qrcode-upload-callback').post(this.notificationsController.getQrcodeUploadStatus);
 
     app.route('/notifications/:serialNumber').get(this.notificationsController.getNotification);
 

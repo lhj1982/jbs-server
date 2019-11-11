@@ -19,7 +19,11 @@ module.exports = {
   qiniu: {
     bucket: 'jbs-server',
     accessKey: 'tVQXlS0ahil12znZM0RcwSDehAzJfUhs4lmjSoNC',
-    secretKey: 'Ebwd-HQi_HPQuJD7yK62ooZUVxG3aVI80g73NCBF'
+    secretKey: 'Ebwd-HQi_HPQuJD7yK62ooZUVxG3aVI80g73NCBF',
+    event: {
+      qrcodeKeyPrefix: 'static/images/events/qrcode-dev',
+      callbackUrl: 'https://api.boogoogoo.com/notifications/qrcode-upload-callback'
+    }
   },
   sms: {
     templates: {},

@@ -18,6 +18,7 @@ import {
 } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import MessageService from '../services/message.service';
+import EventService from '../services/event.service';
 import config from '../config';
 import { string2Date, formatDate, addDays, add } from '../utils/dateUtil';
 import logger from '../utils/logger';
@@ -905,5 +906,16 @@ export class EventsController extends BaseController {
       code: 'SUCCESS',
       data: `${affectedRows} record(s) has been updated`
     });
+  };
+
+  getEventQrCode = async (req: Request, res: Response, next: NextFunction) => {
+    const { eventId } = req.params;
+    try {
+      const response = await EventService.getQrCode(eventId);
+      // console.log(response);
+      res.json({ code: 'SUCCESS', data: response });
+    } catch (err) {
+      next(err);
+    }
   };
 }
