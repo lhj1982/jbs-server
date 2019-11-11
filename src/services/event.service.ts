@@ -17,15 +17,17 @@ class EventService {
         } = response;
         const imageData = await this.getwxcode(accessToken, eventId);
 
-        // can return this string directly to client as well
         const base64Str = Buffer.from(imageData, 'binary').toString('base64');
         const uploadResp = await FileService.uploadFileBase64(`static/images/events/qrcode/${eventId}.png`, base64Str);
-
-        // const outputFilename = `./tmp/${eventId}.png`;
-        // fs.writeFileSync(outputFilename, imageData);
-        // const uploadResp = await FileService.uploadFile(`static/images/events/qrcode/${eventId}.png`, outputFilename);
         return uploadResp;
       } catch (err) {
+        if (err.error == 'file exists') {
+          const uploadResp ={
+            "hash": "",
+            "key": `static/images/events/qrcode/${eventId}.png`
+          }
+          return uploadResp;
+        }
         logger.error(err);
         throw err;
       }
@@ -38,14 +40,10 @@ class EventService {
     //方法2： 利用request模块发起请求
     const postData = {
       page: 'pages/event_detail', //二维码默认打开小程序页面
-      // scene: "5dafcd0853aa5e56395ff465",//打开页面时携带的参数
-      scene: eventId,
+      scene: eventId, //打开页面时携带的参数
       width: 100,
       auto_color: false
     };
-    console.log(accessToken);
-    console.log(JSON.stringify(postData));
-    // postData = JSON.stringify(postData);
     const response = await axios({
       responseType: 'arraybuffer',
       method: 'POST',
@@ -55,7 +53,6 @@ class EventService {
       },
       data: JSON.stringify(postData)
     });
-    // console.log(response);
     const { data } = response;
     return data;
   }
