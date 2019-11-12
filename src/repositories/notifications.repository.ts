@@ -13,7 +13,7 @@ class NotificationsRepo {
 
   async find(params) {
     const { offset, limit, audience } = params;
-    const condition = {"audience": audience};
+    const condition = { audience: audience };
     const notifications = await Notification.find(condition)
       .sort({ createdAt: -1 })
       .exec();
@@ -25,7 +25,7 @@ class NotificationsRepo {
   }
 
   async findBySerialNumber(serialNumber: string) {
-    const condition = {"serialNumber": serialNumber}
+    const condition = { serialNumber: serialNumber };
     return await Notification.find(condition)
       .findOne()
       .exec();
@@ -73,7 +73,17 @@ class NotificationsRepo {
     const { serialNumber } = notification;
     console.log(`Update status ${JSON.stringify(notification)}`);
     const resp = await Notification.findOneAndUpdate({ serialNumber }, notification, options).exec();
-
+    return resp;
+  }
+  async updateNotificationRead(notification) {
+    const options = {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true,
+      returnNewDocument: true
+    };
+    const serialNumber = notification.serialNumber;
+    const resp = await Notification.findOneAndUpdate({ serialNumber: serialNumber }, { $set: { read: true } }, options).exec();
     return resp;
   }
 }

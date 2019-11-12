@@ -18,7 +18,7 @@ export class NotificationsController extends BaseController {
       if (!limit) {
         limit = config.query.limit;
       }
-      let result = await NotificationsRepo.find({ offset, limit, audience});
+      let result = await NotificationsRepo.find({ offset, limit, audience });
       const links = this.generateLinks(result.pagination, req.route.path, 'audience=' + audience);
       result = Object.assign({}, result, links);
       res.json(result);
@@ -72,8 +72,12 @@ export class NotificationsController extends BaseController {
     const { serialNumber } = req.params;
     const notification = await NotificationsRepo.findBySerialNumber(serialNumber);
     if (notification) {
-      const { message } = notification;
-      res.json({ code: 'SUCCESS', data: message });
+      const resp = await NotificationsRepo.updateNotificationRead(notification);
+      if (resp.read == true) {
+        res.json({ code: 'SUCCESS', data: true });
+      } else {
+        res.json({ code: 'SUCCESS', data: false });
+      }
     } else {
       res.json({ code: 'SUCCESS', data: '' });
     }
