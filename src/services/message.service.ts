@@ -99,10 +99,14 @@ class MessageService {
 
   async sendNewEventMessages(notifications, options) {
     for (let i = 0; i < notifications.length; i++) {
-      const { smsMessage, recipients, serialNumber } = notifications[i];
-      const response = await this.sendMessage(smsMessage, recipients, serialNumber);
-      const notificationToUpdate = Object.assign(notifications[i], response);
-      await NotificationRepository.updateNotificationStatus(notificationToUpdate, options);
+      const { smsMessage, recipients, serialNumber, audience } = notifications[i];
+      if (audience !== 'shop') {
+        const response = await this.sendMessage(smsMessage, recipients, serialNumber);
+        const notificationToUpdate = Object.assign(notifications[i], response);
+        await NotificationRepository.saveOrUpdate(notificationToUpdate, options);
+      } else {
+        logger.info(`No sms will be sent to ${audience}`);
+      }
     }
   }
 

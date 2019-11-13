@@ -31,8 +31,9 @@ class NotificationsRepo {
       .exec();
   }
 
-  async saveOrUpdate(notification) {
+  async saveOrUpdate(notification, opts = {}) {
     const options = {
+      ...opts,
       new: true,
       upsert: true,
       setDefaultsOnInsert: true,
@@ -61,31 +62,20 @@ class NotificationsRepo {
     return response;
   }
 
-  async updateNotificationStatus(notification, opts = {}) {
-    const options = {
-      ...opts,
-      new: true,
-      upsert: true,
-      setDefaultsOnInsert: true,
-      returnNewDocument: true
-    };
+  // async updateNotificationStatus(notification, opts = {}) {
+  //   const options = {
+  //     ...opts,
+  //     new: true,
+  //     upsert: true,
+  //     setDefaultsOnInsert: true,
+  //     returnNewDocument: true
+  //   };
 
-    const { serialNumber } = notification;
-    console.log(`Update status ${JSON.stringify(notification)}`);
-    const resp = await Notification.findOneAndUpdate({ serialNumber }, notification, options).exec();
-    return resp;
-  }
-  async updateNotificationRead(notification) {
-    const options = {
-      new: true,
-      upsert: true,
-      setDefaultsOnInsert: true,
-      returnNewDocument: true
-    };
-    const serialNumber = notification.serialNumber;
-    const resp = await Notification.findOneAndUpdate({ serialNumber: serialNumber }, { $set: { read: true } }, options).exec();
-    return resp;
-  }
+  //   const { serialNumber } = notification;
+  //   console.log(`Update status ${JSON.stringify(notification)}`);
+  //   const resp = await Notification.findOneAndUpdate({ serialNumber }, notification, options).exec();
+  //   return resp;
+  // }
 }
 
 export default new NotificationsRepo();
