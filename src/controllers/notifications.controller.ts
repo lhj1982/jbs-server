@@ -5,6 +5,7 @@ import logger from '../utils/logger';
 import NotificationsRepo from '../repositories/notifications.repository';
 import { BaseController } from './base.controller';
 import config from '../config';
+import { ResourceNotFoundException } from '../exceptions/custom.exceptions';
 
 export class NotificationsController extends BaseController {
   getNotifications = async (req: Request, res: Response, next: NextFunction) => {
@@ -68,19 +69,19 @@ export class NotificationsController extends BaseController {
     res.json({ code: 'SUCCESS' });
   };
 
-  getNotification = async (req: Request, res: Response, next: NextFunction) => {
+  updateNotification = async (req: Request, res: Response, next: NextFunction) => {
     const { serialNumber } = req.params;
+    const { read } = req.body;
     const notification = await NotificationsRepo.findBySerialNumber(serialNumber);
-    if (notification) {
-      const resp = await NotificationsRepo.updateNotificationRead(notification);
-      if (resp.read == true) {
-        res.json({ code: 'SUCCESS', data: true });
-      } else {
-        res.json({ code: 'SUCCESS', data: false });
-      }
-    } else {
-      res.json({ code: 'SUCCESS', data: '' });
+    if (!notification) {
+      next(new ResourceNotFoundException('Notification', serialNumber));
+      return;
     }
+    const notificationToUpdate = Object.assign(notification.toObject(), {
+      read
+    });
+    const resp = await NotificationsRepo.saveOrUpdate(notificationToUpdate);
+    res.json({ code: 'SUCCESS', data: notificationToUpdate });
   };
 
   generateSendReports = (reports: string[]) => {

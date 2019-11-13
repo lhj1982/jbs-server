@@ -1429,12 +1429,29 @@ paths:
                 $ref: '#/components/schemas/NotificationsResponse'
 
   /notifications/{serialNumber}:
-    get:
+    put:
       tags:
       - "notification"
-      summary: "Retrieve sms notification details"
-      description: "Retrieve sms notification details."
-      operationId: "getNotificationBySerialNumber"
+      summary: "Update notification by serialNumber"
+      description: "Update notification by serialNumber. Required permission: notification.update"
+      operationId: "updateNotificationBySerialNumber"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: serialNumber
+          required: true
+          description: serial number of notification
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                read:
+                  type: "boolean"
       responses:
         200:
           description: "Success"
