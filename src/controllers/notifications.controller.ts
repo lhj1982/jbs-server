@@ -72,16 +72,21 @@ export class NotificationsController extends BaseController {
   updateNotification = async (req: Request, res: Response, next: NextFunction) => {
     const { serialNumber } = req.params;
     const { read } = req.body;
-    const notification = await NotificationsRepo.findBySerialNumber(serialNumber);
-    if (!notification) {
-      next(new ResourceNotFoundException('Notification', serialNumber));
-      return;
+    try {
+      const notification = await NotificationsRepo.findBySerialNumber(serialNumber);
+      if (!notification) {
+        next(new ResourceNotFoundException('Notification', serialNumber));
+        return;
+      }
+      const notificationToUpdate = Object.assign(notification.toObject(), {
+        read
+      });
+      delete notificationToUpdate._id;
+      const resp = await NotificationsRepo.saveOrUpdate(notificationToUpdate);
+      res.json({ code: 'SUCCESS', data: notificationToUpdate });
+    } catch (err) {
+      next(err);
     }
-    const notificationToUpdate = Object.assign(notification.toObject(), {
-      read
-    });
-    const resp = await NotificationsRepo.saveOrUpdate(notificationToUpdate);
-    res.json({ code: 'SUCCESS', data: notificationToUpdate });
   };
 
   generateSendReports = (reports: string[]) => {
