@@ -39,8 +39,8 @@ class NotificationsRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { taskid } = notification;
-    return await Notification.findOneAndUpdate({ taskid }, notification, options).exec();
+    const { _id } = notification;
+    return await Notification.findOneAndUpdate({ _id }, notification, options).exec();
   }
 
   async saveNotifications(notifications, opts = {}) {

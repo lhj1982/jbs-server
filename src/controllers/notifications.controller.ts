@@ -81,7 +81,7 @@ export class NotificationsController extends BaseController {
       const notificationToUpdate = Object.assign(notification.toObject(), {
         read
       });
-      delete notificationToUpdate._id;
+      // delete notificationToUpdate._id;
       const resp = await NotificationsRepo.saveOrUpdate(notificationToUpdate);
       res.json({ code: 'SUCCESS', data: notificationToUpdate });
     } catch (err) {
