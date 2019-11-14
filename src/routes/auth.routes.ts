@@ -13,6 +13,6 @@ export class AuthRoutes {
       next();
     }, this.authController.login);
 
-    app.route('/api/auth/login').post(this.authController.loginWithUserNameAndPassword);
+    app.route('/auth/login').post(this.authController.loginWithUserNameAndPassword);
   }
 }
