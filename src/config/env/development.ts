@@ -6,7 +6,7 @@ module.exports = {
   appId: 'wxf59749a45686779c',
   appSecret: '2553af7112c7911bc3bea91da887dc8c',
   logDir: __dirname + '/../../logs',
-  dbUri: 'mongodb://127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019/jbs?replicaSet=rs0',
+  dbUri: 'mongodb://127.0.0.1:27017/jbs',
   jwt: {
     issuer: 'ademes',
     secret: 'JARF2YXNTA46ZH8F4Q2TBFHWE8DSDJCXAMGQTSSMWZKSPWC8FMWSL9YXU5PELUFN',

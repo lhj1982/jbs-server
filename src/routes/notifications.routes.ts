@@ -11,8 +11,8 @@ export class NotificationsRoutes {
     app.route('/notifications/sms-send-callback').post(this.notificationsController.getSmsSendReports);
     app.route('/notifications/qrcode-upload-callback').post(this.notificationsController.getQrcodeUploadStatus);
 
-    app.route('/notifications/:serialNumber').put(verifyToken, permit({ domain: 'notification', operations: ['update'] }), this.notificationsController.updateNotification);
+    app.route('/api/notifications/:serialNumber').put(verifyToken, permit({ domain: 'notification', operations: ['update'] }), this.notificationsController.updateNotification);
 
-    app.route('/notifications').get(verifyToken, permit({ domain: 'notifications', operations: ['read'] }), this.notificationsController.getNotifications);
+    app.route('/api/notifications').get(verifyToken, permit({ domain: 'notifications', operations: ['read'] }), this.notificationsController.getNotifications);
   }
 }
