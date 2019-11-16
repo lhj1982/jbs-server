@@ -20,6 +20,6 @@ export class NotificationsRoutes {
       this.notificationsController.updateNotification
     );
 
-    app.route('/notifications').get(verifyToken, permit({ domain: 'notification', operations: ['read'] }), this.notificationsController.getNotifications);
+    app.route('/notifications').get(verifyToken, permit({ domain: 'notification', operations: ['getNotifications'] }), this.notificationsController.getNotifications);
   }
 }
