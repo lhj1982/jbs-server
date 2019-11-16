@@ -24,11 +24,11 @@ export class UsersRoutes {
     app
       .route('/users/:userId')
       .get(this.usersController.getUserDetails)
-      .put(verifyToken, permit({ domain: 'user', operations: ['update'] }), this.usersController.updateUser);
-    app.route('/users/:userId/block').put(verifyToken, permit({ domain: 'user', operations: ['block'] }), this.usersController.blockUser);
+      .put(verifyToken, permit({ domain: 'user', operations: ['updateUser'] }), this.usersController.updateUser);
+    app.route('/users/:userId/block').put(verifyToken, permit({ domain: 'user', operations: ['blockUserById'] }), this.usersController.blockUser);
 
-    app.route('/profile').get(verifyToken, permit({ domain: 'user', operations: ['read'] }), this.usersController.getMyProfile);
-    app.route('/profile/my-events').get(verifyToken, permit({ domain: 'user', operations: ['read'] }), this.usersController.getMyEvents);
+    app.route('/profile').get(verifyToken, permit({ domain: 'user', operations: ['getProfile'] }), this.usersController.getMyProfile);
+    app.route('/profile/my-events').get(verifyToken, permit({ domain: 'user', operations: ['getMyEvents'] }), this.usersController.getMyEvents);
     app.route('/profile/token-status').get(verifyToken, this.usersController.getTokenStatus);
   }
 }
