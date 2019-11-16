@@ -7,7 +7,7 @@ export class EventsRoutes {
   eventsController: EventsController = new EventsController();
 
   routes(app): void {
-    app.route('/events/archive-events').get(verifyToken, permit({ domain: 'event', operations: ['archive'] }), this.eventsController.archiveEvents);
+    app.route('/events/archive-events').get(verifyToken, permit({ domain: 'event', operations: ['archiveEvents'] }), this.eventsController.archiveEvents);
     app.route('/events/calendar/:date').get(this.eventsController.getEventsByDate);
     app.route('/events/calendar/:date/count').get(this.eventsController.getEventsCountByDate);
     app.route('/events/get-events-count-by-date').get(this.eventsController.getEventsCountByDate);
@@ -25,7 +25,7 @@ export class EventsRoutes {
       //   console.log(`Request type: ${req.method}`);
       //   next();
       // }, this.eventsController.getEvents)
-      .post(verifyToken, permit({ domain: 'event', operations: ['create'] }), this.eventsController.addEvent);
+      .post(verifyToken, permit({ domain: 'event', operations: ['addEvent'] }), this.eventsController.addEvent);
     app.route('/events/:eventId/simplified').get(this.eventsController.getEventDetailsSimplified);
     app.route('/events/:eventId/qrcode').get(this.eventsController.getEventQrCode);
     app.route('/events/:scriptId/:shopId').get(this.eventsController.getEventsByScriptAndShop);
@@ -34,14 +34,14 @@ export class EventsRoutes {
     app
       .route('/events/:eventId')
       .get(verifyToken, this.eventsController.getEventDetails)
-      .put(verifyToken, permit({ domain: 'event', operations: ['update'] }), this.eventsController.updateEvent);
-    app.route('/events/:eventId/join').post(verifyToken, permit({ domain: 'event-user', operations: ['create'] }), this.eventsController.joinUserEvent);
+      .put(verifyToken, permit({ domain: 'event', operations: ['updateEventById'] }), this.eventsController.updateEvent);
+    app.route('/events/:eventId/join').post(verifyToken, permit({ domain: 'event-user', operations: ['joinEvent'] }), this.eventsController.joinUserEvent);
     // ppl can cancel his own booking, host can cancel others booking, when host cancel booking, he has option to blacklist a person
-    app.route('/events/:eventId/users/cancel').put(verifyToken, permit({ domain: 'event-user', operations: ['update'] }), this.eventsController.cancelEventUser);
+    app.route('/events/:eventId/users/cancel').put(verifyToken, permit({ domain: 'event-user', operations: ['cancelEventUser'] }), this.eventsController.cancelEventUser);
     // only host can update payment data
-    app.route('/events/:eventId/users/update-status').put(verifyToken, permit({ domain: 'event-user', operations: ['update'] }), this.eventsController.updateEventUserStatus);
+    app.route('/events/:eventId/users/update-status').put(verifyToken, permit({ domain: 'event-user', operations: ['updateEventUserStatus'] }), this.eventsController.updateEventUserStatus);
 
-    app.route('/events/:eventId/cancel').put(verifyToken, permit({ domain: 'event', operations: ['update'] }), this.eventsController.cancelEvent);
-    app.route('/events/:eventId/complete').put(verifyToken, permit({ domain: 'event', operations: ['update'] }), this.eventsController.completeEvent);
+    app.route('/events/:eventId/cancel').put(verifyToken, permit({ domain: 'event', operations: ['cancelEvent'] }), this.eventsController.cancelEvent);
+    app.route('/events/:eventId/complete').put(verifyToken, permit({ domain: 'event', operations: ['completeEvent'] }), this.eventsController.completeEvent);
   }
 }

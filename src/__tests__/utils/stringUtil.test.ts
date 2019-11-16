@@ -12,6 +12,6 @@ test('get random string, fixed length', () => {
 });
 
 test('generate password', () => {
-  const password = passwordHash.generate('password');
+  const password = passwordHash.generate('DYkSLux9SPsA9FMG');
   console.log(password);
 });
