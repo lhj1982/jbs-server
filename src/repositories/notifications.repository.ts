@@ -39,8 +39,12 @@ class NotificationsRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { _id } = notification;
-    return await Notification.findOneAndUpdate({ _id }, notification, options).exec();
+    const { _id, serialNumber } = notification;
+    if (_id) {
+      return await Notification.findOneAndUpdate({ _id }, notification, options).exec();
+    } else {
+      return await Notification.findOneAndUpdate({ serialNumber }, notification, options).exec();
+    }
   }
 
   async saveNotifications(notifications, opts = {}) {
