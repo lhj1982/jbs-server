@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { UserSchema } from '../models/user.model';
 import EventUsersRepo from './eventUsers.repository';
-import * as passwordHash from 'password-hash';
+import * as bcrypt from 'bcrypt';
 const User = mongoose.model('User', UserSchema);
 mongoose.set('useFindAndModify', false);
 
@@ -36,7 +36,7 @@ class UsersRepo {
       .findOne()
       .exec();
     if (user) {
-      if (passwordHash.verify(password, user.password)) {
+      if (bcrypt.compareSync(password, user.password)) {
         return user;
       }
     }

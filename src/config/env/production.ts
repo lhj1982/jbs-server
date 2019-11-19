@@ -5,6 +5,11 @@ module.exports = {
   },
   appId: 'wxf59749a45686779c',
   appSecret: '2553af7112c7911bc3bea91da887dc8c',
+  mch: {
+    mchId: '1560901281',
+    key: 'MfXPmTHK0F9fFzcsDcfsa5mR8wBCl0Yt',
+    notifyUrl: 'https://api.boogoogoo.com/orders/wechat/pay_callback'
+  },
   logDir: '/data/log/jbs-server',
   dbUri: 'mongodb://admin:12wed98uh56yhbv@49.234.63.40:27017,49.234.63.40:27018,49.234.63.40:27019/jbs?replicaSet=rs0&maxPoolSize=512&authSource=admin',
   jwt: {

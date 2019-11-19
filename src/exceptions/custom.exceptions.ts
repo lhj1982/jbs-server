@@ -35,8 +35,8 @@ class InvalidRequestException extends HttpException {
 }
 
 class ResourceAlreadyExist extends HttpException {
-  constructor(resource: string, key: string) {
-    super(500, '${resource.toLowerCase()}_already_exist', `Resource ${resource} with key ${key} is already exist`);
+  constructor(resource: string, ...keys) {
+    super(500, '${resource.toLowerCase()}_already_exist', `Resource ${resource} with key ${keys} is already exist`);
   }
 }
 
@@ -64,6 +64,12 @@ class EventCannotCancelException extends HttpException {
   }
 }
 
+class OrderCannotPayException extends HttpException {
+  constructor(id: string) {
+    super(500, 'order_cannot_pay', `Order ${id} cannot be paid`);
+  }
+}
+
 export {
   AuthorizationException,
   WrongCredentialException,
@@ -74,5 +80,6 @@ export {
   EventIsFullBookedException,
   EventCannotCompleteException,
   EventCannotCancelException,
-  UserIsBlacklistedException
+  UserIsBlacklistedException,
+  OrderCannotPayException
 };

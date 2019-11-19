@@ -11,6 +11,7 @@ import { EventSchema } from './models/event.model';
 import { EventUserSchema } from './models/eventUser.model';
 import { EventCommissionSchema } from './models/eventCommissions.model';
 import { NotificationSchema } from './models/notification.model';
+import { OrderSchema } from './models/order.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -21,6 +22,7 @@ const Script = mongoose.model('Script', ScriptSchema, 'scripts');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
 const EventCommission = mongoose.model('EventCommission', EventCommissionSchema, 'eventCommissions');
 const Notification = mongoose.model('Notification', NotificationSchema, 'notifications');
+const Order = mongoose.model('Order', OrderSchema, 'orders');
 
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';
@@ -29,6 +31,7 @@ import { AuthRoutes } from './routes/auth.routes';
 import { EventsRoutes } from './routes/events.routes';
 import { PricesRoutes } from './routes/prices.routes';
 import { NotificationsRoutes } from './routes/notifications.routes';
+import { OrdersRoutes } from './routes/orders.routes';
 import errorMiddleware from './middleware/error.middleare';
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
@@ -47,6 +50,7 @@ class App {
   eventsRoutes: EventsRoutes = new EventsRoutes();
   pricesRoutes: PricesRoutes = new PricesRoutes();
   notificationsRoutes: NotificationsRoutes = new NotificationsRoutes();
+  ordersRoutes: OrdersRoutes = new OrdersRoutes();
   // mongoUrl: string = 'mongodb://localhost/CRMdb';
   mongoUrl: string = config.dbUri;
 
@@ -63,6 +67,7 @@ class App {
     this.eventsRoutes.routes(this.app);
     this.pricesRoutes.routes(this.app);
     this.notificationsRoutes.routes(this.app);
+    this.ordersRoutes.routes(this.app);
     this.app.use(errorMiddleware);
   }
 

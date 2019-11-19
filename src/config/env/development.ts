@@ -1,10 +1,15 @@
 module.exports = {
   server: {
     port: 3000,
-    entrypoint: `http://192.168.10.162:3000`
+    entrypoint: `http://localhost:3000`
   },
   appId: 'wxf59749a45686779c',
   appSecret: '2553af7112c7911bc3bea91da887dc8c',
+  mch: {
+    mchId: '1560901281',
+    key: 'z3Xy3mhP4ZKT2EbRE8esXnTrHmhS5ifb',
+    notifyUrl: 'https://api.boogoogoo.com/orders/wechat/pay_callback'
+  },
   logDir: __dirname + '/../../logs',
   dbUri: 'mongodb://127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019/jbs?replicaSet=rs0',
   jwt: {

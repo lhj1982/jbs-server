@@ -19,8 +19,10 @@ import {
 import { BaseController } from './base.controller';
 import MessageService from '../services/message.service';
 import EventService from '../services/event.service';
+import OrderService from '../services/order.service';
 import config from '../config';
 import { string2Date, formatDate, addDays, add } from '../utils/dateUtil';
+import { getRandomString } from '../utils/stringUtil';
 import logger from '../utils/logger';
 // import * as _ from 'lodash';
 
@@ -260,6 +262,15 @@ export class EventsController extends BaseController {
           },
           opts
         );
+        const order = {
+          createdBy: hostUserId,
+          type: 'event_join',
+          amount: price,
+          objectId: newEvent.id,
+          outTradeNo: getRandomString(32),
+          status: 'created'
+        };
+        await OrderService.createOrder(order, opts);
       }
       newEvent = Object.assign(newEvent.toObject(), {
         shop,
@@ -411,6 +422,17 @@ export class EventsController extends BaseController {
       });
       await UsersRepo.saveOrUpdateUser(user);
       const event = await EventsRepo.findById(eventId);
+      const { price } = event;
+      const order = {
+        createdBy: userId,
+        type: 'event_join',
+        objectId: eventId,
+        amount: price,
+        outTradeNo: getRandomString(32),
+        status: 'created'
+      };
+      await OrderService.createOrder(order, opts);
+
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
 
