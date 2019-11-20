@@ -322,10 +322,18 @@ export class EventsController extends BaseController {
     if (startTime) {
       updateData['startTime'] = formatDate(startTime, config.eventDateFormatParse);
     }
+
     const {
       script: { id: scriptId },
       shop: { id: shopId }
     } = event;
+
+    const script = await ScriptsRepo.findById(scriptId);
+    const { duration } = script;
+    const endTime = add(startTime, duration, 'm');
+    if (endTime) {
+      updateData['endTime'] = endTime;
+    }
     const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
     let discountRule = undefined;
     if (applicableDiscountRules.length > 0) {

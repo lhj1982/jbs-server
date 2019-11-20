@@ -12,15 +12,30 @@ export class NotificationsController extends BaseController {
     try {
       let offset = parseInt(req.query.offset);
       let limit = parseInt(req.query.limit);
-      const { audience } = req.query;
+      const audience = req.query.audience;
+      const eventType = req.query.eventType;
+      const message = req.query.message
+      let query = `audience=${audience}`;
+      if (eventType) {
+        query += `&eventType=${eventType}`;
+      } 
+      if (message) {
+        query += `&weChat=${message}`;
+      }
       if (!offset) {
         offset = config.query.offset;
       }
       if (!limit) {
         limit = config.query.limit;
       }
-      let result = await NotificationsRepo.find({ offset, limit, audience });
-      const links = this.generateLinks(result.pagination, req.route.path, 'audience=' + audience);
+      let result = await NotificationsRepo.find({
+        offset,
+        limit,
+        audience,
+        eventType,
+        message
+      });
+      const links = this.generateLinks(result.pagination, req.route.path, query);
       result = Object.assign({}, result, links);
       res.json(result);
     } catch (err) {

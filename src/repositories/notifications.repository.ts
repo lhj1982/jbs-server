@@ -12,8 +12,21 @@ class NotificationsRepo {
   }
 
   async find(params) {
-    const { offset, limit, audience } = params;
-    const condition = { audience: audience };
+    const { offset, limit, audience, eventType, message } = params;
+    let condition = {};
+    condition = { 'audience': audience };
+    if (eventType) {
+      condition['eventType'] = eventType;
+    } 
+    if (message) {
+      var search = new RegExp(message);
+      condition['message'] = search;
+    }
+    if (eventType && message) {
+      var search = new RegExp(message);
+      condition['message'] = search;
+      condition['eventType'] = eventType;
+    }
     const notifications = await Notification.find(condition)
       .sort({ createdAt: -1 })
       .exec();
