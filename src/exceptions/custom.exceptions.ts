@@ -70,6 +70,12 @@ class OrderCannotPayException extends HttpException {
   }
 }
 
+class InvalidPaymentSignatureException extends HttpException {
+  constructor() {
+    super(400, 'invalid_payment_signature', `Invalid payment signature`);
+  }
+}
+
 export {
   AuthorizationException,
   WrongCredentialException,
@@ -81,5 +87,6 @@ export {
   EventCannotCompleteException,
   EventCannotCancelException,
   UserIsBlacklistedException,
-  OrderCannotPayException
+  OrderCannotPayException,
+  InvalidPaymentSignatureException
 };

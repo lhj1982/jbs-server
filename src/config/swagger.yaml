@@ -1566,7 +1566,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
 
   /order/{orderId}/pay-status: 
-    post:
+    get:
       tags:
       - "order"
       summary: "Get order payment status"

@@ -20,13 +20,63 @@ export const OrderSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['created', 'completed', 'failed']
+      enum: ['created', 'completed', 'failed', 'paid']
     },
     createdAt: {
       type: Date,
       default: Date.now
     },
-    payment: {}
+    payment: {
+      tradeType: {
+        type: String
+      },
+      totalFee: {
+        type: Number
+      },
+      settlementTotalFee: {
+        type: Number
+      },
+      feeType: {
+        type: String
+      },
+      cashFee: {
+        type: Number
+      },
+      cashFeeType: {
+        type: String
+      },
+      couponFee: {
+        type: Number
+      },
+      couponCount: {
+        type: Number
+      },
+      transactionId: {
+        type: String
+      },
+      outTradeNo: {
+        type: String
+      },
+      timeEnd: {
+        type: Date
+      }
+    },
+    refunds: [
+      {
+        refundId: {
+          type: String
+        },
+        outRefundNo: {
+          type: String
+        },
+        refundFee: {
+          type: Number
+        },
+        status: {
+          type: String
+        }
+      }
+    ]
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

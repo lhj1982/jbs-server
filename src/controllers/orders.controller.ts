@@ -44,8 +44,22 @@ export class OrdersController extends BaseController {
   };
 
   confirmWechatPayment = async (req: Request, res: Response, next: NextFunction) => {
+    const { body } = req;
     logger.info(`wechat payment notify ${req}`);
-    res.json({ code: 'SUCCESS' });
+    try {
+      const payment = await OrderService.confirmWechatPayment(body);
+      const { outTradeNo } = payment;
+      const order = await OrdersRepo.findByTradeNo(outTradeNo);
+      if (!order) {
+        next(new ResourceNotFoundException('Order', outTradeNo));
+        return;
+      }
+      const newOrder = await OrdersRepo.updatePaymentByTradeNo(payment);
+      res.json({ code: 'SUCCESS', data: newOrder });
+    } catch (err) {
+      logger.error(err);
+      next(err);
+    }
   };
 
   queryPaymentStatus = async (req: Request, res: Response, next: NextFunction) => {
@@ -65,4 +79,6 @@ export class OrdersController extends BaseController {
       next(err);
     }
   };
+
+  refundOrder = async (req: Request, res: Response, next: NextFunction) => {};
 }

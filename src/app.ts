@@ -1,5 +1,6 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import * as xmlparser from 'express-xml-bodyparser';
 import * as mongoose from 'mongoose';
 import config from './config';
 import { RoleSchema } from './models/role.model';
@@ -90,6 +91,7 @@ class App {
     this.app.use(this.allowCrossDomain);
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(xmlparser());
     this.app.use((req, res, next) => {
       logger.info(`Request from: ${req.originalUrl}`);
       logger.info(`Request type: ${req.method}`);

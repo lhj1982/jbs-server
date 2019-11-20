@@ -1,10 +1,13 @@
 import config from '../config';
 const axios = require('axios');
 import logger from '../utils/logger';
-import { pp, getRandomString } from '../utils/stringUtil';
+import { string2Date } from '../utils/dateUtil';
+import { pp, getRandomString, normalizePaymentData } from '../utils/stringUtil';
 import { nowDate } from '../utils/dateUtil';
 import OrdersRepo from '../repositories/orders.repository';
-import { ResourceAlreadyExist } from '../exceptions/custom.exceptions';
+import { ResourceAlreadyExist, InvalidPaymentSignatureException } from '../exceptions/custom.exceptions';
+import * as _ from 'lodash';
+
 const ip = require('ip');
 const crypto = require('crypto');
 const xml = require('xml2js');
@@ -55,6 +58,7 @@ class OrderService {
           const data = res.xml;
           logger.info(`unifiedorder status: ${pp(data)}`);
           // console.log(data);
+          const normalizedData = normalizePaymentData(data);
           if (data.return_code[0] == 'SUCCESS' && data.result_code[0] == 'SUCCESS') {
             //获取预支付会话ID
             const prepayId = data.prepay_id[0];
@@ -64,13 +68,39 @@ class OrderService {
             // return { code: 'SUCCESS', data: payResult };
           } else {
             // return { code: 'FAIL', error: data };
-            resolve(this.getPaymentErrorResponse(data));
+            resolve(this.getPaymentErrorResponse(normalizedData));
           }
         })
         .catch(error => {
           // return { code: 'FAIL', error };
           reject(error);
         });
+    });
+  }
+
+  async confirmWechatPayment(responseData): Promise<any> {
+    return new Promise((resolve, reject) => {
+      // console.log(data);
+      const { xml: data } = responseData;
+      logger.info(`payment notify status: ${pp(data)}`);
+      const normalizedData = normalizePaymentData(data);
+      // console.log(data);
+      if (data.return_code[0] == 'SUCCESS' && data.result_code[0] == 'SUCCESS') {
+        // //获取预支付会话ID
+        // const prepayId = data.prepay_id[0];
+        // const payResult = this.getPayParams(appid, prepayId);
+        // console.log(normalizePaymentData(data));
+        if (!this.isValidSign(normalizedData)) {
+          // throw new InvalidPaymentSignatureException();
+          reject(new InvalidPaymentSignatureException());
+        } else {
+          resolve(this.getPaymentStatusOkResponse(normalizedData));
+        }
+        // return { code: 'SUCCESS', data: payResult };
+      } else {
+        // return { code: 'FAIL', error: data };
+        resolve(this.getPaymentErrorResponse(normalizedData));
+      }
     });
   }
 
@@ -113,19 +143,11 @@ class OrderService {
           const data = res.xml;
           logger.info(`orderquery status: ${pp(data)}`);
           // console.log(data);
+          const normalizedData = normalizePaymentData(data);
           if (data.return_code[0] == 'SUCCESS' && data.result_code[0] == 'SUCCESS') {
-            const orderStatus = {
-              appId: data.appid[0],
-              deviceInfo: data.device_info[0],
-              totalFee: data.total_fee[0],
-              outTradeNo: data.out_trade_no[0],
-              tradeState: data.trade_state[0],
-              tradeStateDesc: data.trade_state_desc[0],
-              timeEnd: data.time_end[0]
-            };
-            resolve(this.getPaymentStatusOkResponse(data));
+            resolve(this.getPaymentStatusOkResponse(normalizedData));
           } else {
-            resolve(this.getPaymentErrorResponse(data));
+            resolve(this.getPaymentErrorResponse(normalizedData));
           }
         })
         .catch(error => {
@@ -136,29 +158,51 @@ class OrderService {
 
   getPaymentStatusOkResponse(data) {
     const response = {
-      appId: data.appid[0],
-      deviceInfo: data.device_info[0],
-      totalFee: data.total_fee[0],
-      outTradeNo: data.out_trade_no[0],
-      tradeState: data.trade_state[0],
-      tradeStateDesc: data.trade_state_desc[0]
+      appId: data.appid,
+      totalFee: data.total_fee,
+      outTradeNo: data.out_trade_no
     };
+    if (data.device_info) {
+      response['deviceInfo'] = data.device_info;
+    }
+    if (data.trade_state) {
+      response['tradeState'] = data.trade_state;
+    }
+    if (data.trade_state_desc) {
+      response['tradeStateDesc'] = data.trade_state_desc;
+    }
+    if (data.attach) {
+      response['attach'] = data.attach;
+    }
+    if (data.bank_type) {
+      response['bankType'] = data.bank_type;
+    }
+    if (data.trade_type) {
+      response['tradeType'] = data.trade_type;
+    }
+    if (data.transaction_id) {
+      response['transactionId'] = data.transaction_id;
+    }
+    if (data.fee_type) {
+      response['feeType'] = data.fee_type;
+    }
+
     if (data.time_end) {
-      response['timeEnd'] = data.time_end[0];
+      response['timeEnd'] = string2Date(data.time_end, true, 'YYYYMMDDHHmmss');
     }
     return response;
   }
 
   getPaymentErrorResponse(data) {
     const response = {
-      returnCode: data.return_code[0],
-      returnMsg: data.return_msg[0]
+      returnCode: data.return_code,
+      returnMsg: data.return_msg
     };
     if (data.err_code) {
-      response['errCode'] = data.err_code[0];
+      response['errCode'] = data.err_code;
     }
     if (data.err_code_des) {
-      response['errCodeDesc'] = data.err_code_des[0];
+      response['errCodeDesc'] = data.err_code_des;
     }
     return response;
   }
@@ -267,6 +311,16 @@ class OrderService {
     }
     string = string.substr(1);
     return string;
+  }
+
+  isValidSign(data) {
+    const dataToCheck = _.clone(data);
+    const { sign } = dataToCheck;
+    delete dataToCheck.sign;
+    const generatedSign = this.getSign(dataToCheck, config.mch.key);
+    console.log(generatedSign);
+    console.log(sign);
+    return generatedSign === sign;
   }
 }
 

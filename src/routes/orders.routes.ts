@@ -15,5 +15,6 @@ export class OrdersRoutes {
     app.route('/orders').get(verifyToken, this.ordersController.getOrders);
     app.route('/orders/:orderId/pay').post(verifyToken, this.ordersController.payOrder);
     app.route('/orders/:orderId/pay-status').get(verifyToken, permit({ domain: 'order', operations: ['getOrderPaymentStatus'] }), this.ordersController.queryPaymentStatus);
+    app.route('/orders/:orderId/refund').post(verifyToken, this.ordersController.refundOrder);
   }
 }

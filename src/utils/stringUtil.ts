@@ -75,6 +75,42 @@ const replacePlacehoder = (message, placeholder, replacement) => {
   return message.replace(re, replacement);
 };
 
+/**
+ * Input data, normalize to normal json object.
+ * 
+ * { appid: [ 'wx2421b1c4370ec43b' ],
+  attach: [ '支付测试' ],
+  bank_type: [ 'CFT' ],
+  fee_type: [ 'CNY' ],
+  is_subscribe: [ 'Y' ],
+  mch_id: [ '10000100' ],
+  nonce_str: [ '5d2b6c2a8db53831f7eda20af46e531c' ],
+  openid: [ 'oUpF8uMEb4qRXf22hE3X68TekukE' ],
+  out_trade_no: [ '1409811653' ],
+  result_code: [ 'SUCCESS' ],
+  return_code: [ 'SUCCESS' ],
+  sign: [ 'B552ED6B279343CB493C5DD0D78AB241' ],
+  time_end: [ '20140903131540' ],
+  total_fee: [ '1' ],
+  coupon_fee: [ '10', '100' ],
+  coupon_count: [ '1' ],
+  coupon_type: [ 'CASH' ],
+  coupon_id: [ '10000' ],
+  trade_type: [ 'JSAPI' ],
+  transaction_id: [ '1004400740201409030005092168' ] }
+
+ * @type {[type]}
+ */
+const normalizePaymentData = (data): any => {
+  const response = {};
+  for (const attr in data) {
+    if (data[attr]) {
+      response[attr] = data[attr][0];
+    }
+  }
+  return response;
+};
+
 const isMobileNumber = phone => {
   let flag = false;
   let message = '';
@@ -97,4 +133,4 @@ const isMobileNumber = phone => {
   return { valid: flag, message };
 };
 
-export { pp, escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder, isMobileNumber, getRandomString };
+export { pp, escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder, isMobileNumber, getRandomString, normalizePaymentData };
