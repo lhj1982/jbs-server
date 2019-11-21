@@ -14,11 +14,11 @@ export class NotificationsController extends BaseController {
       let limit = parseInt(req.query.limit);
       const audience = req.query.audience;
       const eventType = req.query.eventType;
-      const message = req.query.message
+      const message = req.query.message;
       let query = `audience=${audience}`;
       if (eventType) {
         query += `&eventType=${eventType}`;
-      } 
+      }
       if (message) {
         query += `&weChat=${message}`;
       }

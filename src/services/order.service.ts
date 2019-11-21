@@ -41,9 +41,9 @@ class OrderService {
     // console.log(order);
     const attach = 'boogoogoo event cost';
     const body = 'boogoogoo - eventJoin';
-    const sign = this.getPrePaySign(appid, attach, body, openId, amount, config.mch.notifyUrl, ip.address(), nonceStr, outTradeNo);
+    const sign = this.getPrePaySign(appid, attach, body, openId, amount, config.mch.payNotifyUrl, ip.address(), nonceStr, outTradeNo);
     //通过参数和签名组装xml数据，用以调用统一下单接口
-    const sendData = this.wxSendData(appid, attach, body, openId, amount, config.mch.notifyUrl, ip.address(), nonceStr, outTradeNo, sign);
+    const sendData = this.wxSendData(appid, attach, body, openId, amount, config.mch.payNotifyUrl, ip.address(), nonceStr, outTradeNo, sign);
     console.log(sign, 'sign');
     const response = await axios({
       method: 'POST',
@@ -154,6 +154,10 @@ class OrderService {
           reject(error);
         });
     });
+  }
+
+  async refund(order, amount): Promise<any> {
+    return new Promise((resolve, reject) => {});
   }
 
   getPaymentStatusOkResponse(data) {

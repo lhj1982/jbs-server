@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import OrdersRepo from '../repositories/orders.repository';
 import OrderService from '../services/order.service';
-import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, OrderCannotPayException } from '../exceptions/custom.exceptions';
+import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, OrderCannotPayException, CannotRefundException } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import logger from '../utils/logger';
 
@@ -80,5 +80,25 @@ export class OrdersController extends BaseController {
     }
   };
 
-  refundOrder = async (req: Request, res: Response, next: NextFunction) => {};
+  refundOrder = async (req: Request, res: Response, next: NextFunction) => {
+    const {
+      loggedInUser: { id: loggedInUserId }
+    } = res.locals;
+    const { orderId } = req.params;
+    const { amount } = req.body;
+    const order = await OrdersRepo.findById(orderId);
+    if (!order) {
+      next(new ResourceNotFoundException('Order', orderId));
+      return;
+    }
+    const { amount: orderAmount } = order;
+    if (amount > orderAmount) {
+      next(new CannotRefundException(orderId, `You cannot refund ${amount}`));
+    }
+    try {
+      const refund = await OrderService.refund(order, amount);
+    } catch (err) {
+      next(err);
+    }
+  };
 }

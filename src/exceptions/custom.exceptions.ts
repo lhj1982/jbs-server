@@ -76,6 +76,12 @@ class InvalidPaymentSignatureException extends HttpException {
   }
 }
 
+class CannotRefundException extends HttpException {
+  constructor(id: string, message: string) {
+    super(400, 'cannot_refund', `Order ${id}, ${message}`);
+  }
+}
+
 export {
   AuthorizationException,
   WrongCredentialException,
@@ -88,5 +94,6 @@ export {
   EventCannotCancelException,
   UserIsBlacklistedException,
   OrderCannotPayException,
-  InvalidPaymentSignatureException
+  InvalidPaymentSignatureException,
+  CannotRefundException
 };

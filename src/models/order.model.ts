@@ -20,7 +20,10 @@ export const OrderSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['created', 'completed', 'failed', 'paid']
+      enum: ['created', 'completed', 'failed', 'paid', 'refund']
+    },
+    message: {
+      type: String
     },
     createdAt: {
       type: Date,
