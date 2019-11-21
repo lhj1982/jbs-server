@@ -73,5 +73,17 @@ class EventUsersRepo {
       return await EventUser.findOneAndUpdate({ _id: e._id }, { event, user, userName, source, createdAt, status, mobile, wechatId }, options).exec();
     }
   }
+
+  async update(eventUser, opt = {}) {
+    const options = {
+      ...opt,
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true,
+      returnNewDocument: true
+    };
+    const { _id } = eventUser;
+    return await EventUser.findOneAndUpdate({ _id }, eventUser, options).exec();
+  }
 }
 export default new EventUsersRepo();

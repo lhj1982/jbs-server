@@ -15,15 +15,35 @@ export const OrderSchema = new Schema(
     amount: {
       type: Number
     },
+    commissionAmount: {
+      type: Number
+    },
     outTradeNo: {
       tytpe: String
     },
-    status: {
+    orderStatus: {
       type: String,
-      enum: ['created', 'completed', 'failed', 'paid_pending', 'paid', 'refund_pending', 'refund']
+      enum: ['created', 'paid', 'refund_requested', 'refund'],
+      default: 'created'
     },
+    commissionStatus: {
+      type: String,
+      enum: ['refund']
+    },
+    // paymentStatus: {
+    // 	type: String,
+    // 	enum: ['unpaid', 'paid'],
+    // 	default: 'unpaid'
+    // },
+    // status: {
+    //   type: String,
+    //   enum: ['created', 'completed', 'failed', 'paid_pending', 'paid', 'refund_requested', 'refund_pending', 'refund']
+    // },
     message: {
       type: String
+    },
+    refundRequestedAt: {
+    	type: Date
     },
     createdAt: {
       type: Date,
@@ -64,6 +84,22 @@ export const OrderSchema = new Schema(
         type: Date
       }
     },
+    commissionRefunds: [
+      {
+        refundId: {
+          type: String
+        },
+        outRefundNo: {
+          type: String
+        },
+        refundFee: {
+          type: Number
+        },
+        status: {
+          type: String
+        }
+      }
+    ],
     refunds: [
       {
         refundId: {

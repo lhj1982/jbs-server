@@ -5,6 +5,7 @@ import { string2Date } from '../utils/dateUtil';
 import { pp, getRandomString, normalizePaymentData } from '../utils/stringUtil';
 import { nowDate } from '../utils/dateUtil';
 import OrdersRepo from '../repositories/orders.repository';
+import EventUsersRepo from '../repositories/eventUsers.repository';
 import { ResourceAlreadyExist, InvalidPaymentSignatureException } from '../exceptions/custom.exceptions';
 import * as _ from 'lodash';
 
@@ -20,10 +21,10 @@ class OrderService {
    * @param {[type]} options =             {} [description]
    */
   async createOrder(order, options = {}) {
-    const { createdBy, type, objectId, status } = order;
-    const existingOrder = await OrdersRepo.findUnique(createdBy, type, objectId, status);
+    const { outTradeNo } = order;
+    const existingOrder = await OrdersRepo.findByTradeNo(outTradeNo);
     if (existingOrder) {
-      throw new ResourceAlreadyExist('Order', [createdBy, type, objectId, status]);
+      throw new ResourceAlreadyExist('Order', [outTradeNo]);
       return;
     }
     return await OrdersRepo.createOrder(order, options);
@@ -78,6 +79,14 @@ class OrderService {
     });
   }
 
+  /**
+   * Example data
+   *
+   * {"appid":["wxf59749a45686779c"],"attach":["boogoogoo event cost"],"bank_type":["CFT"],"cash_fee":["100"],"fee_type":["CNY"],"is_subscribe":["N"],"mch_id":["1560901281"],"nonce_str":["u1AeoeNrAGZcJdJrMrFNwE27Wkmtdb0x"],"openid":["ofQG25BHVTfC37YEvwggI767QhF8"],"out_trade_no":["0iCn6xlrjVoyuVafVBrtYqKrbvkGdyXc"],"result_code":["SUCCESS"],"return_code":["SUCCESS"],"sign":["805B424371F65377CA7B1C3A686970BD"],"time_end":["20191121223812"],"total_fee":["100"],"trade_type":["JSAPI"],"transaction_id":["4200000466201911214822490787"]}
+   *
+   * @param  {[type]}       responseData [description]
+   * @return {Promise<any>}              [description]
+   */
   async confirmWechatPayment(responseData): Promise<any> {
     return new Promise((resolve, reject) => {
       // console.log(data);
@@ -156,16 +165,60 @@ class OrderService {
     });
   }
 
+  /**
+   * Update payment status when payment is succefully confirmed.
+   * Update order status
+   * Update eventUser status if it's a event_join order type
+   *
+   * @param  {[type]}       order   [description]
+   * @param  {[type]}       payment [description]
+   * @param  {[type]}       options =             {} [description]
+   * @return {Promise<any>}         [description]
+   */
+  async updatePaymentStatus(payment, options = {}): Promise<any> {
+    const { outTradeNo } = payment;
+    const order = await OrdersRepo.findByTradeNo(outTradeNo);
+    const { type, objectId } = order;
+    const newOrder = await OrdersRepo.updatePaymentByTradeNo(payment, options);
+    if (type === 'event_join') {
+      const eventUser = await EventUsersRepo.findById(objectId);
+      const eventUserToUpdate = Object.assign(eventUser.toObject(), {
+        orderStatus: 'paid'
+      });
+      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, options);
+    }
+    return newOrder;
+  }
+
+  /**
+   * Get all orders which are marked as refund_requested and do refund.
+   * Update orderStatus to refund afterwards and updated refunds array
+   *
+   * @return {Promise<any>} [description]
+   */
+  async refundOrders(options = {}): Promise<any> {
+    const now = nowDate();
+    const from = now.add(-300, 'days');
+    const candiates = await OrdersRepo.getCandidateRefundOrders({ from });
+  }
+
   async refund(order, amount): Promise<any> {
     return new Promise((resolve, reject) => {});
   }
 
   getPaymentStatusOkResponse(data) {
     const response = {
+      returnCode: data.return_code,
       appId: data.appid,
       totalFee: data.total_fee,
       outTradeNo: data.out_trade_no
     };
+    if (data.result_code) {
+      response['resultCode'] = data.result_code;
+    }
+    if (data.return_msg) {
+      response['returnMsg'] = data.return_msg;
+    }
     if (data.device_info) {
       response['deviceInfo'] = data.device_info;
     }

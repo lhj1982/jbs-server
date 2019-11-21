@@ -28,6 +28,10 @@ export const EventUserSchema = new Schema(
       enum: ['unpaid', 'paid', 'cancelled', 'blacklisted'],
       default: 'unpaid'
     },
+    statusNote: {
+      type: String,
+      enum: ['price_updated']
+    },
     createdAt: {
       type: Date,
       default: Date.now

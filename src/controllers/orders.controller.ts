@@ -19,10 +19,10 @@ export class OrdersController extends BaseController {
       return;
     }
     const {
-      status,
+      orderStatus,
       createdBy: { id: createdByUserId }
     } = order;
-    if (status != 'created') {
+    if (orderStatus != 'created') {
       next(new OrderCannotPayException(orderId));
       return;
     }
@@ -38,11 +38,6 @@ export class OrdersController extends BaseController {
     try {
       const opts = { session };
       const response = await OrderService.wechatPay(order);
-      const orderToUpdate = Object.assign(order.toObject(), {
-        status: 'paid_pending'
-      });
-      const newOrder = OrdersRepo.saveOrUpdate(orderToUpdate, opts);
-
       // console.log('ssss' + response);
       await session.commitTransaction();
       await OrdersRepo.endSession();
@@ -58,17 +53,26 @@ export class OrdersController extends BaseController {
   confirmWechatPayment = async (req: Request, res: Response, next: NextFunction) => {
     const { body } = req;
     logger.info(`wechat payment notify ${req}`);
+    const session = await OrdersRepo.getSession();
+    session.startTransaction();
     try {
+      const opts = { session };
       const payment = await OrderService.confirmWechatPayment(body);
       const { outTradeNo } = payment;
       const order = await OrdersRepo.findByTradeNo(outTradeNo);
       if (!order) {
         next(new ResourceNotFoundException('Order', outTradeNo));
+        await session.abortTransaction();
+        await OrdersRepo.endSession();
         return;
       }
-      const newOrder = await OrdersRepo.updatePaymentByTradeNo(payment);
+      const newOrder = await OrderService.updatePaymentStatus(payment, opts);
+      await session.commitTransaction();
+      await OrdersRepo.endSession();
       res.json({ code: 'SUCCESS', data: newOrder });
     } catch (err) {
+      await session.abortTransaction();
+      await OrdersRepo.endSession();
       logger.error(err);
       next(err);
     }
@@ -88,6 +92,21 @@ export class OrdersController extends BaseController {
       res.json({ code: 'SUCCESS', data: response });
     } catch (err) {
       console.log(err);
+      next(err);
+    }
+  };
+
+  /**
+   * Go throw all orders which are marked as refund_requested, and call refund.
+   *
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
+  refundOrders = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const refundOrders = OrderService.refundOrders();
+    } catch (err) {
       next(err);
     }
   };

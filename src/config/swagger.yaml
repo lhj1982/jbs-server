@@ -2092,6 +2092,12 @@ components:
         createdAt:
           type: "string"
           format: "date-time"
+
+    Order:
+      type: "object"
+      properties:
+        
+
     Notification:
       type: "object"
       properties:

@@ -1,12 +1,12 @@
 import * as mongoose from 'mongoose';
 import { OrderSchema } from '../models/order.model';
 import { CommonRepo } from './common.repository';
-const Order = mongoose.model('Order', OrderSchema);
+const Order = mongoose.model('Order', OrderSchema, 'orders');
 mongoose.set('useFindAndModify', false);
 
 class OrdersRepo extends CommonRepo {
   async getSession() {
-    return super.getSession(Event);
+    return super.getSession(Order);
   }
 
   async endSession() {
@@ -20,14 +20,27 @@ class OrdersRepo extends CommonRepo {
       .exec();
   }
 
-  async findUnique(createdBy: string, type: string, objectId: string, status: string) {
-    return await Order.findOne({ createdBy, type, objectId, status }).exec();
+  // async findUnique(params) {
+  //   return await Order.findOne(params).exec();
+  // }
+  async findByParams(params) {
+    return await Order.find(params).exec();
   }
 
   async findByTradeNo(outTradeNo: string) {
     return await Order.findOne({ outTradeNo })
       .populate('createdBy', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
       .exec();
+  }
+
+  async getCandidateRefundOrders(filter, opts = {}) {
+    const options = {
+      ...opts,
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true,
+      returnNewDocument: true
+    };
   }
 
   async createOrder(order, opts = {}) {
@@ -38,8 +51,8 @@ class OrdersRepo extends CommonRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { createdBy, type, objectId, status } = order;
-    return await Order.findOneAndUpdate({ createdBy, type, objectId, status }, order, options).exec();
+    const { outTradeNo } = order;
+    return await Order.findOneAndUpdate({ outTradeNo }, order, options).exec();
   }
 
   async saveOrUpdate(order, opts = {}) {
@@ -54,6 +67,16 @@ class OrdersRepo extends CommonRepo {
     return await Order.findOneAndUpdate({ outTradeNo }, order, options).exec();
   }
 
+  async updateStatus(criteria, orderStatus, opts = {}) {
+    const options = {
+      ...opts,
+      upsert: false,
+      returnNewDocument: true,
+      multi: true
+    };
+    return await Order.updateMany(criteria, { $set: orderStatus }, options);
+  }
+
   async updatePaymentByTradeNo(payment, opts = {}) {
     const options = {
       ...opts,
@@ -63,7 +86,7 @@ class OrdersRepo extends CommonRepo {
       returnNewDocument: true
     };
     const { outTradeNo } = payment;
-    return await Order.findOneAndUpdate({ outTradeNo }, { $set: { payment } }, options).exec();
+    return await Order.findOneAndUpdate({ outTradeNo }, { $set: { status: 'paid', payment } }, options).exec();
   }
 }
 export default new OrdersRepo();
