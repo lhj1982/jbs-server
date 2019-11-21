@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import RefundsRepo from '../repositories/refunds.repository';
 import OrdersRepo from '../repositories/orders.repository';
 import OrderService from '../services/order.service';
 import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, OrderCannotPayException, CannotRefundException } from '../exceptions/custom.exceptions';
@@ -19,10 +20,10 @@ export class OrdersController extends BaseController {
       return;
     }
     const {
-      status,
+      orderStatus,
       createdBy: { id: createdByUserId }
     } = order;
-    if (status != 'created') {
+    if (orderStatus != 'created') {
       next(new OrderCannotPayException(orderId));
       return;
     }
@@ -37,16 +38,13 @@ export class OrdersController extends BaseController {
     session.startTransaction();
     try {
       const opts = { session };
-      const response = await OrderService.wechatPay(order);
-      const orderToUpdate = Object.assign(order.toObject(), {
-        status: 'paid_pending'
-      });
-      const newOrder = OrdersRepo.saveOrUpdate(orderToUpdate, opts);
-
+      const payment = await OrderService.wechatPay(order);
+      const orderToUpdate = Object.assign(order.toObject(), { payment });
+      const newOrder = await OrdersRepo.updatePaymentByTradeNo(orderToUpdate, opts);
       // console.log('ssss' + response);
       await session.commitTransaction();
       await OrdersRepo.endSession();
-      res.json({ code: 'SUCCESS', data: response });
+      res.json({ code: 'SUCCESS', data: newOrder });
     } catch (err) {
       await session.abortTransaction();
       await OrdersRepo.endSession();
@@ -58,17 +56,30 @@ export class OrdersController extends BaseController {
   confirmWechatPayment = async (req: Request, res: Response, next: NextFunction) => {
     const { body } = req;
     logger.info(`wechat payment notify ${req}`);
+    const session = await OrdersRepo.getSession();
+    session.startTransaction();
     try {
+      const opts = { session };
       const payment = await OrderService.confirmWechatPayment(body);
       const { outTradeNo } = payment;
       const order = await OrdersRepo.findByTradeNo(outTradeNo);
       if (!order) {
         next(new ResourceNotFoundException('Order', outTradeNo));
+        await session.abortTransaction();
+        await OrdersRepo.endSession();
         return;
       }
-      const newOrder = await OrdersRepo.updatePaymentByTradeNo(payment);
+      const orderToUpdate = Object.assign(order.toObject(), {
+        orderStatus: 'paid',
+        payment
+      });
+      const newOrder = await OrderService.updatePaymentStatus(orderToUpdate, opts);
+      await session.commitTransaction();
+      await OrdersRepo.endSession();
       res.json({ code: 'SUCCESS', data: newOrder });
     } catch (err) {
+      await session.abortTransaction();
+      await OrdersRepo.endSession();
       logger.error(err);
       next(err);
     }
@@ -92,6 +103,29 @@ export class OrdersController extends BaseController {
     }
   };
 
+  /**
+   * Go throw all orders which are marked as refund_requested, and call refund.
+   *
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
+  refundOrders = async (req: Request, res: Response, next: NextFunction) => {
+    const session = await OrdersRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const refunds = await OrderService.refundOrders(opts);
+      await session.commitTransaction();
+      await OrdersRepo.endSession();
+      res.json({ code: 'SUCCESS', data: refunds });
+    } catch (err) {
+      await session.abortTransaction();
+      await OrdersRepo.endSession();
+      next(err);
+    }
+  };
+
   refundOrder = async (req: Request, res: Response, next: NextFunction) => {
     const {
       loggedInUser: { id: loggedInUserId }
@@ -110,6 +144,32 @@ export class OrdersController extends BaseController {
     try {
       const refund = await OrderService.refund(order, amount);
     } catch (err) {
+      next(err);
+    }
+  };
+
+  confirmWechatRefund = async (req: Request, res: Response, next: NextFunction) => {
+    const { body } = req;
+    logger.info(`wechat refund notify ${req}`);
+    const session = await OrdersRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const refundData = await OrderService.confirmWechatRefund(body);
+      const { outRefundNo, refundStatus } = refundData;
+      const refund = await RefundsRepo.findByRefundNo(outRefundNo);
+      let refundToUpdate = {};
+      if (refundStatus !== 'SUCCESS') {
+        refundToUpdate = Object.assign(refund.toObject(), { status: 'failed' }, ...refundData);
+      }
+      const newRefund = await RefundsRepo.saveOrUpdate(refundToUpdate, opts);
+      await session.commitTransaction();
+      await OrdersRepo.endSession();
+      res.json({ code: 'SUCCESS', data: newRefund });
+    } catch (err) {
+      await session.abortTransaction();
+      await OrdersRepo.endSession();
+      logger.error(err);
       next(err);
     }
   };

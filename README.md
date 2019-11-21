@@ -44,6 +44,42 @@ rs.initiate(config)
 rs.reconfig(config,{force: true});
 
 
+# Certificate
+
+generate pfx for wechat pay api
+```
+openssl pkcs12 -export -out client-certificate2.pfx -inkey client1-key.pem -in client1-crt.pem -certfile ca-crt.pem
+```
+
+# Orders and Refund
+
+	- An order is created when
+		1. A user create an event
+		2. A user join an event
+	- An order status table
+| status      | Description |
+| ----------- | ----------- |
+| created     | order created, not paid |
+| paid        | when system get pay callback from wechat |
+| refund      | when the order is refund |
+| cancelled   | when the order is cancelled |
+
+	- A user choose to pay, the payment status will be updated in order table
+	- A user can choose to cancel an event, when an event is cancelled, the following will happen
+		1. Retrieve all user paid bookings for this event
+		2. Mark their orders status as refund
+		3. Create corresponding refund for those users
+	- Refund status
+| status      | Description |
+| ----------- | ----------- |
+| created     | refund created, initial status |
+| approved    | admin has to approve refund to be able to process |
+| refund      | refund is requested |
+| failed      | refund failed according to wechat callback |
+
+	- There is a separate process to iterate all approved refunds
+	- When a booking is in refund, the user can rejoin the event, eventually, create new order
+
 # Run
 
 ##  Run on local

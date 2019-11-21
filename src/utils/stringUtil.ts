@@ -111,6 +111,30 @@ const normalizePaymentData = (data): any => {
   return response;
 };
 
+const md5 = (str: string) => {
+  const hash = crypto
+    .createHash('md5')
+    .update('some_string')
+    .digest('hex');
+  return hash;
+};
+
+const decryption = (data, key, iv) => {
+  if (!data) {
+    return '';
+  }
+  // console.log(data);
+  iv = iv || '';
+  const clearEncoding = 'utf8';
+  const cipherEncoding = 'base64';
+  const cipherChunks = [];
+  const decipher = crypto.createDecipheriv('aes-256-ecb', key, iv);
+  decipher.setAutoPadding(true);
+  cipherChunks.push(decipher.update(data, cipherEncoding, clearEncoding));
+  cipherChunks.push(decipher.final(clearEncoding));
+  return cipherChunks.join('');
+};
+
 const isMobileNumber = phone => {
   let flag = false;
   let message = '';
@@ -133,4 +157,4 @@ const isMobileNumber = phone => {
   return { valid: flag, message };
 };
 
-export { pp, escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder, isMobileNumber, getRandomString, normalizePaymentData };
+export { pp, escapeRegex, randomSerialNumber, getRandomInt, queryStringToJSON, replacePlacehoder, isMobileNumber, getRandomString, normalizePaymentData, md5, decryption };

@@ -2,11 +2,15 @@ import config from '../config';
 const axios = require('axios');
 import logger from '../utils/logger';
 import { string2Date } from '../utils/dateUtil';
-import { pp, getRandomString, normalizePaymentData } from '../utils/stringUtil';
+import { pp, getRandomString, normalizePaymentData, md5, decryption } from '../utils/stringUtil';
 import { nowDate } from '../utils/dateUtil';
 import OrdersRepo from '../repositories/orders.repository';
+import RefundsRepo from '../repositories/refunds.repository';
+import EventUsersRepo from '../repositories/eventUsers.repository';
 import { ResourceAlreadyExist, InvalidPaymentSignatureException } from '../exceptions/custom.exceptions';
 import * as _ from 'lodash';
+const https = require('https');
+const fs = require('fs');
 
 const ip = require('ip');
 const crypto = require('crypto');
@@ -20,10 +24,10 @@ class OrderService {
    * @param {[type]} options =             {} [description]
    */
   async createOrder(order, options = {}) {
-    const { createdBy, type, objectId, status } = order;
-    const existingOrder = await OrdersRepo.findUnique(createdBy, type, objectId, status);
+    const { outTradeNo } = order;
+    const existingOrder = await OrdersRepo.findByTradeNo(outTradeNo);
     if (existingOrder) {
-      throw new ResourceAlreadyExist('Order', [createdBy, type, objectId, status]);
+      throw new ResourceAlreadyExist('Order', [outTradeNo]);
       return;
     }
     return await OrdersRepo.createOrder(order, options);
@@ -61,9 +65,12 @@ class OrderService {
           const normalizedData = normalizePaymentData(data);
           if (data.return_code[0] == 'SUCCESS' && data.result_code[0] == 'SUCCESS') {
             //获取预支付会话ID
-            const prepayId = data.prepay_id[0];
-            const payResult = this.getPayParams(appid, prepayId);
+            const normalizedData = normalizePaymentData(data);
+
+            // const prepayId = data.prepay_id[0];
+            // const payResult = this.getPayParams(appid, prepayId);
             // console.log(payResult);
+            const payResult = this.getPaymentStatusOkResponse(normalizedData);
             resolve(payResult);
             // return { code: 'SUCCESS', data: payResult };
           } else {
@@ -78,6 +85,14 @@ class OrderService {
     });
   }
 
+  /**
+   * Example data
+   *
+   * {"appid":["wxf59749a45686779c"],"attach":["boogoogoo event cost"],"bank_type":["CFT"],"cash_fee":["100"],"fee_type":["CNY"],"is_subscribe":["N"],"mch_id":["1560901281"],"nonce_str":["u1AeoeNrAGZcJdJrMrFNwE27Wkmtdb0x"],"openid":["ofQG25BHVTfC37YEvwggI767QhF8"],"out_trade_no":["0iCn6xlrjVoyuVafVBrtYqKrbvkGdyXc"],"result_code":["SUCCESS"],"return_code":["SUCCESS"],"sign":["805B424371F65377CA7B1C3A686970BD"],"time_end":["20191121223812"],"total_fee":["100"],"trade_type":["JSAPI"],"transaction_id":["4200000466201911214822490787"]}
+   *
+   * @param  {[type]}       responseData [description]
+   * @return {Promise<any>}              [description]
+   */
   async confirmWechatPayment(responseData): Promise<any> {
     return new Promise((resolve, reject) => {
       // console.log(data);
@@ -101,6 +116,68 @@ class OrderService {
         // return { code: 'FAIL', error: data };
         resolve(this.getPaymentErrorResponse(normalizedData));
       }
+    });
+  }
+
+  async confirmWechatRefund(responseData): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      // console.log(data);
+      const { xml: data } = responseData;
+      logger.info(`payment notify status: ${pp(data)}`);
+      const normalizedData = normalizePaymentData(data);
+      const { req_info } = normalizedData;
+      try {
+        const payload = await this.decryptRequestData(req_info);
+        const { xml: data } = payload;
+        const normalizedData = normalizePaymentData(data);
+        if (data.return_code[0] == 'SUCCESS' && data.result_code[0] == 'SUCCESS') {
+          const response = this.getRefundStatusOkResponse(normalizedData);
+          resolve(response);
+        } else {
+          resolve(this.getRefundErrorResponse(normalizedData));
+        }
+      } catch (err) {
+        reject(err);
+      }
+      // if (data.return_code[0] == 'SUCCESS' && data.result_code[0] == 'SUCCESS') {
+      //   // //获取预支付会话ID
+      //   // const prepayId = data.prepay_id[0];
+      //   // const payResult = this.getPayParams(appid, prepayId);
+      //   // console.log(normalizePaymentData(data));
+      //   if (!this.isValidSign(normalizedData)) {
+      //     // throw new InvalidPaymentSignatureException();
+      //     reject(new InvalidPaymentSignatureException());
+      //   } else {
+      //     resolve(this.getPaymentStatusOkResponse(normalizedData));
+      //   }
+      //   // return { code: 'SUCCESS', data: payResult };
+      // } else {
+      //   // return { code: 'FAIL', error: data };
+      //   resolve(this.getPaymentErrorResponse(normalizedData));
+      // }
+    });
+  }
+
+  async decryptRequestData(data): Promise<any> {
+    //  	let buff = Buffer.from(data, 'base64');
+    // let text = buff.toString('utf-8');
+    const decodeDataBase64 = Buffer.from(data, 'base64').toString('utf8');
+
+    const encryptedKey = md5(config.mch.key).toLowerCase();
+    const iv = Buffer.alloc(0); //设置偏移量
+    let decxml = decryption(decodeDataBase64, encryptedKey, iv); //解码
+    console.log(decxml);
+    const reg = new RegExp('root>', 'g');
+    decxml = decxml.replace(reg, 'xml>');
+    return new Promise((resolve, reject) => {
+      xml
+        .parseStringPromise(decxml)
+        .then(res => {
+          resolve(res);
+        })
+        .catch(err => {
+          reject(err);
+        });
     });
   }
 
@@ -156,16 +233,212 @@ class OrderService {
     });
   }
 
+  /**
+   * Update payment status when payment is succefully confirmed.
+   * Update order status
+   * Update eventUser status if it's a event_join order type
+   *
+   * @param  {[type]}       order   [description]
+   * @param  {[type]}       options =             {} [description]
+   * @return {Promise<any>}         [description]
+   */
+  async updatePaymentStatus(order, options = {}): Promise<any> {
+    const {
+      payment: { outTradeNo }
+    } = order;
+    // const order = await OrdersRepo.findByTradeNo(outTradeNo);
+    const { type, objectId } = order;
+    const newOrder = await OrdersRepo.updatePaymentByTradeNo(order, options);
+    if (type === 'event_join') {
+      const eventUser = await EventUsersRepo.findById(objectId);
+      const eventUserToUpdate = Object.assign(eventUser.toObject(), {
+        orderStatus: 'paid'
+      });
+      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, options);
+    }
+    return newOrder;
+  }
+
+  /**
+   * Get all orders which are marked as refund_requested and do refund.
+   * Update orderStatus to refund afterwards and updated refunds array
+   *
+   * @return {Promise<any>} [description]
+   */
+  async refundOrders(options = {}): Promise<any> {
+    const candidates = await RefundsRepo.getRefundableOrders({
+      status: 'approved'
+    });
+    logger.info(`Found ${candidates.length} order(s) to refund, data: ${pp(candidates)}`);
+    const promises = candidates.map(refund => {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(this.refundOrder(refund, options));
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+    // wait until all promises are resolved
+    return await Promise.all(promises);
+  }
+
+  async refundOrder(refund, options = {}) {
+    const { order } = refund;
+    // console.log(order);
+    const appid = config.appId;
+    const nonceStr = getRandomString(32);
+    const { outTradeNo, amount: totalFee, refundDesc, outRefundNo } = refund;
+    const refundFee = totalFee;
+    const notifyUrl = config.mch.refundNotifyUrl;
+    const sign = this.getRefundPaymentSign(appid, nonceStr, outTradeNo, outRefundNo, totalFee, refundFee, refundDesc, notifyUrl);
+    const sendData = this.wxRefundSendData(appid, nonceStr, outTradeNo, outRefundNo, totalFee, refundFee, refundDesc, notifyUrl, sign);
+
+    const agent = new https.Agent({
+      rejectUnauthorized: false,
+      cert: fs.readFileSync(config.mch.certFile),
+      key: fs.readFileSync(config.mch.certKeyFile),
+      passphrase: config.mch.mchId
+    });
+
+    const response = await axios({
+      method: 'POST',
+      url: 'https://api.mch.weixin.qq.com/secapi/pay/refund',
+      data: sendData,
+      httpsAgent: agent
+    });
+    const { data } = response;
+    return new Promise((resolve, reject) => {
+      xml
+        .parseStringPromise(data.toString('utf-8'))
+        .then(async res => {
+          const data = res.xml;
+          logger.info(`refund status: ${pp(data)}`);
+          // console.log(data);
+          const normalizedData = normalizePaymentData(data);
+          if (data.return_code[0] == 'SUCCESS' && data.result_code[0] == 'SUCCESS') {
+            const refundResp = this.getRefundStatusOkResponse(normalizedData);
+            const refundToUpdate = Object.assign(refund.toObject(), {
+              status: 'refund',
+              ...refundResp
+            });
+            await RefundsRepo.saveOrUpdate(refundToUpdate, options);
+            resolve(refundToUpdate);
+          } else {
+            const refundResp = this.getRefundErrorResponse(normalizedData);
+            const refundToUpdate = Object.assign(refund.toObject(), {
+              status: 'failed',
+              ...refundResp
+            });
+            console.log(refundToUpdate);
+            await RefundsRepo.saveOrUpdate(refundToUpdate, options);
+            resolve(refundToUpdate);
+          }
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
   async refund(order, amount): Promise<any> {
     return new Promise((resolve, reject) => {});
   }
 
+  getRefundStatusOkResponse(data) {
+    const response = {
+      returnCode: data.return_code,
+      appId: data.appid,
+      refundId: data.refund_id,
+      refundFee: data.refund_fee,
+      totalFee: data.total_fee,
+      outTradeNo: data.out_trade_no,
+      outRefundNo: data.out_refund_no
+    };
+
+    if (data.refund_status) {
+      response['refundStatus'] = data.refund_status;
+    }
+    if (data.cash_fee) {
+      response['cashFee'] = data.cash_fee;
+    }
+    if (data.result_code) {
+      response['resultCode'] = data.result_code;
+    }
+    if (data.return_msg) {
+      response['returnMsg'] = data.return_msg;
+    }
+    if (data.trade_state) {
+      response['tradeState'] = data.trade_state;
+    }
+    if (data.trade_state_desc) {
+      response['tradeStateDesc'] = data.trade_state_desc;
+    }
+    if (data.fee_type) {
+      response['feeType'] = data.fee_type;
+    }
+    if (data.transaction_id) {
+      response['transactionId'] = data.transaction_id;
+    }
+    if (data.fee_type) {
+      response['feeType'] = data.fee_type;
+    }
+    if (data.settlement_refund_fee) {
+      response['settlementRefund_fee'] = data.settlement_refund_fee;
+    }
+    if (data.settlement_total_fee) {
+      response['settlementTotalFee'] = data.settlement_total_fee;
+    }
+    if (data.time_end) {
+      response['timeEnd'] = string2Date(data.time_end, true, 'YYYYMMDDHHmmss');
+    }
+    if (data.success_time) {
+      response['refundedAt'] = string2Date(data.success_time, true, 'YYYY-MM-DD HH:mm:ss');
+    }
+    if (data.refund_account) {
+      response['refundAccount'] = data.refund_account;
+    }
+    if (data.refund_request_source) {
+      response['refundRequestSource'] = data.refund_request_source;
+    }
+    return response;
+  }
+
+  getRefundErrorResponse(data) {
+    const response = {
+      returnCode: data.return_code,
+      returnMsg: data.return_msg,
+      outTradeNo: data.out_trade_no,
+      outRefundNo: data.out_refund_no
+    };
+    if (data.err_code) {
+      response['errCode'] = data.err_code;
+    }
+    if (data.err_code_des) {
+      response['errCodeDesc'] = data.err_code_des;
+    }
+    return response;
+  }
+
   getPaymentStatusOkResponse(data) {
     const response = {
+      returnCode: data.return_code,
       appId: data.appid,
       totalFee: data.total_fee,
       outTradeNo: data.out_trade_no
     };
+    if (data.prepay_id) {
+      response['prepayId'] = data.prepay_id;
+    }
+    if (data.code_url) {
+      response['codeUrl'] = data.code_url;
+    }
+    if (data.result_code) {
+      response['resultCode'] = data.result_code;
+    }
+    if (data.return_msg) {
+      response['returnMsg'] = data.return_msg;
+    }
     if (data.device_info) {
       response['deviceInfo'] = data.device_info;
     }
@@ -236,6 +509,41 @@ class OrderService {
     return data;
   }
 
+  getRefundPaymentSign(appid, nonceStr, outTradeNo, outRefundNo, totalFee, refundFee, refundDesc, notifyUrl) {
+    const params = {
+      appid: appid,
+      mch_id: config.mch.mchId,
+      nonce_str: nonceStr,
+      notify_url: notifyUrl,
+      out_refund_no: outRefundNo,
+      total_fee: Number(totalFee),
+      refund_fee: Number(refundFee),
+      refund_desc: refundDesc,
+      out_trade_no: outTradeNo
+    };
+
+    return this.getSign(params, config.mch.key);
+  }
+
+  wxRefundSendData(appid, nonceStr, outTradeNo, outRefundNo, totalFee, refundFee, refundDesc, notifyUrl, sign) {
+    const data = `
+			<xml>
+			   <appid><![CDATA[${appid}]]></appid>
+			   <mch_id><![CDATA[${config.mch.mchId}]]></mch_id>
+			   <nonce_str><![CDATA[${nonceStr}]]></nonce_str>
+			   <notify_url><![CDATA[${notifyUrl}]]></notify_url>
+			   <out_trade_no><![CDATA[${outTradeNo}]]></out_trade_no>
+			   <out_refund_no><![CDATA[${outRefundNo}]]></out_refund_no>
+			   <refund_fee><![CDATA[${refundFee}]]></refund_fee>
+			   <total_fee><![CDATA[${totalFee}]]></total_fee>
+			   <refund_desc><![CDATA[${refundDesc}]]></refund_desc>
+			   <sign><![CDATA[${sign}]]></sign>
+			</xml>
+		`;
+    console.log(data, 'generating xml data');
+    return data;
+  }
+
   //生成预支付签名
   getPrePaySign(appid, attach, body, openid, totalFee, notifyUrl, ip, nonceStr, outTradeNo) {
     const params = {
@@ -276,20 +584,20 @@ class OrderService {
     console.log(data, 'generating xml data');
     return data;
   }
-  getPayParams(appId, prepayId) {
-    const params = {
-      appId,
-      timeStamp: nowDate()
-        .unix()
-        .toString(),
-      nonceStr: getRandomString(32),
-      package: `prepay_id=${prepayId}`,
-      signType: 'MD5'
-    };
-    const paySign = this.getSign(params, config.mch.key);
-    const response = Object.assign(params, { paySign });
-    return response;
-  }
+  // getPayParams(appId, prepayId) {
+  //   const params = {
+  //     appId,
+  //     timeStamp: nowDate()
+  //       .unix()
+  //       .toString(),
+  //     nonceStr: getRandomString(32),
+  //     package: `prepay_id=${prepayId}`,
+  //     signType: 'MD5'
+  //   };
+  //   const paySign = this.getSign(params, config.mch.key);
+  //   const response = Object.assign(params, { paySign });
+  //   return response;
+  // }
 
   getSign(params, key) {
     const string = this.raw(params) + '&key=' + key;

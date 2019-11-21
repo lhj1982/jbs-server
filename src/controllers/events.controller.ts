@@ -266,10 +266,10 @@ export class EventsController extends BaseController {
         const order = {
           createdBy: hostUserId,
           type: 'event_join',
-          amount: price,
+          amount: price * 100,
           objectId: newEventUser.id,
           outTradeNo: getRandomString(32),
-          status: 'created'
+          orderStatus: 'created'
         };
         newOrder = await OrderService.createOrder(order, opts);
       }
@@ -329,7 +329,8 @@ export class EventsController extends BaseController {
 
     const {
       script: { id: scriptId },
-      shop: { id: shopId }
+      shop: { id: shopId },
+      price: originalPrice
     } = event;
 
     const script = await ScriptsRepo.findById(scriptId);
@@ -343,10 +344,25 @@ export class EventsController extends BaseController {
     if (applicableDiscountRules.length > 0) {
       discountRule = applicableDiscountRules[0]._id;
     }
-    // updateData['discountRule'] = discountRule;
-    const eventToUpdate = Object.assign(event, updateData);
-    const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, {});
-    res.json({ code: 'SUCCESS', data: newEvent });
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      // updateData['discountRule'] = discountRule;
+      const eventToUpdate = Object.assign(event, updateData);
+      const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
+      // if price has changed, refund all paid players
+      if (price && originalPrice != price) {
+        await EventService.cancelBookings(event, 'price_updated', opts);
+      }
+      await session.commitTransaction();
+      await EventsRepo.endSession();
+      res.json({ code: 'SUCCESS', data: newEvent });
+    } catch (err) {
+      await session.abortTransaction();
+      await EventsRepo.endSession();
+      next(err);
+    }
   };
 
   /**
@@ -439,12 +455,11 @@ export class EventsController extends BaseController {
         createdBy: userId,
         type: 'event_join',
         objectId: newEventUser.id,
-        amount: price,
+        amount: price * 100,
         outTradeNo: getRandomString(32),
         status: 'created'
       };
       const newOrder = await OrderService.createOrder(order, opts);
-
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
 
@@ -452,7 +467,7 @@ export class EventsController extends BaseController {
       await EventsRepo.endSession();
       res.json({
         code: 'SUCCESS',
-        data: Object.assign(newEventUser, { order: newOrder })
+        data: Object.assign(newEventUser.toObject(), { order: newOrder })
       });
     } catch (err) {
       await session.abortTransaction();
@@ -638,7 +653,6 @@ export class EventsController extends BaseController {
 
       await session.commitTransaction();
       await EventsRepo.endSession();
-
       res.json({ code: 'SUCCESS', data: newEventUser });
     } catch (err) {
       await session.abortTransaction();
@@ -739,10 +753,22 @@ export class EventsController extends BaseController {
       next(new AccessDeinedException(loggedInUser._id, 'Only host can cancel event'));
       return;
     }
-    const status = 'cancelled';
-    const eventToUpdate = Object.assign(event.toObject(), { status });
-    const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate);
-    res.json({ code: 'SUCCESS', data: newEvent });
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const status = 'cancelled';
+      const eventToUpdate = Object.assign(event.toObject(), { status });
+      const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
+      await EventService.cancelBookings(event, 'event_cancelled', opts);
+      await session.commitTransaction();
+      await EventsRepo.endSession();
+      res.json({ code: 'SUCCESS', data: newEvent });
+    } catch (err) {
+      await session.abortTransaction();
+      await EventsRepo.endSession();
+      next(err);
+    }
   };
 
   /**

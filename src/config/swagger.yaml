@@ -26,7 +26,9 @@ tags:
 - name: "notification"
   description: "Notifications"
 - name: "order"
-  description: "Order"
+  description: "Operations about orders"
+- name: "refund"
+  description: "Operations about refunds"
 
 servers:
   - url: http://localhost:3000
@@ -1565,7 +1567,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /order/{orderId}/pay-status: 
+  /order/{orderId}/pay-status:
     get:
       tags:
       - "order"
@@ -1607,6 +1609,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
+  /orders/wechat/pay_callback:
+    post:
+      tags:
+      - "order"
+      summary: "wechat pay notify callback"
+      description: "wechat pay notify callback"
+      operationId: "notifyWechatPayCallback"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /orders/wechat/refund_callback:
+    post:
+      tags:
+      - "order"
+      summary: "wechat refund notify callback"
+      description: "wechat refund notify callback"
+      operationId: "notifyWechatRefundCallback"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /orders/refund:
+    post:
+      tags:
+      - "order"
+      summary: "Refund"
+      description: "Refund"
+      operationId: "batchRefund"
 
 components:
   securitySchemes:
@@ -2092,6 +2150,12 @@ components:
         createdAt:
           type: "string"
           format: "date-time"
+
+    Order:
+      type: "object"
+      properties:
+        
+
     Notification:
       type: "object"
       properties:

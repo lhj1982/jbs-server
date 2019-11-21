@@ -13,6 +13,7 @@ import { EventUserSchema } from './models/eventUser.model';
 import { EventCommissionSchema } from './models/eventCommissions.model';
 import { NotificationSchema } from './models/notification.model';
 import { OrderSchema } from './models/order.model';
+import { RefundSchema } from './models/refund.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -23,6 +24,7 @@ const Script = mongoose.model('Script', ScriptSchema, 'scripts');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
 const EventCommission = mongoose.model('EventCommission', EventCommissionSchema, 'eventCommissions');
 const Notification = mongoose.model('Notification', NotificationSchema, 'notifications');
+const Refund = mongoose.model('Refund', RefundSchema, 'refunds');
 const Order = mongoose.model('Order', OrderSchema, 'orders');
 
 import { UsersRoutes } from './routes/users.routes';
