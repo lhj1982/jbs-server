@@ -201,6 +201,7 @@ export class EventsController extends BaseController {
     const maxNumberOfAvailableSpots = maxNumberOfPersons - numberOfOfflinePersons;
     const numberOfParticipators = 0;
     let newEvent;
+    let newOrder;
     const session = await EventsRepo.getSession();
     session.startTransaction();
     try {
@@ -270,7 +271,7 @@ export class EventsController extends BaseController {
           outTradeNo: getRandomString(32),
           status: 'created'
         };
-        await OrderService.createOrder(order, opts);
+        newOrder = await OrderService.createOrder(order, opts);
       }
       newEvent = Object.assign(newEvent.toObject(), {
         shop,
@@ -290,7 +291,10 @@ export class EventsController extends BaseController {
     // get participators for given event
     const eventUsers = await EventUsersRepo.findByEvent(newEvent.id);
     newEvent = await this.updateEventParticpantsNumber(newEvent, eventUsers);
-    res.json({ code: 'SUCCESS', data: newEvent });
+    res.json({
+      code: 'SUCCESS',
+      data: Object.assign(newEvent.toObject(), { order: newOrder })
+    });
   };
 
   /**
@@ -439,14 +443,17 @@ export class EventsController extends BaseController {
         outTradeNo: getRandomString(32),
         status: 'created'
       };
-      await OrderService.createOrder(order, opts);
+      const newOrder = await OrderService.createOrder(order, opts);
 
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
 
       await session.commitTransaction();
       await EventsRepo.endSession();
-      res.json({ code: 'SUCCESS', data: newEventUser });
+      res.json({
+        code: 'SUCCESS',
+        data: Object.assign(newEventUser, { order: newOrder })
+      });
     } catch (err) {
       await session.abortTransaction();
       await EventsRepo.endSession();

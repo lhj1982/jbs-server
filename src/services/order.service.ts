@@ -20,10 +20,10 @@ class OrderService {
    * @param {[type]} options =             {} [description]
    */
   async createOrder(order, options = {}) {
-    const { createdBy, type, objectId } = order;
-    const existingOrder = await OrdersRepo.findUnique(createdBy, type, objectId);
+    const { createdBy, type, objectId, status } = order;
+    const existingOrder = await OrdersRepo.findUnique(createdBy, type, objectId, status);
     if (existingOrder) {
-      throw new ResourceAlreadyExist('Order', [createdBy, type, objectId]);
+      throw new ResourceAlreadyExist('Order', [createdBy, type, objectId, status]);
       return;
     }
     return await OrdersRepo.createOrder(order, options);

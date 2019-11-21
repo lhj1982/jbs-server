@@ -33,11 +33,23 @@ export class OrdersController extends BaseController {
       return;
     }
 
+    const session = await OrdersRepo.getSession();
+    session.startTransaction();
     try {
+      const opts = { session };
       const response = await OrderService.wechatPay(order);
+      const orderToUpdate = Object.assign(order.toObject(), {
+        status: 'paid_pending'
+      });
+      const newOrder = OrdersRepo.saveOrUpdate(orderToUpdate, opts);
+
       // console.log('ssss' + response);
+      await session.commitTransaction();
+      await OrdersRepo.endSession();
       res.json({ code: 'SUCCESS', data: response });
     } catch (err) {
+      await session.abortTransaction();
+      await OrdersRepo.endSession();
       console.log(err);
       next(err);
     }

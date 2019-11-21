@@ -1,9 +1,18 @@
 import * as mongoose from 'mongoose';
 import { OrderSchema } from '../models/order.model';
+import { CommonRepo } from './common.repository';
 const Order = mongoose.model('Order', OrderSchema);
 mongoose.set('useFindAndModify', false);
 
-class OrdersRepo {
+class OrdersRepo extends CommonRepo {
+  async getSession() {
+    return super.getSession(Event);
+  }
+
+  async endSession() {
+    super.endSession();
+  }
+
   async findById(id: string) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     return await Order.findById(mongoose.Types.ObjectId(id))
@@ -11,8 +20,8 @@ class OrdersRepo {
       .exec();
   }
 
-  async findUnique(createdBy: string, type: string, objectId: string) {
-    return await Order.findOne({ createdBy, type, objectId }).exec();
+  async findUnique(createdBy: string, type: string, objectId: string, status: string) {
+    return await Order.findOne({ createdBy, type, objectId, status }).exec();
   }
 
   async findByTradeNo(outTradeNo: string) {
@@ -29,8 +38,20 @@ class OrdersRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { createdBy, type, objectId } = order;
-    return await Order.findOneAndUpdate({ createdBy, type, objectId }, order, options).exec();
+    const { createdBy, type, objectId, status } = order;
+    return await Order.findOneAndUpdate({ createdBy, type, objectId, status }, order, options).exec();
+  }
+
+  async saveOrUpdate(order, opts = {}) {
+    const options = {
+      ...opts,
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true,
+      returnNewDocument: true
+    };
+    const { outTradeNo } = order;
+    return await Order.findOneAndUpdate({ outTradeNo }, order, options).exec();
   }
 
   async updatePaymentByTradeNo(payment, opts = {}) {

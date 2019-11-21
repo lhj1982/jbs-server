@@ -20,7 +20,7 @@ export const OrderSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['created', 'completed', 'failed', 'paid', 'refund']
+      enum: ['created', 'completed', 'failed', 'paid_pending', 'paid', 'refund_pending', 'refund']
     },
     message: {
       type: String
