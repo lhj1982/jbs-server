@@ -14,9 +14,13 @@ export const RefundSchema = new Schema(
       type: String,
       enum: ['created', 'approved', 'refund', 'failed']
     },
-    amount: {
+    totalAmount: {
       type: Number,
-      required: 'Amount is required'
+      required: 'TotalAmount is required'
+    },
+    refundAmount: {
+      type: Number,
+      required: 'RefundAmount is required'
     },
     refundDesc: {
       type: String

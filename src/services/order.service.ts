@@ -48,7 +48,7 @@ class OrderService {
     const sign = this.getPrePaySign(appid, attach, body, openId, amount, config.mch.payNotifyUrl, ip.address(), nonceStr, outTradeNo);
     //通过参数和签名组装xml数据，用以调用统一下单接口
     const sendData = this.wxSendData(appid, attach, body, openId, amount, config.mch.payNotifyUrl, ip.address(), nonceStr, outTradeNo, sign);
-    console.log(sign, 'sign');
+    // console.log(sign, 'sign');
     const response = await axios({
       method: 'POST',
       url: 'https://api.mch.weixin.qq.com/pay/unifiedorder',
@@ -67,11 +67,11 @@ class OrderService {
             //获取预支付会话ID
             const normalizedData = normalizePaymentData(data);
 
-            // const prepayId = data.prepay_id[0];
-            // const payResult = this.getPayParams(appid, prepayId);
-            // console.log(payResult);
+            const { prepay_id: prepayId } = normalizedData;
+            const payParams = this.getPayParams(appid, prepayId);
+            // console.log(normalizedData);
             const payResult = this.getPaymentStatusOkResponse(normalizedData);
-            resolve(payResult);
+            resolve(Object.assign(payResult, payParams));
             // return { code: 'SUCCESS', data: payResult };
           } else {
             // return { code: 'FAIL', error: data };
@@ -123,14 +123,19 @@ class OrderService {
     return new Promise(async (resolve, reject) => {
       // console.log(data);
       const { xml: data } = responseData;
-      logger.info(`payment notify status: ${pp(data)}`);
+      logger.info(`refund notify status: ${pp(data)}`);
       const normalizedData = normalizePaymentData(data);
       const { req_info } = normalizedData;
       try {
         const payload = await this.decryptRequestData(req_info);
-        const { xml: data } = payload;
-        const normalizedData = normalizePaymentData(data);
-        if (data.return_code[0] == 'SUCCESS' && data.result_code[0] == 'SUCCESS') {
+        const { xml: decryptedData } = payload;
+        logger.info(`refund notify decrypted status: ${pp(decryptedData)}`);
+        let normalizedData = normalizePaymentData(decryptedData);
+        normalizedData['return_code'] = data.return_code[0];
+        if (data.return_msg) {
+          normalizedData['return_msg'] = data.return_msg[0];
+        }
+        if (data.return_code[0] == 'SUCCESS') {
           const response = this.getRefundStatusOkResponse(normalizedData);
           resolve(response);
         } else {
@@ -159,9 +164,7 @@ class OrderService {
   }
 
   async decryptRequestData(data): Promise<any> {
-    //  	let buff = Buffer.from(data, 'base64');
-    // let text = buff.toString('utf-8');
-    const decodeDataBase64 = Buffer.from(data, 'base64').toString('utf8');
+    const decodeDataBase64 = Buffer.from(data, 'base64');
 
     const encryptedKey = md5(config.mch.key).toLowerCase();
     const iv = Buffer.alloc(0); //设置偏移量
@@ -252,8 +255,9 @@ class OrderService {
     if (type === 'event_join') {
       const eventUser = await EventUsersRepo.findById(objectId);
       const eventUserToUpdate = Object.assign(eventUser.toObject(), {
-        orderStatus: 'paid'
+        status: 'paid'
       });
+      // console.log(eventUserToUpdate);
       await EventUsersRepo.saveOrUpdate(eventUserToUpdate, options);
     }
     return newOrder;
@@ -288,8 +292,7 @@ class OrderService {
     // console.log(order);
     const appid = config.appId;
     const nonceStr = getRandomString(32);
-    const { outTradeNo, amount: totalFee, refundDesc, outRefundNo } = refund;
-    const refundFee = totalFee;
+    const { outTradeNo, totalAmount: totalFee, refundAmount: refundFee, refundDesc, outRefundNo } = refund;
     const notifyUrl = config.mch.refundNotifyUrl;
     const sign = this.getRefundPaymentSign(appid, nonceStr, outTradeNo, outRefundNo, totalFee, refundFee, refundDesc, notifyUrl);
     const sendData = this.wxRefundSendData(appid, nonceStr, outTradeNo, outRefundNo, totalFee, refundFee, refundDesc, notifyUrl, sign);
@@ -322,8 +325,8 @@ class OrderService {
               status: 'refund',
               ...refundResp
             });
-            await RefundsRepo.saveOrUpdate(refundToUpdate, options);
-            resolve(refundToUpdate);
+            const newRefund = await RefundsRepo.saveOrUpdate(refundToUpdate, options);
+            resolve(newRefund);
           } else {
             const refundResp = this.getRefundErrorResponse(normalizedData);
             const refundToUpdate = Object.assign(refund.toObject(), {
@@ -331,8 +334,8 @@ class OrderService {
               ...refundResp
             });
             console.log(refundToUpdate);
-            await RefundsRepo.saveOrUpdate(refundToUpdate, options);
-            resolve(refundToUpdate);
+            const newRefund = await RefundsRepo.saveOrUpdate(refundToUpdate, options);
+            resolve(newRefund);
           }
         })
         .catch(error => {
@@ -348,14 +351,15 @@ class OrderService {
   getRefundStatusOkResponse(data) {
     const response = {
       returnCode: data.return_code,
-      appId: data.appid,
       refundId: data.refund_id,
       refundFee: data.refund_fee,
       totalFee: data.total_fee,
       outTradeNo: data.out_trade_no,
       outRefundNo: data.out_refund_no
     };
-
+    if (data.appid) {
+    	response['appId'] = data.appid;
+    }
     if (data.refund_status) {
       response['refundStatus'] = data.refund_status;
     }
@@ -407,9 +411,7 @@ class OrderService {
   getRefundErrorResponse(data) {
     const response = {
       returnCode: data.return_code,
-      returnMsg: data.return_msg,
-      outTradeNo: data.out_trade_no,
-      outRefundNo: data.out_refund_no
+      returnMsg: data.return_msg
     };
     if (data.err_code) {
       response['errCode'] = data.err_code;
@@ -423,10 +425,12 @@ class OrderService {
   getPaymentStatusOkResponse(data) {
     const response = {
       returnCode: data.return_code,
-      appId: data.appid,
       totalFee: data.total_fee,
       outTradeNo: data.out_trade_no
     };
+    if (data.appid) {
+    	response['appId'] = data.appid;
+    }
     if (data.prepay_id) {
       response['prepayId'] = data.prepay_id;
     }
@@ -584,20 +588,21 @@ class OrderService {
     console.log(data, 'generating xml data');
     return data;
   }
-  // getPayParams(appId, prepayId) {
-  //   const params = {
-  //     appId,
-  //     timeStamp: nowDate()
-  //       .unix()
-  //       .toString(),
-  //     nonceStr: getRandomString(32),
-  //     package: `prepay_id=${prepayId}`,
-  //     signType: 'MD5'
-  //   };
-  //   const paySign = this.getSign(params, config.mch.key);
-  //   const response = Object.assign(params, { paySign });
-  //   return response;
-  // }
+
+  getPayParams(appId, prepayId) {
+    const now = nowDate();
+    const params = {
+      appId,
+      timeStamp: now.unix().toString(),
+      // createdAt: nowDate(),
+      nonceStr: getRandomString(32),
+      package: `prepay_id=${prepayId}`,
+      signType: 'MD5'
+    };
+    const paySign = this.getSign(params, config.mch.key);
+    const response = Object.assign(params, { paySign, createdAt: now });
+    return response;
+  }
 
   getSign(params, key) {
     const string = this.raw(params) + '&key=' + key;

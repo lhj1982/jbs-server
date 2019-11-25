@@ -1,11 +1,20 @@
 import * as mongoose from 'mongoose';
 import { UserSchema } from '../models/user.model';
 import EventUsersRepo from './eventUsers.repository';
+import { CommonRepo } from './common.repository';
 import * as bcrypt from 'bcrypt';
 const User = mongoose.model('User', UserSchema);
 mongoose.set('useFindAndModify', false);
 
-class UsersRepo {
+class UsersRepo extends CommonRepo {
+  async getSession() {
+    return super.getSession(User);
+  }
+
+  async endSession() {
+    super.endSession();
+  }
+
   async findById(id: string) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     return await User.where({ _id: id })

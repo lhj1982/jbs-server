@@ -148,6 +148,13 @@ export class OrdersController extends BaseController {
     }
   };
 
+  /**
+   * payment notify status: {"return_code":["SUCCESS"],"appid":["wxf59749a45686779c"],"mch_id":["1560901281"],"nonce_str":["8010b252d85da496c326787c8aa9920c"],"req_info":["LR3HUI1qW+C5FaIAP/Q44K3R7aIhafRcLRcRfuxZZ9nkM+RKM6k0QeTaJgoH6yZghnQGsHDQUAY9h5GyhZ0/XbZKABO2VhbfI2gMsCuPBffo7NmlNTvcMpqTX1fkAncYVQjk9vlQXZtdA5CBXOtpcw2Em6X36Rp20I16YlbMmVWEzip/JLAYohZMVo0K4Jt6LMofFPfTMn7tdS/VzQ/ezT7YmVAMmm82p3HMTA81gN8tMIW7L/ZmHF67iN6viMTsF+le5V0WG9OVOpRYuj2iHvGy183JK4W8DPkcmVtwTu/j8h7zTWA8H76P1A7Hb/rd31auYE6LkNDz+TgWNAOgNMNsnXaz2YNfJOwag7WYN6pSCTDOA6hk+xnY4X19BcaELA7X3RXJLS4GQiLcVbXSylTMHzZnoHO1M9Sn0jOpQtpV3yjYms/vUXzDRsNafVnfItmaM05mg0FfoW1fGOmhfRL7RjFBIFyLeq8QwptFDAFTTQutwMFHGiXGeN5VJq01Rlfb9UbGpEobwOGALWVSBgN9SVYOpORUuznbscZPhSP5lRjnG64qhLsoapywCBDMAtbi/5V35iinjz5I/2uDpYIkhXoJzJnnrGtAxDVCOZcTjbRvWGFCt+459m4H0kiE1Da1quAlIsBp12WPQtZhAlAmo/FOd5kbKrodn0OWIPieQAlwZs7ZlZ1W0NXEaPedn4MoEoWwyzEmoI4Yu8gXXt9MocvoLSaGRQa9vsIpYKkjJWoR9wqcNLTmM+peNVgDD3aUTxOAxPixejcFuxSjWRZXDtxkHDvcYsJpAK471xYZsUSF2evPhb6Rgc5qn8BPnGIxZOoVotGmJQiFsNPFBRaS91OtaJLymmgOsp+9SBuaa/ChwvHLS1k5WatWsiffbk3IponOtbvgPu+cPLWA5MKiNWl7eMJfdF5CSXOfLVIjMW4ZExaLfEi1BOMqsjNUp1ad2M9XnGeULb+l9RNjErQw4zbVLh8HkeNCEWxzzCMAIgUdv89cxhtpgh9Jbu1mrUmB3S3wjJ8pKRBvwXW+6unEDSaEWRS7Z9DmEsJYhANeW79iPBzYqYgSsCMyogO6S/ISH5r8HvMrljK9n+Q3Qw=="]}
+
+   * @param {Request}      req  [description]
+   * @param {Response}     res  [description]
+   * @param {NextFunction} next [description]
+   */
   confirmWechatRefund = async (req: Request, res: Response, next: NextFunction) => {
     const { body } = req;
     logger.info(`wechat refund notify ${req}`);
@@ -156,12 +163,16 @@ export class OrdersController extends BaseController {
     try {
       const opts = { session };
       const refundData = await OrderService.confirmWechatRefund(body);
+      // console.log(refundData);
       const { outRefundNo, refundStatus } = refundData;
       const refund = await RefundsRepo.findByRefundNo(outRefundNo);
       let refundToUpdate = {};
       if (refundStatus !== 'SUCCESS') {
-        refundToUpdate = Object.assign(refund.toObject(), { status: 'failed' }, ...refundData);
+        refundToUpdate = Object.assign(refund.toObject(), { status: 'failed' }, refundData);
+      } else {
+      	refundToUpdate = Object.assign({}, refund.toObject(), refundData);
       }
+      // console.log(refundToUpdate);
       const newRefund = await RefundsRepo.saveOrUpdate(refundToUpdate, opts);
       await session.commitTransaction();
       await OrdersRepo.endSession();

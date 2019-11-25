@@ -104,9 +104,11 @@ class EventService {
           {
             order: _id,
             user: createdBy,
-            amount,
+            totalAmount: amount,
+            refundAmount: amount,
             outTradeNo,
             outRefundNo: getRandomString(32),
+            refundDesc: 'refund event',
             type: 'refund',
             status: 'created',
             createdAt: nowDate()

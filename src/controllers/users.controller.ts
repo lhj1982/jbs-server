@@ -4,6 +4,7 @@ import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundExceptio
 import UsersRepo from '../repositories/users.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import EventsRepo from '../repositories/events.repository';
+import UserService from '../services/user.service';
 import * as _ from 'lodash';
 
 export class UsersController {
@@ -133,6 +134,22 @@ export class UsersController {
       });
       const newUser = await UsersRepo.saveOrUpdateUser(userToUpdate);
       res.json({ code: 'SUCCESS', data: newUser });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getWechatEncryptedData = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    if (!loggedInUser) {
+      next(new AccessDeinedException(''));
+      return;
+    }
+    const { body } = req;
+    try {
+      // console.log(body);
+      const response = await UserService.getWechatEncryptedData(loggedInUser, body);
+      res.json({ code: 'SUCCESS', data: response });
     } catch (err) {
       next(err);
     }

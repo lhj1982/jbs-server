@@ -59,6 +59,27 @@ export const OrderSchema = new Schema(
       prepayId: {
         type: String
       },
+      package: {
+        type: String
+      },
+      appId: {
+        type: String
+      },
+      paySign: {
+        type: String
+      },
+      nonceStr: {
+        type: String
+      },
+      signType: {
+        type: String
+      },
+      createdAt: {
+        type: Date
+      },
+      timeStamp: {
+        type: String
+      },
       tradeType: {
         type: String
       },

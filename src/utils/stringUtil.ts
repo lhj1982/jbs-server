@@ -114,7 +114,7 @@ const normalizePaymentData = (data): any => {
 const md5 = (str: string) => {
   const hash = crypto
     .createHash('md5')
-    .update('some_string')
+    .update(str, 'utf8')
     .digest('hex');
   return hash;
 };
