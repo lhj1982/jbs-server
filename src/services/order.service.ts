@@ -342,6 +342,11 @@ class OrderService {
           // console.log(data);
           const normalizedData = normalizePaymentData(data);
           if (data.return_code[0] == 'SUCCESS' && data.result_code[0] == 'SUCCESS') {
+            const orderToUpdate = Object.assign(order.toObject(), {
+              orderStatus: 'refund'
+            });
+            await OrdersRepo.saveOrUpdate(orderToUpdate, options);
+
             const refundResp = this.getRefundStatusOkResponse(normalizedData);
             const refundToUpdate = Object.assign(refund.toObject(), {
               status: 'refund',
@@ -355,7 +360,7 @@ class OrderService {
               status: 'failed',
               ...refundResp
             });
-            console.log(refundToUpdate);
+            // console.log(refundToUpdate);
             const newRefund = await RefundsRepo.saveOrUpdate(refundToUpdate, options);
             resolve(newRefund);
           }

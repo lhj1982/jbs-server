@@ -415,7 +415,7 @@ export class EventsController extends BaseController {
 
     // get participators for given event
     const eventUsers = await EventUsersRepo.findByEvent(eventId, {
-      status: ['paid', 'unpaid', 'blacklisted']
+      status: ['paid', 'unpaid']
     });
     await this.updateEventParticpantsNumber(event, eventUsers);
     if (!this.canJoinEvent(event, eventUsers)) {
