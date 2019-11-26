@@ -44,7 +44,7 @@ export class EventsController extends BaseController {
       if (!limit) {
         limit = config.query.limit;
       }
-      console.log(filterToUpdate);
+      // console.log(filterToUpdate);
       let result = await EventsRepo.find({ keyword, offset, limit }, filterToUpdate);
       const links = this.generateLinks(result.pagination, req.route.path, '');
       result = Object.assign({}, result, links);

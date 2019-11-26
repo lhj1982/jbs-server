@@ -5,9 +5,32 @@ import OrderService from '../services/order.service';
 import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, OrderCannotPayException, CannotRefundException } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import logger from '../utils/logger';
+import config from '../config';
 
 export class OrdersController extends BaseController {
-  getOrders = async (req: Request, res: Response, next: NextFunction) => {};
+  getOrders = async (req: Request, res: Response, next: NextFunction) => {
+    let offset = parseInt(req.query.offset);
+    let limit = parseInt(req.query.limit);
+    const { tradeNo: outTradeNo } = req.query;
+    if (!offset) {
+      offset = config.query.offset;
+    }
+    if (!limit) {
+      limit = config.query.limit;
+    }
+    try {
+      let result = await OrderService.searchOrders({
+        outTradeNo,
+        limit,
+        offset
+      });
+      const links = this.generateLinks(result.pagination, req.route.path, '');
+      result = Object.assign({}, result, links);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  };
 
   payOrder = async (req: Request, res: Response, next: NextFunction) => {
     const {
@@ -170,7 +193,7 @@ export class OrdersController extends BaseController {
       if (refundStatus !== 'SUCCESS') {
         refundToUpdate = Object.assign(refund.toObject(), { status: 'failed' }, refundData);
       } else {
-      	refundToUpdate = Object.assign({}, refund.toObject(), refundData);
+        refundToUpdate = Object.assign({}, refund.toObject(), refundData);
       }
       // console.log(refundToUpdate);
       const newRefund = await RefundsRepo.saveOrUpdate(refundToUpdate, opts);
@@ -181,6 +204,20 @@ export class OrdersController extends BaseController {
       await session.abortTransaction();
       await OrdersRepo.endSession();
       logger.error(err);
+      next(err);
+    }
+  };
+
+  updateRefund = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { orderId, refundId } = req.params;
+    const { status } = req.body;
+    try {
+      const refund = await OrderService.updateRefund(orderId, refundId, {
+        status
+      });
+      res.json({ code: 'SUCCESS', data: refund });
+    } catch (err) {
       next(err);
     }
   };

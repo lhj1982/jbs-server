@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import { escapeRegex } from '../utils/stringUtil';
 import { OrderSchema } from '../models/order.model';
 import { CommonRepo } from './common.repository';
 const Order = mongoose.model('Order', OrderSchema, 'orders');
@@ -11,6 +12,28 @@ class OrdersRepo extends CommonRepo {
 
   async endSession() {
     super.endSession();
+  }
+
+  async find(params) {
+    const { offset, limit, outTradeNo } = params;
+    // let condition = { outTradeNo };
+    let condition = {};
+    if (outTradeNo) {
+      const regex = new RegExp(escapeRegex(outTradeNo), 'gi');
+      condition = { outTradeNo: regex };
+    }
+
+    const total = await Order.find(condition)
+      .countDocuments({})
+      .exec();
+    const pagination = { offset, limit, total };
+    const pagedOrders = await Order.find(condition)
+      .populate('refunds')
+      .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(limit)
+      .exec();
+    return { pagination, data: pagedOrders };
   }
 
   async findById(id: string) {

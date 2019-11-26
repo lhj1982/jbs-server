@@ -50,7 +50,11 @@ class UserService {
       const { encryptedData, iv } = data;
       const { appId } = config;
 
-      const decryptedData = decryptData(encryptedData, sessionKey, iv);
+      const decryptedData = decryptData(
+        'nSGBDXip2Eqa4JVtLOhI30o/Vd/ra+seyfaRXnSq1+LVKQoVGIw3G1dqBJsQ3ZexPui6ClTAjZcCZzujOXGJjAFEzkb1bu+w47vxdZhKnrVZOTEnTfc76qX7v/QkzOT/JZBsGyWgkg/BgUYMIXhOS4EDr9cP1YGYZwlHp6XLP9+6MtD7sAw6JzpvNCJvXmPzZovjmJBZe4FZDimdDGX4+YiD6y++xBGCTd7/RpX4WS5a2BNkoKlwKwgyAEfCZJ5mWdXhCIBIC3rD5Ky53F1e8OYtNf9jw9wg87bSfl/oeSIOhN1mPpPjGaQTdnc2mrZY8sUnP6OfI66ug95lrfkqwqYZfOCYmM7YN4kTgpr3uLubTCFqmb/dzr53OoJO7uocUB1wdwRjWwbqnlP5W+zgftVMc5Y/hGri8kekexl2CDYdNm3yCzyjqwZT9J0RiFvY1ByLZuM1XTHurNiUll+DJA==',
+        'q43ucennCcjyIkw1JvYGAw==',
+        '1N737A9ZQjxMSqLPDjwvDQ=='
+      );
       console.log(appId);
       console.log(decryptedData);
       return decryptedData;

@@ -17,6 +17,12 @@ class RefundsRepo {
       .exec();
   }
 
+  async findById(id: string) {
+    return await Refund.findOne({ _id: id })
+      .populate('order')
+      .exec();
+  }
+
   async saveOrUpdate(refund, opts = {}) {
     const options = {
       new: true,

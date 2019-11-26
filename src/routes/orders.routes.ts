@@ -10,10 +10,11 @@ export class OrdersRoutes {
     app.route('/orders/wechat/pay_callback').post(this.ordersController.confirmWechatPayment);
     app.route('/orders/wechat/refund_callback').post(this.ordersController.confirmWechatRefund);
 
-    app.route('/orders').get(verifyToken, this.ordersController.getOrders);
+    app.route('/orders').get(verifyToken, permit({ domain: 'order', operations: ['getOrders'] }), this.ordersController.getOrders);
     app.route('/orders/refund').post(verifyToken, this.ordersController.refundOrders);
     app.route('/orders/:orderId/pay').post(verifyToken, this.ordersController.payOrder);
     app.route('/orders/:orderId/pay-status').get(verifyToken, permit({ domain: 'order', operations: ['getOrderPaymentStatus'] }), this.ordersController.queryPaymentStatus);
     app.route('/orders/:orderId/refund').post(verifyToken, this.ordersController.refundOrder);
+    app.route('/orders/:orderId/refund/:refundId').put(verifyToken, permit({ domain: 'order', operations: ['updateRefund'] }), this.ordersController.updateRefund);
   }
 }

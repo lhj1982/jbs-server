@@ -14,7 +14,7 @@ const decryptData = (data, sessionKey, initialVector) => {
   const decryptedSessionKey = Buffer.from(sessionKey, 'base64');
   // const aa = new Buffer(this.sessionKey, 'base64');
   const decryptedData = Buffer.from(data, 'base64');
-  const iv = Buffer.from(initialVector, 'base64').toString('utf8'); //new Buffer(iv, 'base64');
+  const iv = Buffer.from(initialVector, 'base64'); //new Buffer(iv, 'base64');
   // console.log(aa);
   let result;
   try {

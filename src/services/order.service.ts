@@ -7,7 +7,7 @@ import { nowDate } from '../utils/dateUtil';
 import OrdersRepo from '../repositories/orders.repository';
 import RefundsRepo from '../repositories/refunds.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
-import { ResourceAlreadyExist, InvalidPaymentSignatureException } from '../exceptions/custom.exceptions';
+import { ResourceAlreadyExist, ResourceNotFoundException, InvalidPaymentSignatureException } from '../exceptions/custom.exceptions';
 import * as _ from 'lodash';
 const https = require('https');
 const fs = require('fs');
@@ -17,6 +17,28 @@ const crypto = require('crypto');
 const xml = require('xml2js');
 
 class OrderService {
+  async searchOrders(params): Promise<any> {
+    const { limit, offset, outTradeNo } = params;
+    const orders = await OrdersRepo.find({ outTradeNo, offset, limit });
+    return orders;
+  }
+
+  async updateRefund(orderId, refundId, dataToUpdate) {
+    const refund = await RefundsRepo.findById(refundId);
+    if (!refund) {
+      throw new ResourceNotFoundException('Refund', refundId);
+    }
+    const { status } = refund;
+    if (status === 'created') {
+      const refundToUpdate = Object.assign(refund.toObject(), dataToUpdate);
+      console.log(refundToUpdate);
+      const newRefund = await RefundsRepo.saveOrUpdate(refundToUpdate);
+      return newRefund;
+    } else {
+      return refund;
+    }
+  }
+
   /**
    * Create new order, throw exception if error is duplicated.
    *
@@ -130,7 +152,7 @@ class OrderService {
         const payload = await this.decryptRequestData(req_info);
         const { xml: decryptedData } = payload;
         logger.info(`refund notify decrypted status: ${pp(decryptedData)}`);
-        let normalizedData = normalizePaymentData(decryptedData);
+        const normalizedData = normalizePaymentData(decryptedData);
         normalizedData['return_code'] = data.return_code[0];
         if (data.return_msg) {
           normalizedData['return_msg'] = data.return_msg[0];
@@ -358,7 +380,7 @@ class OrderService {
       outRefundNo: data.out_refund_no
     };
     if (data.appid) {
-    	response['appId'] = data.appid;
+      response['appId'] = data.appid;
     }
     if (data.refund_status) {
       response['refundStatus'] = data.refund_status;
@@ -429,7 +451,7 @@ class OrderService {
       outTradeNo: data.out_trade_no
     };
     if (data.appid) {
-    	response['appId'] = data.appid;
+      response['appId'] = data.appid;
     }
     if (data.prepay_id) {
       response['prepayId'] = data.prepay_id;
