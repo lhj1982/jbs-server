@@ -819,9 +819,9 @@ export class EventsController extends BaseController {
       if (eventCommissions) {
         await EventsRepo.saveEventCommissions(eventCommissions, opts);
       }
-
       await MessageService.saveCompleteEventNotifications(newEvent, eventCommissions, opts);
-
+      const refunds = await OrderService.createCommissionRefunds(eventCommissions, opts);
+      logger.info(`Created ${refunds.length} commission refunds`);
       await session.commitTransaction();
       await EventsRepo.endSession();
       res.json({ code: 'SUCCESS', data: newEvent });
@@ -928,7 +928,7 @@ export class EventsController extends BaseController {
       const eventUser = eventUsers[i];
       const { status } = eventUser;
       if (status === 'unpaid') {
-        allPaid = true;
+        allPaid = false;
         break;
       }
     }

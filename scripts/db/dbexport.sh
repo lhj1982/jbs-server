@@ -6,10 +6,11 @@
 #fi
 db=jbs
 out_dir=backup
+BASE_DIR=/root/db
 DATE=`date +"%Y-%m-%d_%H_%M_%S"`
-DUMPFILENAME=${db}_${DATE}.tar.gz
-UN=<username>
-PW=<password>
+DUMPFILENAME=${BASE_DIR}/${db}_${DATE}.tar.gz
+UN=admin
+PW=12wed98uh56yhbv
 
 if [ ! $out_dir ]; then
         out_dir="./backup"
@@ -17,8 +18,8 @@ else
         mkdir -p $out_dir
 fi
 
-cd /root/db
-tmp_file="fadlfhsdofheinwvw.js"
+cd ${BASE_DIR}
+tmp_file=${BASE_DIR}/fadlfhsdofheinwvw.js
 echo -e "use ${db}\nprint('_ ' + db.getCollectionNames())" > $tmp_file
 cols=`mongo -u ${UN} -p ${PW} < $tmp_file | grep '_' | awk '{print $2}' | tr ',' ' '`
 for c in $cols

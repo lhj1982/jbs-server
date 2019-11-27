@@ -6,6 +6,7 @@ import { pp, getRandomString, normalizePaymentData, md5, decryption } from '../u
 import { nowDate } from '../utils/dateUtil';
 import OrdersRepo from '../repositories/orders.repository';
 import RefundsRepo from '../repositories/refunds.repository';
+import EventsRepo from '../repositories/events.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import { ResourceAlreadyExist, ResourceNotFoundException, InvalidPaymentSignatureException } from '../exceptions/custom.exceptions';
 import * as _ from 'lodash';
@@ -373,6 +374,78 @@ class OrderService {
 
   async refund(order, amount): Promise<any> {
     return new Promise((resolve, reject) => {});
+  }
+
+  async createCommissionRefunds(eventCommissions, options): Promise<any> {
+    const refunds = [];
+    const {
+      event: { _id: eventId },
+      commissions: {
+        host: {
+          user: { _id: hostUserId },
+          amount: commissionAmount
+        },
+        participators
+      }
+    } = eventCommissions;
+    const event = await EventsRepo.findById(eventId);
+    console.log(event);
+    const hostRefund = await this.createCommisionRefund(hostUserId, event, commissionAmount, options);
+    refunds.push(hostRefund);
+    for (let i = 0; i < participators.length; i++) {
+      const {
+        user: { _id: userId },
+        amount
+      } = participators[i];
+      const participatorRefund = await this.createCommisionRefund(userId, event, amount, options);
+      refunds.push(participatorRefund);
+    }
+    return refunds;
+  }
+
+  async createCommisionRefund(userId, event, amount, options): Promise<any> {
+    const { _id: eventId, price } = event;
+    const hostEventUser = await EventUsersRepo.findEventUser(eventId, userId, options);
+    if (hostEventUser) {
+      const { _id: eventUserId } = hostEventUser;
+      const order = await OrdersRepo.findByParams({
+        createdBy: userId,
+        orderStatus: 'paid',
+        objectId: eventUserId,
+        type: 'event_join'
+      });
+      const refundParams = {
+        user: userId,
+        totalAmount: price,
+        refundAmount: amount,
+        outRefundNo: getRandomString(32),
+        refundDesc: 'commission refund',
+        type: 'commission',
+        status: 'created',
+        createdAt: nowDate()
+      };
+      if (order) {
+        const { _id: orderId, outTradeNo } = order;
+        refundParams['order'] = orderId;
+        refundParams['outTradeNo'] = outTradeNo;
+      }
+      const newRefund = await RefundsRepo.saveOrUpdate(refundParams, options);
+      return newRefund;
+    } else {
+      // if there is no booking for this user, it should not happen, but if happens, create a refund anyway without objectId
+      const refundParams = {
+        user: userId,
+        totalAmount: amount,
+        refundAmount: amount,
+        outRefundNo: getRandomString(32),
+        refundDesc: 'commission refund',
+        type: 'commission',
+        status: 'created',
+        createdAt: nowDate()
+      };
+      const newRefund = await RefundsRepo.saveOrUpdate(refundParams, options);
+      return newRefund;
+    }
   }
 
   getRefundStatusOkResponse(data) {
