@@ -106,8 +106,8 @@ class App {
   mongoSetup(): void {
     mongoose.Promise = global.Promise;
     mongoose.connect(this.mongoUrl, {
-      useNewUrlParser: true
-      // replicaSet: 'rs0'
+      useNewUrlParser: true,
+      replicaSet: 'rs0'
     });
   }
 }

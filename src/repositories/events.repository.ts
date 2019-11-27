@@ -251,21 +251,23 @@ class EventsRepo extends CommonRepo {
       .populate('script')
       .sort({ startTime: 1 })
       .exec();
-    const eventsUserJoined = (await Event.find({ status: { $in: status } })
-      .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
-      .populate({
-        path: 'members',
-        match: { user: userId, status: { $in: ['unpaid', 'paid'] } },
-        select: 'nickName openId avatarUrl gender country province city language',
-        populate: {
-          path: 'user',
-          select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
-        }
-      })
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
-      .populate('script')
-      .sort({ startTime: 1 })
-      .exec()).filter(event => {
+    const eventsUserJoined = (
+      await Event.find({ status: { $in: status } })
+        .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
+        .populate({
+          path: 'members',
+          match: { user: userId, status: { $in: ['unpaid', 'paid'] } },
+          select: 'nickName openId avatarUrl gender country province city language',
+          populate: {
+            path: 'user',
+            select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
+          }
+        })
+        .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+        .populate('script')
+        .sort({ startTime: 1 })
+        .exec()
+    ).filter(event => {
       const { members } = event;
       return members.length > 0;
     });
