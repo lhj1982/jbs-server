@@ -148,7 +148,7 @@ export class UsersController {
     const { body } = req;
     try {
       // console.log(body);
-      const response = await UserService.getWechatEncryptedData(loggedInUser, body);
+      const response = await UserService.getWechatEncryptedData(body);
       res.json({ code: 'SUCCESS', data: response });
     } catch (err) {
       next(err);
