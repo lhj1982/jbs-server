@@ -14,7 +14,7 @@ module.exports = {
     certKeyFile: __dirname + '/../apiclient_key.pem'
   },
   logDir: __dirname + '/../../logs',
-  dbUri: 'mongodb://admin:87651234@127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019/jbs?replicaSet=rs0&maxPoolSize=512&authSource=admin',
+  dbUri: 'mongodb://127.0.0.1:27017,127.0.0.1:27018,127.0.0.1:27019/jbs?replicaSet=rs0',
   jwt: {
     issuer: 'ademes',
     secret: 'JARF2YXNTA46ZH8F4Q2TBFHWE8DSDJCXAMGQTSSMWZKSPWC8FMWSL9YXU5PELUFN',

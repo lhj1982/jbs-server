@@ -56,6 +56,9 @@ export const UserSchema = new Schema(
     mobile: {
       type: String
     },
+    mobileCountryCode: {
+      type: String
+    },
     contactMobile: {
       type: String
     },

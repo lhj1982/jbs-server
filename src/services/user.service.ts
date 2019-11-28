@@ -17,9 +17,9 @@ class UserService {
     // session.startTransaction();
     try {
       const opts = { session };
-      const { encryptedData, iv, session_key } = data;
+      const { encryptedData, iv, sessionKey } = data;
       const { appId } = config;
-      const newWBDC = new WXBizDataCrypt(appId, session_key);
+      const newWBDC = new WXBizDataCrypt(appId, sessionKey);
 
       const resultPhone = newWBDC.decryptData(encryptedData, iv);
       const result = {
