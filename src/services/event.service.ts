@@ -108,7 +108,7 @@ class EventService {
             refundAmount: amount,
             outTradeNo,
             outRefundNo: getRandomString(32),
-            refundDesc: 'refund event',
+            refundDesc: 'refund - cancelled event',
             type: 'refund',
             status: 'created',
             createdAt: nowDate()

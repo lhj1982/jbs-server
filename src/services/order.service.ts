@@ -32,7 +32,7 @@ class OrderService {
     const { status } = refund;
     if (status === 'created') {
       const refundToUpdate = Object.assign(refund.toObject(), dataToUpdate);
-      console.log(refundToUpdate);
+      // console.log(refundToUpdate);
       const newRefund = await RefundsRepo.saveOrUpdate(refundToUpdate);
       return newRefund;
     } else {
@@ -389,21 +389,45 @@ class OrderService {
       }
     } = eventCommissions;
     const event = await EventsRepo.findById(eventId);
-    console.log(event);
-    const hostRefund = await this.createCommisionRefund(hostUserId, event, commissionAmount, options);
+    // console.log(event);
+    const refundRemainingAmount = this.getRemainingCommission(hostUserId, commissionAmount, event, participators);
+    const hostRefund = await this.createCommisionRefund(hostUserId, event, 'refund - host commission', commissionAmount, refundRemainingAmount, options);
     refunds.push(hostRefund);
     for (let i = 0; i < participators.length; i++) {
       const {
         user: { _id: userId },
         amount
       } = participators[i];
-      const participatorRefund = await this.createCommisionRefund(userId, event, amount, options);
+      const participatorRefund = await this.createCommisionRefund(userId, event, 'refund - participator commission', amount, 0, options);
       refunds.push(participatorRefund);
     }
     return refunds;
   }
 
-  async createCommisionRefund(userId, event, amount, options): Promise<any> {
+  getRemainingCommission(hostUserId: string, hostCommissionAmount: number, event, participatorsCommission) {
+    const { price: eventPrice } = event;
+    let participatorCommission = undefined;
+    for (let i = 0; i < participatorsCommission.length; i++) {
+      const {
+        user: { _id: userId },
+        amount
+      } = participatorsCommission[i];
+      if (hostUserId.toString() === userId.toString()) {
+        participatorCommission = participatorsCommission[i];
+        break;
+      }
+    }
+    if (participatorCommission) {
+      const { amount } = participatorCommission;
+      const remaining = hostCommissionAmount + amount - eventPrice;
+      logger.info(`Found remaining commission for host ${hostUserId} is ${remaining}`);
+      return remaining <= 0 ? 0 : remaining;
+    } else {
+      return 0;
+    }
+  }
+
+  async createCommisionRefund(userId, event, refundDesc, amount, refundRemainingAmount, options): Promise<any> {
     const { _id: eventId, price } = event;
     const hostEventUser = await EventUsersRepo.findEventUser(eventId, userId, options);
     if (hostEventUser) {
@@ -418,8 +442,9 @@ class OrderService {
         user: userId,
         totalAmount: price,
         refundAmount: amount,
+        refundRemainingAmount,
         outRefundNo: getRandomString(32),
-        refundDesc: 'commission refund',
+        refundDesc,
         type: 'commission',
         status: 'created',
         createdAt: nowDate()

@@ -22,8 +22,13 @@ export const RefundSchema = new Schema(
       type: Number,
       required: 'RefundAmount is required'
     },
+    // This is the description field to describe for what purpose this refund is, it can be
+    // cancel event, event commission - host, event commission - participator, event commission remaining - host
     refundDesc: {
       type: String
+    },
+    refundRemainingAmount: {
+      type: Number
     },
     outRefundNo: {
       type: String

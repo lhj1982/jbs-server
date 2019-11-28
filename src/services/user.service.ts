@@ -1,5 +1,6 @@
 import config from '../config';
 import logger from '../utils/logger';
+import { pp } from '../utils/stringUtil';
 import UsersRepo from '../repositories/users.repository';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 
@@ -13,6 +14,7 @@ class UserService {
    * @param {[type]} data [description]
    */
   async getWechatEncryptedData(data) {
+    logger.info(`${pp(data)}`);
     const session = await UsersRepo.getSession();
     // session.startTransaction();
     try {

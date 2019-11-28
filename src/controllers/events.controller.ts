@@ -818,10 +818,10 @@ export class EventsController extends BaseController {
       // console.log(eventCommissions);
       if (eventCommissions) {
         await EventsRepo.saveEventCommissions(eventCommissions, opts);
+        const refunds = await OrderService.createCommissionRefunds(eventCommissions, opts);
+        logger.info(`Created ${refunds.length} commission refunds`);
       }
       await MessageService.saveCompleteEventNotifications(newEvent, eventCommissions, opts);
-      const refunds = await OrderService.createCommissionRefunds(eventCommissions, opts);
-      logger.info(`Created ${refunds.length} commission refunds`);
       await session.commitTransaction();
       await EventsRepo.endSession();
       res.json({ code: 'SUCCESS', data: newEvent });
