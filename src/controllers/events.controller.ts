@@ -136,7 +136,7 @@ export class EventsController extends BaseController {
 
   addEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons, price, hostUserMobile, hostUserWechatId } = req.body;
-    let { numberOfOfflinePersons, isHostJoin } = req.body;
+    let { numberOfOfflinePersons, isHostJoin, supportPayment } = req.body;
     if (!scriptId) {
       next(new InvalidRequestException('AddEvent', ['scriptId']));
       return;
@@ -160,6 +160,9 @@ export class EventsController extends BaseController {
     if (!startTime) {
       next(new InvalidRequestException('AddEvent', ['startTime']));
       return;
+    }
+    if (!supportPayment) {
+      supportPayment = false;
     }
     // if (!numberOfPersons) {
     //   next(new InvalidRequestException('AddEvent', ['numberOfPersons']));
@@ -243,6 +246,7 @@ export class EventsController extends BaseController {
           price,
           discountRule,
           isHostJoin,
+          supportPayment,
           createdAt: new Date()
         },
         opts
@@ -263,15 +267,17 @@ export class EventsController extends BaseController {
           },
           opts
         );
-        const order = {
-          createdBy: hostUserId,
-          type: 'event_join',
-          amount: price * 100,
-          objectId: newEventUser.id,
-          outTradeNo: getRandomString(32),
-          orderStatus: 'created'
-        };
-        newOrder = await OrderService.createOrder(order, opts);
+        if (supportPayment) {
+          const order = {
+            createdBy: hostUserId,
+            type: 'event_join',
+            amount: price * 100,
+            objectId: newEventUser.id,
+            outTradeNo: getRandomString(32),
+            orderStatus: 'created'
+          };
+          newOrder = await OrderService.createOrder(order, opts);
+        }
       }
       newEvent = Object.assign(newEvent.toObject(), {
         shop,
@@ -283,18 +289,18 @@ export class EventsController extends BaseController {
       await MessageService.saveNewEventNotifications(newEvent, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      // get participators for given event
+      const eventUsers = await EventUsersRepo.findByEvent(newEvent.id);
+      newEvent = await this.updateEventParticpantsNumber(newEvent, eventUsers);
+      res.json({
+        code: 'SUCCESS',
+        data: Object.assign(newEvent.toObject(), { order: newOrder })
+      });
     } catch (err) {
       await session.abortTransaction();
       await EventsRepo.endSession();
       next(err);
     }
-    // get participators for given event
-    const eventUsers = await EventUsersRepo.findByEvent(newEvent.id);
-    newEvent = await this.updateEventParticpantsNumber(newEvent, eventUsers);
-    res.json({
-      code: 'SUCCESS',
-      data: Object.assign(newEvent.toObject(), { order: newOrder })
-    });
   };
 
   /**
@@ -450,16 +456,19 @@ export class EventsController extends BaseController {
       });
       await UsersRepo.saveOrUpdateUser(user);
       const event = await EventsRepo.findById(eventId);
-      const { price } = event;
-      const order = {
-        createdBy: userId,
-        type: 'event_join',
-        objectId: newEventUser.id,
-        amount: price * 100,
-        outTradeNo: getRandomString(32),
-        status: 'created'
-      };
-      const newOrder = await OrderService.createOrder(order, opts);
+      const { price, supportPayment } = event;
+      let newOrder;
+      if (supportPayment) {
+        const order = {
+          createdBy: userId,
+          type: 'event_join',
+          objectId: newEventUser.id,
+          amount: price * 100,
+          outTradeNo: getRandomString(32),
+          status: 'created'
+        };
+        newOrder = await OrderService.createOrder(order, opts);
+      }
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
 
@@ -746,7 +755,7 @@ export class EventsController extends BaseController {
     }
 
     const { loggedInUser } = res.locals;
-    const { hostUser } = event;
+    const { hostUser, supportPayment } = event;
     const { id: hostUserId } = hostUser;
     const { id: loggedInUserId } = loggedInUser;
     if (loggedInUser.id != hostUser.id) {
@@ -760,7 +769,10 @@ export class EventsController extends BaseController {
       const status = 'cancelled';
       const eventToUpdate = Object.assign(event.toObject(), { status });
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
-      await EventService.cancelBookings(event, 'event_cancelled', opts);
+      if (supportPayment) {
+        logger.info(`Event is payment enabled, cancel all paid bookings if exists`);
+        await EventService.cancelBookings(event, 'event_cancelled', opts);
+      }
       await session.commitTransaction();
       await EventsRepo.endSession();
       res.json({ code: 'SUCCESS', data: newEvent });
@@ -788,7 +800,7 @@ export class EventsController extends BaseController {
     const { status } = req.body;
     const { loggedInUser } = res.locals;
 
-    const { hostUser } = event;
+    const { hostUser, supportPayment } = event;
     const { id: hostUserId } = hostUser;
     const { id: loggedInUserId } = loggedInUser;
     if (loggedInUser.id != hostUser.id) {
@@ -818,8 +830,11 @@ export class EventsController extends BaseController {
       // console.log(eventCommissions);
       if (eventCommissions) {
         await EventsRepo.saveEventCommissions(eventCommissions, opts);
-        const refunds = await OrderService.createCommissionRefunds(eventCommissions, opts);
-        logger.info(`Created ${refunds.length} commission refunds`);
+        if (supportPayment) {
+          logger.info(`Event is payment enabled, creating commission refunds if exists`);
+          const refunds = await OrderService.createCommissionRefunds(eventCommissions, opts);
+          logger.info(`Created ${refunds.length} commission refunds`);
+        }
       }
       await MessageService.saveCompleteEventNotifications(newEvent, eventCommissions, opts);
       await session.commitTransaction();

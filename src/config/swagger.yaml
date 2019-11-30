@@ -485,6 +485,9 @@ paths:
                 isHostJoin:
                   type: "boolean"
                   default: true
+                supportPayment:
+                  type: "boolean"
+                  default: false
               example:
                 shopId: '1234'
                 scriptId: '1234'
@@ -495,6 +498,7 @@ paths:
                 numberOfOfflinePersons: 0
                 price: 100
                 isHostJoin: true
+                supportPayment: false
       responses:
         200:
           description: "Success"
