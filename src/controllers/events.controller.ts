@@ -981,4 +981,21 @@ export class EventsController extends BaseController {
       next(err);
     }
   };
+
+  getEventOrders = async (req: Request, res: Response, next: NextFunction) => {
+    const { eventId } = req.params;
+    const { loggedInUser } = res.locals;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    try {
+      const orders = await OrderService.getOrderByEvent(event);
+
+      res.json({ code: 'SUCCESS', data: orders });
+    } catch (err) {
+      next(err);
+    }
+  };
 }

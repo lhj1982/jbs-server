@@ -473,6 +473,29 @@ class OrderService {
     }
   }
 
+  async getOrderByEvent(event) {
+    const { id: eventId } = event;
+    const offset = 0;
+    const limit = 100;
+    const eventUsers = await EventUsersRepo.findByEvent(eventId);
+    const promises = eventUsers.map(async eventUser => {
+      const {
+        _id: objectId,
+        user: { _id: createdBy }
+      } = eventUser;
+      const orders = await OrdersRepo.find({
+        offset,
+        limit,
+        type: 'event_join',
+        objectId,
+        createdBy
+      });
+      return orders;
+    });
+    // wait until all promises are resolved
+    return await Promise.all(promises);
+  }
+
   getRefundStatusOkResponse(data) {
     const response = {
       returnCode: data.return_code,

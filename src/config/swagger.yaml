@@ -1025,7 +1025,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-
+  
+  /event/{eventId}/orders:
+    get:
+      tags:
+      - "event"
+      summary: "Get orders and refunds for given event"
+      description: "Get orders and refunds for given event"
+      operationId: "getEventOrders"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: eventIds
+          description: event id
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrdersResponse'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /events/price-schema:
     get:
@@ -2279,6 +2307,10 @@ components:
         payment:
           type: "object"
           $ref: "#/components/schemas/Payment"
+        refunds:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Refund"
 
     Payment:
       type: "object"

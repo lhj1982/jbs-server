@@ -28,6 +28,7 @@ export class EventsRoutes {
       .post(verifyToken, permit({ domain: 'event', operations: ['addEvent'] }), this.eventsController.addEvent);
     app.route('/events/:eventId/simplified').get(this.eventsController.getEventDetailsSimplified);
     app.route('/events/:eventId/qrcode').get(this.eventsController.getEventQrCode);
+    app.route('/events/:eventId/orders').get(verifyToken, permit({ domain: 'event', operations: ['getEventOrders'] }), this.eventsController.getEventOrders);
     app.route('/events/:scriptId/:shopId').get(this.eventsController.getEventsByScriptAndShop);
     app.route('/events/:scriptId/:shopId/discount-rules').get(this.eventsController.getEventDiscountRolesByScriptAndShop);
     app.route('/events/:scriptId/:shopId/available-discount-rules').get(verifyToken, this.eventsController.getAvailableDiscountRules);

@@ -15,12 +15,21 @@ class OrdersRepo extends CommonRepo {
   }
 
   async find(params) {
-    const { offset, limit, outTradeNo } = params;
+    const { offset, limit, outTradeNo, type, objectId, createdBy } = params;
     // let condition = { outTradeNo };
     let condition = {};
     if (outTradeNo) {
       const regex = new RegExp(escapeRegex(outTradeNo), 'gi');
       condition = { outTradeNo: regex };
+    }
+    if (type) {
+      condition['type'] = type;
+    }
+    if (objectId) {
+      condition['objectId'] = objectId;
+    }
+    if (createdBy) {
+      condition['createdBy'] = createdBy;
     }
 
     const total = await Order.find(condition)

@@ -64,6 +64,10 @@ export const EventSchema = new Schema(
       enum: ['ready', 'completed', 'expired', 'cancelled'],
       default: 'ready'
     },
+    supportPayment: {
+      type: Boolean,
+      default: false
+    },
     isHostJoin: {
       type: Boolean,
       default: true
