@@ -26,7 +26,7 @@ export class UsersRoutes {
       .get(this.usersController.getUserDetails)
       .put(verifyToken, permit({ domain: 'user', operations: ['updateUser'] }), this.usersController.updateUser);
     app.route('/users/:userId/block').put(verifyToken, permit({ domain: 'user', operations: ['blockUserById'] }), this.usersController.blockUser);
-
+    app.route('/users/:userId/tag').post(verifyToken, this.usersController.addUserTag);
     app.route('/profile').get(verifyToken, permit({ domain: 'user', operations: ['getProfile'] }), this.usersController.getMyProfile);
     app.route('/profile/my-events').get(verifyToken, permit({ domain: 'user', operations: ['getMyEvents'] }), this.usersController.getMyEvents);
     app.route('/profile/token-status').get(verifyToken, this.usersController.getTokenStatus);

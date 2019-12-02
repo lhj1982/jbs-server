@@ -419,11 +419,8 @@ paths:
           name: filter
           description: filter to apply, status or availableSpot etc, it has to be a urlencoded json string
           schema:
-            type: "object"
-            properties:
-              filler:
-                type: "string"
-                description: urlencoded filter json string
+            type: "string"
+            description: urlencoded filter json string
       responses:
         200:
           description: "Success"

@@ -155,6 +155,16 @@ export class UsersController {
     }
   };
 
+  addUserTag = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { userId } = req.params;
+    const { _id: loggedInUserId } = loggedInUser;
+    if (userId != loggedInUserId.toString()) {
+      next(new AccessDeinedException(loggedInUserId, 'You are not allowed to tag yourself'));
+      return;
+    }
+  };
+
   // getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
   //   const { loggedInUser } = res.locals;
   //   if (!loggedInUser) {

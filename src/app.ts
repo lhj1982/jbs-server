@@ -14,6 +14,8 @@ import { EventCommissionSchema } from './models/eventCommissions.model';
 import { NotificationSchema } from './models/notification.model';
 import { OrderSchema } from './models/order.model';
 import { RefundSchema } from './models/refund.model';
+import { TagSchema } from './models/tag.model';
+import { UserTagSchema } from './models/userTag.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -26,6 +28,8 @@ const EventCommission = mongoose.model('EventCommission', EventCommissionSchema,
 const Notification = mongoose.model('Notification', NotificationSchema, 'notifications');
 const Refund = mongoose.model('Refund', RefundSchema, 'refunds');
 const Order = mongoose.model('Order', OrderSchema, 'orders');
+const Tag = mongoose.model('Tag', TagSchema, 'tags');
+const UserTag = mongoose.model('UserTag', UserTagSchema, 'userTags');
 
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';

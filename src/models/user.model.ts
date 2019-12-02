@@ -93,7 +93,17 @@ export const UserSchema = new Schema(
       type: String,
       enum: ['active', 'inactive', 'blocked'],
       default: 'inactive'
-    }
+    },
+    topTags: [
+      {
+        tag: {
+          type: String
+        },
+        count: {
+          type: Number
+        }
+      }
+    ]
   },
   { toJSON: { virtuals: true } }
 );
