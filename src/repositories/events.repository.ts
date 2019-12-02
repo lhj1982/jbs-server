@@ -6,6 +6,7 @@ import { DiscountRuleSchema } from '../models/discountRule.model';
 import { EventCommissionSchema } from '../models/eventCommissions.model';
 import { CommonRepo } from './common.repository';
 import * as moment from 'moment';
+import { escapeRegex } from '../utils/stringUtil';
 import { nowDate } from '../utils/dateUtil';
 const Event = mongoose.model('Event', EventSchema, 'events');
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
@@ -97,10 +98,46 @@ class EventsRepo extends CommonRepo {
       condition['minNumberOfAvailableSpots'] = { $lte: availableSpots, $gt: 0 };
     }
     // console.log(condition);
-    const total = await Event.countDocuments(condition).exec();
-    const pagination = { offset, limit, total };
-    const pagedEvents = await Event.find(condition)
-      .populate('script')
+    // const total = await Event.countDocuments(condition).exec();
+
+    let pagination = undefined;
+    let pagedEvents = [];
+    if (keyword) {
+      const rawEvents = await Promise.all([this.getEventsFilteredByScriptName(keyword, condition), this.getEventsFilteredByHostName(keyword, condition)]);
+      const events = this.mergeUniqueArray(rawEvents[0], rawEvents[1], 1);
+      pagination = { offset, limit, total: events.length };
+      pagedEvents = events.slice(offset, offset + limit);
+    } else {
+      // get all matched events, filter away those have null script or shop
+      let events = await Event.find(condition)
+        .populate('script')
+        .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+        .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
+        .populate('commissions')
+        .populate({
+          path: 'members',
+          match: { status: { $in: ['unpaid', 'paid'] } },
+          select: '_id user source status mobile wechatId createdAt'
+        })
+        .sort({ startTime: 1 })
+        .exec();
+      events = events.filter(event => {
+        const { script, shop } = event;
+        return script != null && shop != null;
+      });
+      pagination = { offset, limit, total: events.length };
+      pagedEvents = events.slice(offset, offset + limit);
+    }
+    return { pagination, data: pagedEvents };
+  }
+
+  async getEventsFilteredByScriptName(keyword: string, condition: any) {
+    const regex = new RegExp(escapeRegex(keyword), 'gi');
+    let events = await Event.find(condition)
+      .populate({
+        path: 'script',
+        match: { name: regex }
+      })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
       .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
       .populate('commissions')
@@ -109,11 +146,39 @@ class EventsRepo extends CommonRepo {
         match: { status: { $in: ['unpaid', 'paid'] } },
         select: '_id user source status mobile wechatId createdAt'
       })
-      .skip(offset)
-      .limit(limit)
       .sort({ startTime: 1 })
       .exec();
-    return { pagination, data: pagedEvents };
+    events = events.filter(event => {
+      const { script, shop } = event;
+      return script != null && shop != null;
+    });
+    // console.log(events);
+    return events;
+  }
+
+  async getEventsFilteredByHostName(keyword: string, condition: any) {
+    const regex = new RegExp(escapeRegex(keyword), 'gi');
+    let events = await Event.find(condition)
+      .populate('script')
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .populate({
+        path: 'hostUser',
+        match: { nickName: regex },
+        select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
+      })
+      .populate('commissions')
+      .populate({
+        path: 'members',
+        match: { status: { $in: ['unpaid', 'paid'] } },
+        select: '_id user source status mobile wechatId createdAt'
+      })
+      .sort({ startTime: 1 })
+      .exec();
+    events = events.filter(event => {
+      const { script, shop, hostUser } = event;
+      return script != null && shop != null && hostUser != null;
+    });
+    return events;
   }
 
   async findByDate(fromDate: moment.Moment, toDate: moment.Moment, filter: any = { status: ['ready', 'completed', 'expired'] }) {
@@ -276,7 +341,7 @@ class EventsRepo extends CommonRepo {
       let duplicated = false;
       for (let j = 0; j < userEvents.length; j++) {
         const event2 = userEvents[j];
-        if (event2.id === event1.id) {
+        if (event2._id.toString() === event1._id.toString()) {
           duplicated = true;
           break;
         }
@@ -285,10 +350,47 @@ class EventsRepo extends CommonRepo {
         userEvents.push(event1);
       }
     }
-    return userEvents.sort(this.compare);
+    return userEvents.sort(this.compareDesc);
   }
 
-  compare(a, b) {
+  /**
+   * @param {any[]}     e1 [description]
+   * @param {any[]}     e2 [description]
+   * @param {number =  1}           sort 1 - asc; -1 - desc
+   */
+  mergeUniqueArray(e1: any[], e2: any[], sort = 1) {
+    const result = e1;
+    for (let i = 0; i < e2.length; i++) {
+      const event2 = e2[i];
+      let duplicated = false;
+      for (let j = 0; j < result.length; j++) {
+        const event1 = e1[j];
+        if (event2._id.toString() === event1._id.toString()) {
+          duplicated = true;
+          break;
+        }
+      }
+      if (!duplicated) {
+        result.push(event2);
+      }
+    }
+    return sort === 1 ? result.sort(this.compareAsc) : result.sort(this.compareDesc);
+  }
+
+  compareAsc(a, b) {
+    // Use toUpperCase() to ignore character casing
+    const { startTime: startTimeA } = a;
+    const { startTime: startTimeB } = b;
+    let comparison = 0;
+    if (startTimeA > startTimeB) {
+      comparison = 1;
+    } else if (startTimeA < startTimeB) {
+      comparison = -1;
+    }
+    return comparison;
+  }
+
+  compareDesc(a, b) {
     // Use toUpperCase() to ignore character casing
     const { startTime: startTimeA } = a;
     const { startTime: startTimeB } = b;
