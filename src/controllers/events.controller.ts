@@ -1000,7 +1000,7 @@ export class EventsController extends BaseController {
   getEventOrders = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
     const { loggedInUser } = res.locals;
-    const event = await EventsRepo.findById(eventId);
+    const event = await EventsRepo.findById(eventId, { status: ['ready', 'completed', 'expired', 'cancelled']});
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
       return;
