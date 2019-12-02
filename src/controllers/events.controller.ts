@@ -35,8 +35,8 @@ export class EventsController extends BaseController {
       let filterToUpdate = { status: ['ready'], availableSpots: -1 };
       if (filterStr) {
         const filter = JSON.parse(decodeURIComponent(filterStr));
-        const { availableSpots } = filter;
-        filterToUpdate = Object.assign(filterToUpdate, { availableSpots });
+        filterToUpdate = Object.assign(filterToUpdate, filter);
+        // console.log(filterToUpdate);
       }
       if (!offset) {
         offset = config.query.offset;
