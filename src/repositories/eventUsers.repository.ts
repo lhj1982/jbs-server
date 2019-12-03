@@ -26,6 +26,8 @@ class EventUsersRepo {
     // console.log(eventId);
     // console.log(userName);
     return await EventUser.where({ event: eventId, user: userId })
+      .populate('event', ['_id', 'name'])
+      .populate('user', ['_id'])
       .findOne()
       .exec();
   }
