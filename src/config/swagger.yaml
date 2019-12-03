@@ -1027,7 +1027,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
   
-  /event/{eventId}/orders:
+  /events/{eventId}/orders:
     get:
       tags:
       - "event"
@@ -1038,7 +1038,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: eventIds
+          name: eventId
           description: event id
           schema:
             type: "string"

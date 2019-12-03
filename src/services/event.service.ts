@@ -9,6 +9,7 @@ import { pp, getRandomString } from '../utils/stringUtil';
 import OrdersRepo from '../repositories/orders.repository';
 import RefundsRepo from '../repositories/refunds.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
+import { ResourceNotFoundException } from '../exceptions/custom.exceptions';
 
 class EventService {
   async getQrCode(eventId: string) {
@@ -73,54 +74,101 @@ class EventService {
    * @param {[type]} event   [description]
    * @param {{}}   options [description]
    */
-  async cancelBookings(event, statusNote: string, options: {}) {
+  async cancelBookings(event, statusNote: string, refundDesc: string, options: {}) {
     const { id } = event;
     const eventUsers = await EventUsersRepo.findByEvent(id, {
       status: ['paid']
     });
-    console.log(eventUsers);
+    // console.log(eventUsers);
     // find all paid orders and mark them as refund
     const refundedOrders = [];
     for (let i = 0; i < eventUsers.length; i++) {
       const eventUser = eventUsers[i];
-      const {
-        user: { id: createdBy },
-        id: objectId
-      } = eventUser;
-      const params = {
-        createdBy,
-        type: 'event_join',
-        objectId,
-        orderStatus: 'paid'
-      };
-      // console.log(params);
-      const order = await OrdersRepo.findByParams(params);
-      // console.log(orders);
-      if (order) {
-        const { amount, outTradeNo, _id } = order;
-        // console.log('ssss');
-        await OrdersRepo.updateStatus(params, { orderStatus: 'refund' }, options);
-        await RefundsRepo.saveOrUpdate(
-          {
-            order: _id,
-            user: createdBy,
-            totalAmount: amount,
-            refundAmount: amount,
-            outTradeNo,
-            outRefundNo: getRandomString(32),
-            refundDesc: 'refund - cancelled event',
-            type: 'refund',
-            status: 'created',
-            createdAt: nowDate()
-          },
-          options
-        );
+      // const {
+      //   user: { id: createdBy },
+      //   id: objectId
+      // } = eventUser;
+      // const params = {
+      //   createdBy,
+      //   type: 'event_join',
+      //   objectId,
+      //   orderStatus: 'paid'
+      // };
+      // // console.log(params);
+      // const order = await OrdersRepo.findByParams(params);
+      // // console.log(orders);
+      // if (order) {
+      //   const { amount, outTradeNo, _id } = order;
+      //   // console.log('ssss');
+      //   await OrdersRepo.updateStatus(params, { orderStatus: 'refund' }, options);
+      //   await RefundsRepo.saveOrUpdate(
+      //     {
+      //       order: _id,
+      //       user: createdBy,
+      //       totalAmount: amount,
+      //       refundAmount: amount,
+      //       outTradeNo,
+      //       outRefundNo: getRandomString(32),
+      //       refundDesc: 'refund - cancelled event',
+      //       type: 'refund',
+      //       status: 'created',
+      //       createdAt: nowDate()
+      //     },
+      //     options
+      //   );
+      //   await this.markEventUsersUnpaid(eventUser, statusNote, options);
+      //   refundedOrders.push(order);
+      // }
+      try {
+        const order = await this.cancelBooking(eventUser, refundDesc, options);
         await this.markEventUsersUnpaid(eventUser, statusNote, options);
         refundedOrders.push(order);
+      } catch (err) {
+        logger.error(err);
       }
     }
     logger.info(`Found orders to be refunded, ${pp(refundedOrders)}`);
     return refundedOrders;
+  }
+
+  async cancelBooking(eventUser: any, refundDesc: string, options: any) {
+    const {
+      user: { id: createdBy },
+      id: objectId
+    } = eventUser;
+    const params = {
+      createdBy,
+      type: 'event_join',
+      objectId,
+      orderStatus: 'paid'
+    };
+    // console.log(params);
+    // console.log(params);
+    const order = await OrdersRepo.findByParams(params);
+    // console.log(orders);
+    if (order) {
+      const { amount, outTradeNo, _id } = order;
+      // console.log('ssss');
+      await OrdersRepo.updateStatus(params, { orderStatus: 'refund' }, options);
+      await RefundsRepo.saveOrUpdate(
+        {
+          order: _id,
+          user: createdBy,
+          totalAmount: amount,
+          refundAmount: amount,
+          outTradeNo,
+          outRefundNo: getRandomString(32),
+          refundDesc,
+          type: 'refund',
+          status: 'created',
+          createdAt: nowDate()
+        },
+        options
+      );
+      return order;
+    } else {
+      throw new ResourceNotFoundException('Order', pp(params));
+    }
   }
 
   async markEventUsersUnpaid(eventUser, statusNote, options) {

@@ -493,7 +493,14 @@ class OrderService {
       return orders;
     });
     // wait until all promises are resolved
-    return await Promise.all(promises);
+    const originalOrders = await Promise.all(promises);
+    let orders = [];
+    for (let i = 0; i < originalOrders.length; i++) {
+      const originalOrder: any = originalOrders[i];
+      const { data } = originalOrder;
+      orders = orders.concat(data);
+    }
+    return orders;
   }
 
   getRefundStatusOkResponse(data) {

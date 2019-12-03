@@ -35,8 +35,8 @@ export class EventsController extends BaseController {
       let filterToUpdate = { status: ['ready'], availableSpots: -1 };
       if (filterStr) {
         const filter = JSON.parse(decodeURIComponent(filterStr));
-        const { availableSpots } = filter;
-        filterToUpdate = Object.assign(filterToUpdate, { availableSpots });
+        filterToUpdate = Object.assign(filterToUpdate, filter);
+        // console.log(filterToUpdate);
       }
       if (!offset) {
         offset = config.query.offset;
@@ -359,7 +359,7 @@ export class EventsController extends BaseController {
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       // if price has changed, refund all paid players
       if (price && originalPrice != price) {
-        await EventService.cancelBookings(event, 'price_updated', opts);
+        // await EventService.cancelBookings(event, 'price_updated', 'refund - cancelled event', opts);
       }
       await session.commitTransaction();
       await EventsRepo.endSession();
@@ -578,7 +578,8 @@ export class EventsController extends BaseController {
       return;
     }
     const {
-      hostUser: { id: hostUserId }
+      hostUser: { id: hostUserId },
+      supportPayment
     } = event;
     const { loggedInUser } = res.locals;
     const { userId, status } = req.body;
@@ -608,7 +609,14 @@ export class EventsController extends BaseController {
     try {
       const opts = { session };
       const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
-      const eventUserToUpdate = Object.assign(eventUser, { status: status });
+      // console.log(eventUser);
+      if (supportPayment) {
+        await EventService.cancelBooking(eventUser, 'refund - cancelled user event', opts);
+      }
+      const eventUserToUpdate = Object.assign(eventUser, {
+        status: status,
+        statusNote: 'cancel_user_event'
+      });
       const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
@@ -771,7 +779,7 @@ export class EventsController extends BaseController {
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       if (supportPayment) {
         logger.info(`Event is payment enabled, cancel all paid bookings if exists`);
-        await EventService.cancelBookings(event, 'event_cancelled', opts);
+        await EventService.cancelBookings(event, 'event_cancelled', 'refund - cancelled event', opts);
       }
       await session.commitTransaction();
       await EventsRepo.endSession();
@@ -1000,7 +1008,9 @@ export class EventsController extends BaseController {
   getEventOrders = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
     const { loggedInUser } = res.locals;
-    const event = await EventsRepo.findById(eventId);
+    const event = await EventsRepo.findById(eventId, {
+      status: ['ready', 'completed', 'expired', 'cancelled']
+    });
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
       return;
