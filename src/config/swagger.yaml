@@ -1041,7 +1041,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: eventIds
+          name: eventId
           description: event id
           schema:
             type: "string"
