@@ -99,6 +99,9 @@ class App {
       logger.info(`Request type: ${req.method}`);
       next();
     });
+    this.app.get('/', function(req, res) {
+      res.send('boogoogoo api v1.0');
+    });
     // serving static files
     this.app.use(express.static('public'));
   }
