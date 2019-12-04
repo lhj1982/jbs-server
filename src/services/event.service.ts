@@ -74,7 +74,7 @@ class EventService {
    * @param {[type]} event   [description]
    * @param {{}}   options [description]
    */
-  async cancelBookings(event, statusNote: string, refundDesc: string, options: {}) {
+  async cancelBookings(event, statusNote: string, refundDesc: string, immediateRefund = false, options: {}) {
     const { id } = event;
     const eventUsers = await EventUsersRepo.findByEvent(id, {
       status: ['paid']
@@ -120,7 +120,7 @@ class EventService {
       //   refundedOrders.push(order);
       // }
       try {
-        const order = await this.cancelBooking(eventUser, refundDesc, options);
+        const order = await this.cancelBooking(eventUser, refundDesc, immediateRefund, options);
         await this.markEventUsersUnpaid(eventUser, statusNote, options);
         refundedOrders.push(order);
       } catch (err) {
@@ -131,7 +131,7 @@ class EventService {
     return refundedOrders;
   }
 
-  async cancelBooking(eventUser: any, refundDesc: string, options: any) {
+  async cancelBooking(eventUser: any, refundDesc: string, immediateRefund = false, options: any) {
     const {
       user: { id: createdBy },
       id: objectId
@@ -160,7 +160,7 @@ class EventService {
           outRefundNo: getRandomString(32),
           refundDesc,
           type: 'refund',
-          status: 'created',
+          status: immediateRefund ? 'approved' : 'created',
           createdAt: nowDate()
         },
         options

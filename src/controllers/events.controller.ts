@@ -611,12 +611,13 @@ export class EventsController extends BaseController {
       const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
       // console.log(eventUser);
       if (supportPayment) {
-        await EventService.cancelBooking(eventUser, 'refund - cancelled user event', opts);
+        await EventService.cancelBooking(eventUser, '退款 - 参团人取消', true, opts);
       }
       const eventUserToUpdate = Object.assign(eventUser, {
         status: status,
-        statusNote: 'cancel_user_event'
+        statusNote: 'user_event_cancelled'
       });
+      console.log(eventUserToUpdate);
       const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
@@ -779,7 +780,7 @@ export class EventsController extends BaseController {
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       if (supportPayment) {
         logger.info(`Event is payment enabled, cancel all paid bookings if exists`);
-        await EventService.cancelBookings(event, 'event_cancelled', 'refund - cancelled event', opts);
+        await EventService.cancelBookings(event, 'event_cancelled', 'refund - cancelled event', false, opts);
       }
       await session.commitTransaction();
       await EventsRepo.endSession();

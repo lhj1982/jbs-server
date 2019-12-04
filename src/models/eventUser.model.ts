@@ -30,7 +30,7 @@ export const EventUserSchema = new Schema(
     },
     statusNote: {
       type: String,
-      enum: ['price_updated', 'event_cancelled']
+      enum: ['price_updated', 'event_cancelled', 'user_event_cancelled']
     },
     createdAt: {
       type: Date,

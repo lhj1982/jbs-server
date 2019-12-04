@@ -66,8 +66,8 @@ class OrderService {
       amount
     } = order;
     // console.log(order);
-    const attach = 'boogoogoo event cost';
-    const body = 'boogoogoo - eventJoin';
+    const attach = '不咕咕 event cost';
+    const body = '不咕咕 - 参团';
     const sign = this.getPrePaySign(appid, attach, body, openId, amount, config.mch.payNotifyUrl, ip.address(), nonceStr, outTradeNo);
     //通过参数和签名组装xml数据，用以调用统一下单接口
     const sendData = this.wxSendData(appid, attach, body, openId, amount, config.mch.payNotifyUrl, ip.address(), nonceStr, outTradeNo, sign);
@@ -391,14 +391,14 @@ class OrderService {
     const event = await EventsRepo.findById(eventId);
     // console.log(event);
     const refundRemainingAmount = this.getRemainingCommission(hostUserId, commissionAmount, event, participators);
-    const hostRefund = await this.createCommisionRefund(hostUserId, event, 'refund - host commission', commissionAmount, refundRemainingAmount, options);
+    const hostRefund = await this.createCommisionRefund(hostUserId, event, '退款 - 发车人返现', commissionAmount, refundRemainingAmount, options);
     refunds.push(hostRefund);
     for (let i = 0; i < participators.length; i++) {
       const {
         user: { _id: userId },
         amount
       } = participators[i];
-      const participatorRefund = await this.createCommisionRefund(userId, event, 'refund - participator commission', amount, 0, options);
+      const participatorRefund = await this.createCommisionRefund(userId, event, '退款 - 参团人返现', amount, 0, options);
       refunds.push(participatorRefund);
     }
     return refunds;
@@ -440,9 +440,9 @@ class OrderService {
       });
       const refundParams = {
         user: userId,
-        totalAmount: price,
-        refundAmount: amount,
-        refundRemainingAmount,
+        totalAmount: price * 100,
+        refundAmount: amount * 100,
+        refundRemainingAmount: refundRemainingAmount * 100,
         outRefundNo: getRandomString(32),
         refundDesc,
         type: 'commission',
@@ -460,10 +460,10 @@ class OrderService {
       // if there is no booking for this user, it should not happen, but if happens, create a refund anyway without objectId
       const refundParams = {
         user: userId,
-        totalAmount: amount,
-        refundAmount: amount,
+        totalAmount: amount * 100,
+        refundAmount: amount * 100,
         outRefundNo: getRandomString(32),
-        refundDesc: 'commission refund',
+        refundDesc,
         type: 'commission',
         status: 'created',
         createdAt: nowDate()
