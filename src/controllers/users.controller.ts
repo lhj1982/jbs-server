@@ -4,6 +4,7 @@ import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundExceptio
 import UsersRepo from '../repositories/users.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import EventsRepo from '../repositories/events.repository';
+import TagsRepo from '../repositories/tags.repository';
 import UserService from '../services/user.service';
 import * as _ from 'lodash';
 
@@ -158,10 +159,37 @@ export class UsersController {
   addUserTag = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedInUser } = res.locals;
     const { userId } = req.params;
-    const { _id: loggedInUserId } = loggedInUser;
-    if (userId != loggedInUserId.toString()) {
-      next(new AccessDeinedException(loggedInUserId, 'You are not allowed to tag yourself'));
-      return;
+    const {
+      body: { tagId, type, objectId }
+    } = req;
+    try {
+      const { _id: loggedInUserId } = loggedInUser;
+      if (userId === loggedInUserId.toString()) {
+        next(new AccessDeinedException(loggedInUserId, 'You are not allowed to tag yourself'));
+        return;
+      }
+      if (type === 'event') {
+        const event = await EventsRepo.findById(objectId);
+        if (!event) {
+          throw new ResourceNotFoundException('Event', objectId);
+          return;
+        }
+      }
+      const tag = await TagsRepo.findById(tagId);
+      if (!tag) {
+        throw new ResourceNotFoundException('Tag', tagId);
+        return;
+      }
+      const userTag = await UserService.addUserTag({
+        taggedBy: loggedInUserId,
+        user: userId,
+        tag: tagId,
+        type: 'event',
+        objectId
+      });
+      res.json({ code: 'SUCCESS', data: userTag });
+    } catch (err) {
+      next(err);
     }
   };
 

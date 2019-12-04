@@ -1260,7 +1260,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-                
+  
+  /users/{userId}/tag:
+    post:
+      tags:
+      - "user"
+      summary: "Give tag to a given user"
+      description: "Give tag to a given user"
+      operationId: "tagUser"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: user id to tag
+          schema:
+            type: string
+      requestBody:
+        description: "Tag user request body"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                tagId:
+                  type: "string"
+                type:
+                  type: "string"
+                  enum: ["event"]
+                taggedBy:
+                  type: "string"
+                objectId:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTag'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /profile:
     get:
       tags:
@@ -2438,6 +2485,31 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/ArrayOfNotifications'
+
+    Tag:
+      type: "object"
+      properties:
+        key:
+          type: "string"
+        name:
+          type: "string"
+
+    UserTag:
+      type: "object"
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        taggedBy:
+          $ref: "#/components/schemas/User"
+        tag:
+          $ref: "#/components/schemas/Tag"
+        type:
+          type: "string"
+        objectId:
+          type: "string"
+        createdAt:
+          type: "string"
+          format: "date-time"
 
     PaginatedDataResponse:
       type: "object"

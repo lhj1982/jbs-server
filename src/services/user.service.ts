@@ -2,6 +2,7 @@ import config from '../config';
 import logger from '../utils/logger';
 import { pp } from '../utils/stringUtil';
 import UsersRepo from '../repositories/users.repository';
+import UserTagsRepo from '../repositories/userTags.repository';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 
 class UserService {
@@ -34,6 +35,23 @@ class UserService {
     } catch (err) {
       // await session.abortTransaction();
       await UsersRepo.endSession();
+    }
+  }
+
+  async addUserTag(params) {
+    const session = await UsersRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+
+      const userTag = await UserTagsRepo.saveOrUpdate(params, opts);
+      await session.commitTransaction();
+      await UsersRepo.endSession();
+      return userTag;
+    } catch (err) {
+      await session.abortTransaction();
+      await UsersRepo.endSession();
+      throw err;
     }
   }
 }
