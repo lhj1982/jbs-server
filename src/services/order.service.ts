@@ -262,6 +262,8 @@ class OrderService {
   /**
    * Update payment status when payment is succefully confirmed.
    * Update order status
+   * Note: because pay notify will be sent multiple times, so we have to make sure we do not update eventUser status by mistake.
+   * We ONLY update eventUser to paid when there is a 'created' order, if an order is paid or refund, we should not update eventUser again.
    * Update eventUser status if it's a event_join order type
    *
    * @param  {[type]}       order   [description]

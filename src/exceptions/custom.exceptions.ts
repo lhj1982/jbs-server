@@ -70,6 +70,12 @@ class OrderCannotPayException extends HttpException {
   }
 }
 
+class OrderAlreadyPaidException extends HttpException {
+  constructor(id: string) {
+    super(500, 'order_already_paid', `Order ${id} is already paid`);
+  }
+}
+
 class InvalidPaymentSignatureException extends HttpException {
   constructor() {
     super(400, 'invalid_payment_signature', `Invalid payment signature`);
@@ -94,6 +100,7 @@ export {
   EventCannotCancelException,
   UserIsBlacklistedException,
   OrderCannotPayException,
+  OrderAlreadyPaidException,
   InvalidPaymentSignatureException,
   CannotRefundException
 };

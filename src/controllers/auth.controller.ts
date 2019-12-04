@@ -127,6 +127,18 @@ export class AuthController {
     }
   };
 
+  code2session = async (req: Request, res: Response, next: NextFunction) => {
+    const {
+      body: { code }
+    } = req;
+    try {
+      const response = await AuthApi.code2Session(code);
+      res.json({ code: 'SUCCESS', response });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   getTokenPayload = (user): any => {
     // const now = Math.floor(new Date().getTime()/1000);
     const expiredAt = Math.floor(

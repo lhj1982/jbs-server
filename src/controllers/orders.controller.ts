@@ -2,7 +2,15 @@ import { Request, Response, NextFunction } from 'express';
 import RefundsRepo from '../repositories/refunds.repository';
 import OrdersRepo from '../repositories/orders.repository';
 import OrderService from '../services/order.service';
-import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, OrderCannotPayException, CannotRefundException } from '../exceptions/custom.exceptions';
+import {
+  InvalidRequestException,
+  ResourceAlreadyExist,
+  ResourceNotFoundException,
+  AccessDeinedException,
+  OrderCannotPayException,
+  OrderAlreadyPaidException,
+  CannotRefundException
+} from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import logger from '../utils/logger';
 import config from '../config';
@@ -88,6 +96,13 @@ export class OrdersController extends BaseController {
       const order = await OrdersRepo.findByTradeNo(outTradeNo);
       if (!order) {
         next(new ResourceNotFoundException('Order', outTradeNo));
+        await session.abortTransaction();
+        await OrdersRepo.endSession();
+        return;
+      }
+      const { orderStatus, _id } = order;
+      if (orderStatus != 'created') {
+        next(new OrderAlreadyPaidException(_id));
         await session.abortTransaction();
         await OrdersRepo.endSession();
         return;
