@@ -23,7 +23,7 @@ export const OrderSchema = new Schema(
     },
     orderStatus: {
       type: String,
-      enum: ['created', 'paid', 'refund', 'cancelled'],
+      enum: ['created', 'paid', 'refund', 'cancelled', 'refunded'],
       default: 'created'
     },
     // commissionStatus: {

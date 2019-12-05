@@ -122,7 +122,9 @@ class EventService {
       try {
         const order = await this.cancelBooking(eventUser, refundDesc, immediateRefund, options);
         await this.markEventUsersUnpaid(eventUser, statusNote, options);
-        refundedOrders.push(order);
+        if (order) {
+          refundedOrders.push(order);
+        }
       } catch (err) {
         logger.error(err);
       }
@@ -167,7 +169,8 @@ class EventService {
       );
       return order;
     } else {
-      throw new ResourceNotFoundException('Order', pp(params));
+      logger.warn(`No paid order is found, ${pp(params)}, no need to process`);
+      return undefined;
     }
   }
 

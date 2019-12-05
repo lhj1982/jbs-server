@@ -76,6 +76,12 @@ class OrderAlreadyPaidException extends HttpException {
   }
 }
 
+class RefundAlreadyPerformedException extends HttpException {
+  constructor(id: string, status: string) {
+    super(500, 'refund_already_performed', `Refund ${id}, status: ${status} is already performed`);
+  }
+}
+
 class InvalidPaymentSignatureException extends HttpException {
   constructor() {
     super(400, 'invalid_payment_signature', `Invalid payment signature`);
@@ -101,6 +107,7 @@ export {
   UserIsBlacklistedException,
   OrderCannotPayException,
   OrderAlreadyPaidException,
+  RefundAlreadyPerformedException,
   InvalidPaymentSignatureException,
   CannotRefundException
 };

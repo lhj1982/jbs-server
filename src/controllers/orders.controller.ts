@@ -9,6 +9,7 @@ import {
   AccessDeinedException,
   OrderCannotPayException,
   OrderAlreadyPaidException,
+  RefundAlreadyPerformedException,
   CannotRefundException
 } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
@@ -196,17 +197,34 @@ export class OrdersController extends BaseController {
   confirmWechatRefund = async (req: Request, res: Response, next: NextFunction) => {
     const { body } = req;
     logger.info(`wechat refund notify ${req}`);
+    const refundData = await OrderService.confirmWechatRefund(body);
+    // console.log(refundData);
+    const { outRefundNo, refundStatus } = refundData;
+    const refund = await RefundsRepo.findByRefundNo(outRefundNo);
+    if (!refund) {
+      next(new ResourceNotFoundException('Refund', outRefundNo));
+      return;
+    }
+    const { _id, status, order } = refund;
+    if (status === 'refund' || status === 'failed') {
+      next(new RefundAlreadyPerformedException(_id, status));
+      return;
+    }
+
     const session = await OrdersRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
-      const refundData = await OrderService.confirmWechatRefund(body);
-      // console.log(refundData);
-      const { outRefundNo, refundStatus } = refundData;
-      const refund = await RefundsRepo.findByRefundNo(outRefundNo);
       let refundToUpdate = {};
       if (refundStatus !== 'SUCCESS') {
         refundToUpdate = Object.assign(refund.toObject(), { status: 'failed' }, refundData);
+        const { orderStatus } = order;
+        if (orderStatus !== 'refunded') {
+          const orderToUpdate = Object.assign(order.toObject(), {
+            status: 'refunded'
+          });
+          await OrdersRepo.saveOrUpdate(orderToUpdate, opts);
+        }
       } else {
         refundToUpdate = Object.assign({}, refund.toObject(), refundData);
       }

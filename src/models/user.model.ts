@@ -95,5 +95,5 @@ export const UserSchema = new Schema(
       default: 'inactive'
     }
   },
-  { toJSON: { virtuals: true } }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
