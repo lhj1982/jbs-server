@@ -246,6 +246,7 @@ export class EventsController extends BaseController {
           price,
           discountRule,
           isHostJoin,
+          status: 'ready',
           supportPayment,
           createdAt: new Date()
         },
@@ -421,7 +422,7 @@ export class EventsController extends BaseController {
 
     // get participators for given event
     const eventUsers = await EventUsersRepo.findByEvent(eventId, {
-      status: ['paid', 'unpaid']
+      status: ['paid', 'unpaid', 'blacklisted']
     });
     await this.updateEventParticpantsNumber(event, eventUsers);
     if (!this.canJoinEvent(event, eventUsers)) {

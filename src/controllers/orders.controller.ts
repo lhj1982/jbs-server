@@ -218,14 +218,14 @@ export class OrdersController extends BaseController {
       let refundToUpdate = {};
       if (refundStatus !== 'SUCCESS') {
         refundToUpdate = Object.assign(refund.toObject(), { status: 'failed' }, refundData);
+      } else {
         const { orderStatus } = order;
         if (orderStatus !== 'refunded') {
           const orderToUpdate = Object.assign(order.toObject(), {
-            status: 'refunded'
+            orderStatus: 'refunded'
           });
           await OrdersRepo.saveOrUpdate(orderToUpdate, opts);
         }
-      } else {
         refundToUpdate = Object.assign({}, refund.toObject(), refundData);
       }
       // console.log(refundToUpdate);

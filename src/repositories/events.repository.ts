@@ -272,11 +272,13 @@ class EventsRepo extends CommonRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { id: eventId, shop, script, startTime, endTime, hostUser } = event;
+    const { _id: eventId, shop, script, startTime, endTime, hostUser, status, createdAt } = event;
     if (eventId) {
       return await Event.findOneAndUpdate({ _id: eventId }, event, options).exec();
+    } else if (status === 'ready') {
+      return await Event.findOneAndUpdate({ shop, script, startTime, status, hostUser }, event, options).exec();
     } else {
-      return await Event.findOneAndUpdate({ shop, script, startTime, endTime, hostUser }, event, options).exec();
+      return await Event.findOneAndUpdate({ shop, script, startTime, hostUser, createdAt }, event, options).exec();
     }
   }
 
