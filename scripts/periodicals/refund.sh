@@ -1,0 +1,5 @@
+#!/bin/sh
+
+curl -X POST "https://api.boogoogoo.com/orders/refund" -H "accept: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1NzczMjM5NTYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc0NzMxOTU2fQ.jxCczSSER-IFoivwDHBUpMbyX9NI89-DpdEdVe70aVE"
+
+exit 0
