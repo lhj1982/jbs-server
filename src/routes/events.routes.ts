@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { EventsController } from '../controllers/events.controller';
 import { verifyToken } from '../middleware/verifyToken';
 import permit from '../middleware/permission.middleware';
+import cacheMiddleware from '../middleware/cache.middleware';
+import config from '../config';
 
 export class EventsRoutes {
   eventsController: EventsController = new EventsController();
@@ -18,7 +20,7 @@ export class EventsRoutes {
     // app.route('/events/update-status').post(verifyToken, this.eventsController.updateStatus);
     app
       .route('/events')
-      .get(this.eventsController.getEvents)
+      .get(cacheMiddleware(config.cache.duration), this.eventsController.getEvents)
       // .get((req: Request, res: Response, next: NextFunction) => {
       //   // middleware
       //   console.log(`Request from: ${req.originalUrl}`);

@@ -14,7 +14,7 @@ const logger = createLogger({
     format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
   ),
   transports: [
-    new transports.Console(),
+    new transports.Console({ level: 'debug' }),
     new transports.File({
       filename: `${config.logDir}/error.log`,
       level: 'error'

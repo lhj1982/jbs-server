@@ -3,6 +3,9 @@ module.exports = {
     port: 3000,
     entrypoint: `http://localhost:3000`
   },
+  cache: {
+    duration: 2 * 60 * 60 // cache in second
+  },
   appId: 'wxf59749a45686779c',
   appSecret: '<app key>',
   mch: {
