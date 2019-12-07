@@ -181,6 +181,14 @@ class EventService {
     });
     return await EventUsersRepo.update(eventUserToUpdate, options);
   }
+
+  isPaymentSupported(shop: any): boolean {
+    const { supportedPaymentMethods } = shop;
+    if (supportedPaymentMethods && supportedPaymentMethods.length > 0 && supportedPaymentMethods.indexOf('wechat') != -1) {
+      return true;
+    }
+    return false;
+  }
 }
 
 export default new EventService();

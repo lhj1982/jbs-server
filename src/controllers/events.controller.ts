@@ -161,9 +161,6 @@ export class EventsController extends BaseController {
       next(new InvalidRequestException('AddEvent', ['startTime']));
       return;
     }
-    if (!supportPayment) {
-      supportPayment = false;
-    }
     // if (!numberOfPersons) {
     //   next(new InvalidRequestException('AddEvent', ['numberOfPersons']));
     //   return;
@@ -225,6 +222,9 @@ export class EventsController extends BaseController {
       let discountRule = undefined;
       if (applicableDiscountRules.length > 0) {
         discountRule = applicableDiscountRules[0];
+      }
+      if (typeof supportPayment === 'undefined') {
+        supportPayment = EventService.isPaymentSupported(shop);
       }
 
       newEvent = await EventsRepo.saveOrUpdate(

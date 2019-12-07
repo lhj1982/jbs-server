@@ -2079,7 +2079,11 @@ components:
           type: "string"
         wechatName:
           type: "string"
-
+        supportedPaymentMethods:
+          type: "array"
+          items:
+            type: "string"
+            enum: ["wechat"]
     
     ArrayOfShops:
       type: "array"
@@ -2150,6 +2154,8 @@ components:
         discountRule:
           type: "object"
           $ref: '#/components/schemas/DiscountRule'
+        supportPayment:
+          type: "boolean"
 
 
     EventDetails:
