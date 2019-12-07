@@ -27,7 +27,7 @@ do
     mongoexport -h 127.0.0.1 -d $db -u ${UN} -p ${PW} -c $c -o "$out_dir/exp_${db}_${c}.json" --authenticationDatabase=admin
 done
 tar -czvf ${DUMPFILENAME} ${out_dir} || exit 1
-aws s3 cp ${DUMPFILENAME} s3://jbs-backup --region ap-southeast-1 || exit 2
+/root/.local/bin/aws s3 cp ${DUMPFILENAME} s3://jbs-backup --region ap-southeast-1 || exit 2
 rm -f ${DUMPFILENAME} || exit 3
 rm -f $tmp_file || exit 4
 

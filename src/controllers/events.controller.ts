@@ -21,7 +21,7 @@ import MessageService from '../services/message.service';
 import EventService from '../services/event.service';
 import OrderService from '../services/order.service';
 import config from '../config';
-import { string2Date, formatDate, addDays, add } from '../utils/dateUtil';
+import { nowDate, string2Date, formatDate, addDays, add } from '../utils/dateUtil';
 import { getRandomString } from '../utils/stringUtil';
 import logger from '../utils/logger';
 // import * as _ from 'lodash';
@@ -347,16 +347,21 @@ export class EventsController extends BaseController {
       updateData['endTime'] = endTime;
     }
     const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
+    // console.log(applicableDiscountRules);
     let discountRule = undefined;
     if (applicableDiscountRules.length > 0) {
       discountRule = applicableDiscountRules[0]._id;
     }
+    // console.log(event.discountRule);
     const session = await EventsRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
-      // updateData['discountRule'] = discountRule;
-      const eventToUpdate = Object.assign(event, updateData);
+      updateData['discountRule'] = discountRule;
+      const eventToUpdate = Object.assign(event.toObject(), updateData, {
+        updatedAt: nowDate()
+      });
+      // console.log(eventToUpdate.discountRule);
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       // if price has changed, refund all paid players
       if (price && originalPrice != price) {

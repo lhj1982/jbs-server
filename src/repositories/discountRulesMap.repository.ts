@@ -20,9 +20,9 @@ class DiscountRulesMapRepo {
     if (startTime) {
       const weekDay = getDay(startTime);
       const time = getTime(startTime);
-      // console.log(startTime);
-      // console.log(weekDay);
-      // console.log(time);
+      console.log(startTime);
+      console.log(weekDay);
+      console.log(time);
       {
         days: {
           all: [weekDay];
