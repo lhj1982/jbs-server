@@ -365,7 +365,8 @@ export class EventsController extends BaseController {
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       // if price has changed, refund all paid players
       if (price && originalPrice != price) {
-        // await EventService.cancelBookings(event, 'price_updated', 'refund - cancelled event', opts);
+        logger.info(`Detecting price is changed, cancel all paid bookings, event: ${eventId}`);
+        await EventService.cancelBookings(event, 'price_updated', '退款 - 价格改变', true, opts);
       }
       await session.commitTransaction();
       await EventsRepo.endSession();
@@ -786,7 +787,7 @@ export class EventsController extends BaseController {
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       if (supportPayment) {
         logger.info(`Event is payment enabled, cancel all paid bookings if exists`);
-        await EventService.cancelBookings(event, 'event_cancelled', 'refund - cancelled event', false, opts);
+        await EventService.cancelBookings(event, 'event_cancelled', '退款 - 参团人取消', true, opts);
       }
       await session.commitTransaction();
       await EventsRepo.endSession();

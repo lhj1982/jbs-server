@@ -12,6 +12,7 @@ import {
   RefundAlreadyPerformedException,
   CannotRefundException
 } from '../exceptions/custom.exceptions';
+import { pp } from '../utils/stringUtil';
 import { BaseController } from './base.controller';
 import logger from '../utils/logger';
 import config from '../config';
@@ -196,7 +197,7 @@ export class OrdersController extends BaseController {
    */
   confirmWechatRefund = async (req: Request, res: Response, next: NextFunction) => {
     const { body } = req;
-    logger.info(`wechat refund notify ${req}`);
+    logger.info(`wechat refund notify ${pp(body)}`);
     const refundData = await OrderService.confirmWechatRefund(body);
     // console.log(refundData);
     const { outRefundNo, refundStatus } = refundData;
@@ -224,6 +225,7 @@ export class OrdersController extends BaseController {
           const orderToUpdate = Object.assign(order.toObject(), {
             orderStatus: 'refunded'
           });
+          console.log(orderToUpdate);
           await OrdersRepo.saveOrUpdate(orderToUpdate, opts);
         }
         refundToUpdate = Object.assign({}, refund.toObject(), refundData);

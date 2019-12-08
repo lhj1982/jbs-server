@@ -84,41 +84,6 @@ class EventService {
     const refundedOrders = [];
     for (let i = 0; i < eventUsers.length; i++) {
       const eventUser = eventUsers[i];
-      // const {
-      //   user: { id: createdBy },
-      //   id: objectId
-      // } = eventUser;
-      // const params = {
-      //   createdBy,
-      //   type: 'event_join',
-      //   objectId,
-      //   orderStatus: 'paid'
-      // };
-      // // console.log(params);
-      // const order = await OrdersRepo.findByParams(params);
-      // // console.log(orders);
-      // if (order) {
-      //   const { amount, outTradeNo, _id } = order;
-      //   // console.log('ssss');
-      //   await OrdersRepo.updateStatus(params, { orderStatus: 'refund' }, options);
-      //   await RefundsRepo.saveOrUpdate(
-      //     {
-      //       order: _id,
-      //       user: createdBy,
-      //       totalAmount: amount,
-      //       refundAmount: amount,
-      //       outTradeNo,
-      //       outRefundNo: getRandomString(32),
-      //       refundDesc: 'refund - cancelled event',
-      //       type: 'refund',
-      //       status: 'created',
-      //       createdAt: nowDate()
-      //     },
-      //     options
-      //   );
-      //   await this.markEventUsersUnpaid(eventUser, statusNote, options);
-      //   refundedOrders.push(order);
-      // }
       try {
         const order = await this.cancelBooking(eventUser, refundDesc, immediateRefund, options);
         await this.markEventUsersUnpaid(eventUser, statusNote, options);
