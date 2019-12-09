@@ -17,16 +17,12 @@ export class ScriptsRoutes {
     // Scripts
     app
       .route('/scripts')
-      .get(
-        cacheMiddleware(config.cache.duration),
-        (req: Request, res: Response, next: NextFunction) => {
-          // middleware
-          console.log(`Request from: ${req.originalUrl}`);
-          console.log(`Request type: ${req.method}`);
-          next();
-        },
-        this.scriptsController.getScripts
-      )
+      .get(cacheMiddleware(config.cache.duration), (req: Request, res: Response, next: NextFunction) => {
+        // middleware
+        console.log(`Request from: ${req.originalUrl}`);
+        console.log(`Request type: ${req.method}`);
+        next();
+      }, this.scriptsController.getScripts)
 
       .post(verifyToken, permit({ domain: 'script', operations: ['createScript'] }), this.scriptsController.addScript);
 
