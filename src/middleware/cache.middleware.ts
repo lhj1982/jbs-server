@@ -4,7 +4,11 @@ const client = redis.createClient();
 
 export default function cacheMiddleware(duration: number) {
   return (req, res, next) => {
-    const key = '__expIress__' + req.originalUrl || req.url;
+    const token = req.headers.authorization.split(' ')[1];
+    let key = '__expIress__' + req.originalUrl || req.url;
+    if (token) {
+      key = key + '|' + token;
+    }
     client.get(key, (err, reply) => {
       if (reply) {
         logger.debug(`Found hit in cache, key: ${key}, value: ${reply}`);

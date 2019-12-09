@@ -80,7 +80,7 @@ export class UsersController {
         ageTag
       });
       const updatedUser = await UsersRepo.saveOrUpdateUser(user);
-      await CacheService.purgeUserCache(user);
+      await CacheService.purgeUserCache(user, req);
       res.json({ code: 'SUCCESS', data: updatedUser });
     } catch (err) {
       res.send(err);
