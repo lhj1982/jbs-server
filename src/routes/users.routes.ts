@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { UsersController } from '../controllers/users.controller';
 import { verifyToken } from '../middleware/verifyToken';
 import permit from '../middleware/permission.middleware';
+import cacheMiddleware from '../middleware/cache.middleware';
+import config from '../config';
 
 export class UsersRoutes {
   usersController: UsersController = new UsersController();
@@ -23,12 +25,12 @@ export class UsersRoutes {
 
     app
       .route('/users/:userId')
-      .get(this.usersController.getUserDetails)
+      .get(cacheMiddleware(config.cache.duration), this.usersController.getUserDetails)
       .put(verifyToken, permit({ domain: 'user', operations: ['updateUser'] }), this.usersController.updateUser);
     app.route('/users/:userId/block').put(verifyToken, permit({ domain: 'user', operations: ['blockUserById'] }), this.usersController.blockUser);
 
-    app.route('/profile').get(verifyToken, permit({ domain: 'user', operations: ['getProfile'] }), this.usersController.getMyProfile);
-    app.route('/profile/my-events').get(verifyToken, permit({ domain: 'user', operations: ['getMyEvents'] }), this.usersController.getMyEvents);
+    app.route('/profile').get(cacheMiddleware(config.cache.duration), verifyToken, permit({ domain: 'user', operations: ['getProfile'] }), this.usersController.getMyProfile);
+    app.route('/profile/my-events').get(cacheMiddleware(config.cache.duration), verifyToken, permit({ domain: 'user', operations: ['getMyEvents'] }), this.usersController.getMyEvents);
     app.route('/profile/token-status').get(verifyToken, this.usersController.getTokenStatus);
     app.route('/profile/wechat-data').post(verifyToken, this.usersController.getWechatEncryptedData);
   }
