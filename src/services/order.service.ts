@@ -30,12 +30,13 @@ class OrderService {
       throw new ResourceNotFoundException('Refund', refundId);
     }
     const { status } = refund;
-    if (status === 'created') {
+    if (status === 'created' || status === 'failed') {
       const refundToUpdate = Object.assign(refund.toObject(), dataToUpdate);
       // console.log(refundToUpdate);
       const newRefund = await RefundsRepo.saveOrUpdate(refundToUpdate);
       return newRefund;
     } else {
+      logger.info(`Only can update created or failed refund`);
       return refund;
     }
   }
