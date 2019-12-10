@@ -23,10 +23,13 @@ class CacheService {
   async purgeEventCache(event: any, req: Request) {
     const token = req.headers.authorization.split(' ')[1];
     let myEventsKey = `${this.keyPrefix}/profile/my-events`;
+    let eventsKey = `${this.keyPrefix}/events?*`;
     if (token) {
       myEventsKey = myEventsKey + '|' + token;
+      eventsKey = eventsKey + '|' + token;
     }
     await this.purgeCacheByKey(myEventsKey);
+    await this.purgeCacheByKey(eventsKey);
   }
 
   async purgeCacheByKey(key: string): Promise<any> {
