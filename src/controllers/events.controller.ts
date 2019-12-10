@@ -793,6 +793,7 @@ export class EventsController extends BaseController {
         logger.info(`Event is payment enabled, cancel all paid bookings if exists`);
         await EventService.cancelBookings(event, 'event_cancelled', '退款 - 参团人取消', true, opts);
       }
+      await CacheService.purgeEventCache(newEvent, req);
       await session.commitTransaction();
       await EventsRepo.endSession();
       res.json({ code: 'SUCCESS', data: newEvent });
@@ -857,6 +858,7 @@ export class EventsController extends BaseController {
         }
       }
       await MessageService.saveCompleteEventNotifications(newEvent, eventCommissions, opts);
+      await CacheService.purgeEventCache(newEvent, req);
       await session.commitTransaction();
       await EventsRepo.endSession();
       res.json({ code: 'SUCCESS', data: newEvent });
