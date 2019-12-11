@@ -289,9 +289,9 @@ export class EventsController extends BaseController {
       // console.log(newEvent);
       // save notifications in db and send sms if necessary
       await MessageService.saveNewEventNotifications(newEvent, opts);
-      await CacheService.purgeEventCache(newEvent, req);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(newEvent, req);
       // get participators for given event
       const eventUsers = await EventUsersRepo.findByEvent(newEvent.id);
       newEvent = await this.updateEventParticpantsNumber(newEvent, eventUsers);
@@ -370,9 +370,9 @@ export class EventsController extends BaseController {
         logger.info(`Detecting price is changed, cancel all paid bookings, event: ${eventId}`);
         await EventService.cancelBookings(event, 'price_updated', '退款 - 价格改变', true, opts);
       }
-      await CacheService.purgeEventCache(newEvent, req);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(newEvent, req);
       res.json({ code: 'SUCCESS', data: newEvent });
     } catch (err) {
       await session.abortTransaction();
@@ -481,9 +481,9 @@ export class EventsController extends BaseController {
       }
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
-      await CacheService.purgeEventCache(event, req);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(event, req);
       res.json({
         code: 'SUCCESS',
         data: Object.assign(newEventUser.toObject(), { order: newOrder })
@@ -629,9 +629,9 @@ export class EventsController extends BaseController {
       });
       console.log(eventUserToUpdate);
       const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
-      await CacheService.purgeEventCache(event, req);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(event, req);
       res.json({ code: 'SUCCESS', data: newEventUser });
     } catch (err) {
       await session.abortTransaction();
@@ -793,9 +793,9 @@ export class EventsController extends BaseController {
         logger.info(`Event is payment enabled, cancel all paid bookings if exists`);
         await EventService.cancelBookings(event, 'event_cancelled', '退款 - 参团人取消', true, opts);
       }
-      await CacheService.purgeEventCache(newEvent, req);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(newEvent, req);
       res.json({ code: 'SUCCESS', data: newEvent });
     } catch (err) {
       await session.abortTransaction();
@@ -858,9 +858,9 @@ export class EventsController extends BaseController {
         }
       }
       await MessageService.saveCompleteEventNotifications(newEvent, eventCommissions, opts);
-      await CacheService.purgeEventCache(newEvent, req);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(newEvent, req);
       res.json({ code: 'SUCCESS', data: newEvent });
     } catch (err) {
       await session.abortTransaction();
