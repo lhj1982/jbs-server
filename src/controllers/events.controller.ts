@@ -430,14 +430,42 @@ export class EventsController extends BaseController {
     // }
 
     // get participators for given event
-    const eventUsers = await EventUsersRepo.findByEvent(eventId, {
-      status: ['paid', 'unpaid', 'blacklisted']
+    let eventUsers = await EventUsersRepo.findByEvent(eventId, {
+      status: ['paid', 'unpaid']
     });
     await this.updateEventParticpantsNumber(event, eventUsers);
+    const existingEventUsers = eventUsers.filter(_ => {
+      const {
+        user: { _id: eventUserId }
+      } = _;
+      return userId === eventUserId.toString();
+    });
+    // console.log(existingEventUser);
+    // if there is an entry already, return existing booking
+    if (existingEventUsers && existingEventUsers.length > 0) {
+      logger.info(`Found existing booking for user ${userId}`);
+      const existingEventUser = existingEventUsers[0];
+      // const { _id } = existingEventUser;
+      // let order = await OrderService.findByObjectId(_id, 'created');
+      const order = await this.createOrder(userId, event, existingEventUser, {});
+
+      // console.log(order);
+      // console.log(Object.assign(existingEventUser, { order: order }));
+      res.json({
+        code: 'SUCCESS',
+        data: Object.assign(existingEventUser.toObject(), {
+          order: order.toObject()
+        })
+      });
+      return;
+    }
     if (!this.canJoinEvent(event, eventUsers)) {
       next(new EventIsFullBookedException(eventId));
       return;
     }
+    eventUsers = await EventUsersRepo.findByEvent(eventId, {
+      status: ['paid', 'unpaid', 'blacklisted']
+    });
     if (this.isBlacklistedUser(userId, eventUsers)) {
       next(new UserIsBlacklistedException(eventId, userId));
       return;
@@ -466,19 +494,7 @@ export class EventsController extends BaseController {
       });
       await UsersRepo.saveOrUpdateUser(user);
       const event = await EventsRepo.findById(eventId);
-      const { price, supportPayment } = event;
-      let newOrder;
-      if (supportPayment) {
-        const order = {
-          createdBy: userId,
-          type: 'event_join',
-          objectId: newEventUser.id,
-          amount: price * 100,
-          outTradeNo: getRandomString(32),
-          status: 'created'
-        };
-        newOrder = await OrderService.createOrder(order, opts);
-      }
+      const newOrder = await this.createOrder(userId, event, newEventUser, opts);
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
       await session.commitTransaction();
@@ -493,6 +509,23 @@ export class EventsController extends BaseController {
       await EventsRepo.endSession();
       next(err);
     }
+  };
+
+  createOrder = async (userId, event, eventUser, opts) => {
+    const { price, supportPayment } = event;
+    let newOrder;
+    if (supportPayment) {
+      const order = {
+        createdBy: userId,
+        type: 'event_join',
+        objectId: eventUser.id,
+        amount: price * 100,
+        outTradeNo: getRandomString(32),
+        status: 'created'
+      };
+      newOrder = await OrderService.createOrder(order, opts);
+    }
+    return newOrder;
   };
 
   getEventDetails = async (req: Request, res: Response, next: NextFunction) => {

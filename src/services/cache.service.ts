@@ -29,7 +29,7 @@ class CacheService {
       eventsKey = eventsKey + '|' + token;
     }
     await this.purgeCacheByKey(myEventsKey);
-    await this.purgeCacheBySearch(eventsKey);
+    // await this.purgeCacheBySearch(eventsKey);
   }
 
   async purgeCacheBySearch(searchKey: string): Promise<any> {

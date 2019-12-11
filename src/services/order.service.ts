@@ -18,6 +18,13 @@ const crypto = require('crypto');
 const xml = require('xml2js');
 
 class OrderService {
+  async findByObjectId(objectId: string, status: string) {
+    return await OrdersRepo.findByParams({
+      objectId,
+      orderStatus: status
+    });
+  }
+
   async searchOrders(params): Promise<any> {
     const { limit, offset, outTradeNo } = params;
     const orders = await OrdersRepo.find({ outTradeNo, offset, limit });
