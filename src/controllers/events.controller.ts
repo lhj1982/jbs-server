@@ -32,12 +32,17 @@ export class EventsController extends BaseController {
     try {
       let offset = parseInt(req.query.offset);
       let limit = parseInt(req.query.limit);
-      const { keyword, filter: filterStr } = req.query;
+      const { keyword, filter: filterStr, sort: sortStr } = req.query;
       let filterToUpdate = { status: ['ready'], availableSpots: -1 };
+      let sortToUpdate = {};
       if (filterStr) {
         const filter = JSON.parse(decodeURIComponent(filterStr));
         filterToUpdate = Object.assign(filterToUpdate, filter);
         // console.log(filterToUpdate);
+      }
+      if (sortStr) {
+        const sort = JSON.parse(decodeURIComponent(sortStr));
+        sortToUpdate = Object.assign(sortToUpdate, sort);
       }
       if (!offset) {
         offset = config.query.offset;
@@ -46,7 +51,7 @@ export class EventsController extends BaseController {
         limit = config.query.limit;
       }
       // console.log(filterToUpdate);
-      let result = await EventsRepo.find({ keyword, offset, limit }, filterToUpdate);
+      let result = await EventsRepo.find({ keyword, offset, limit }, filterToUpdate, sortToUpdate);
       const links = this.generateLinks(result.pagination, req.route.path, '');
       result = Object.assign({}, result, links);
       res.json(result);

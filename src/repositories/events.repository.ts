@@ -82,7 +82,7 @@ class EventsRepo extends CommonRepo {
       .exec();
   }
 
-  async find(params, filter = { status: ['ready'], availableSpots: -1 }) {
+  async find(params, filter = { status: ['ready'], availableSpots: -1 }, sort = undefined) {
     const { status, availableSpots } = filter;
     const { offset, limit, keyword, scriptId, shopId } = params;
     const condition = {
@@ -100,6 +100,10 @@ class EventsRepo extends CommonRepo {
     // console.log(condition);
     // const total = await Event.countDocuments(condition).exec();
 
+    let sortObj = { startTime: 1 };
+    if (sort) {
+      sortObj = Object.assign({}, sort);
+    }
     let pagination = undefined;
     let pagedEvents = [];
     if (keyword) {
@@ -119,7 +123,7 @@ class EventsRepo extends CommonRepo {
           match: { status: { $in: ['unpaid', 'paid'] } },
           select: '_id user source status mobile wechatId createdAt'
         })
-        .sort({ startTime: 1 })
+        .sort(sortObj)
         .exec();
       events = events.filter(event => {
         const { script, shop } = event;
