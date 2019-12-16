@@ -16,8 +16,8 @@ class CacheService {
       userKey = userKey + '|' + token;
       profileKey = profileKey + '|' + token;
     }
-    await this.purgeCacheByKey(userKey);
-    await this.purgeCacheByKey(profileKey);
+    // await this.purgeCacheByKey(userKey);
+    // await this.purgeCacheByKey(profileKey);
   }
 
   async purgeEventCache(event: any, req: Request) {
@@ -28,8 +28,8 @@ class CacheService {
       myEventsKey = myEventsKey + '|' + token;
       eventsKey = eventsKey + '|' + token;
     }
-    await this.purgeCacheByKey(myEventsKey);
-    // await this.purgeCacheBySearch(eventsKey);
+    // await this.purgeCacheByKey(myEventsKey);
+    // // await this.purgeCacheBySearch(eventsKey);
   }
 
   async purgeCacheBySearch(searchKey: string): Promise<any> {
