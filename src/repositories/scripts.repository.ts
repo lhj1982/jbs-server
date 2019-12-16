@@ -50,7 +50,7 @@ class ScriptsRepo {
         };
       }
     }
-    // console.log(condition);
+    console.log(condition);
     const rawScripts = await Script.find(condition)
       .populate({
         path: 'shops',

@@ -2,7 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import RefundsRepo from '../repositories/refunds.repository';
 import OrdersRepo from '../repositories/orders.repository';
 import OrderService from '../services/order.service';
-import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException, OrderCannotPayException, CannotRefundException } from '../exceptions/custom.exceptions';
+import {
+  InvalidRequestException,
+  ResourceAlreadyExist,
+  ResourceNotFoundException,
+  AccessDeinedException,
+  OrderCannotPayException,
+  OrderAlreadyPaidException,
+  RefundAlreadyPerformedException,
+  CannotRefundException
+} from '../exceptions/custom.exceptions';
+import { pp } from '../utils/stringUtil';
 import { BaseController } from './base.controller';
 import logger from '../utils/logger';
 import config from '../config';
@@ -88,6 +98,13 @@ export class OrdersController extends BaseController {
       const order = await OrdersRepo.findByTradeNo(outTradeNo);
       if (!order) {
         next(new ResourceNotFoundException('Order', outTradeNo));
+        await session.abortTransaction();
+        await OrdersRepo.endSession();
+        return;
+      }
+      const { orderStatus, _id } = order;
+      if (orderStatus != 'created') {
+        next(new OrderAlreadyPaidException(_id));
         await session.abortTransaction();
         await OrdersRepo.endSession();
         return;
@@ -180,19 +197,37 @@ export class OrdersController extends BaseController {
    */
   confirmWechatRefund = async (req: Request, res: Response, next: NextFunction) => {
     const { body } = req;
-    logger.info(`wechat refund notify ${req}`);
+    logger.info(`wechat refund notify ${pp(body)}`);
+    const refundData = await OrderService.confirmWechatRefund(body);
+    // console.log(refundData);
+    const { outRefundNo, refundStatus } = refundData;
+    const refund = await RefundsRepo.findByRefundNo(outRefundNo);
+    if (!refund) {
+      next(new ResourceNotFoundException('Refund', outRefundNo));
+      return;
+    }
+    const { _id, status, order } = refund;
+    if (status === 'refund' || status === 'failed') {
+      next(new RefundAlreadyPerformedException(_id, status));
+      return;
+    }
+
     const session = await OrdersRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
-      const refundData = await OrderService.confirmWechatRefund(body);
-      // console.log(refundData);
-      const { outRefundNo, refundStatus } = refundData;
-      const refund = await RefundsRepo.findByRefundNo(outRefundNo);
       let refundToUpdate = {};
       if (refundStatus !== 'SUCCESS') {
         refundToUpdate = Object.assign(refund.toObject(), { status: 'failed' }, refundData);
       } else {
+        const { orderStatus } = order;
+        if (orderStatus !== 'refunded') {
+          const orderToUpdate = Object.assign(order.toObject(), {
+            orderStatus: 'refunded'
+          });
+          console.log(orderToUpdate);
+          await OrdersRepo.saveOrUpdate(orderToUpdate, opts);
+        }
         refundToUpdate = Object.assign({}, refund.toObject(), refundData);
       }
       // console.log(refundToUpdate);

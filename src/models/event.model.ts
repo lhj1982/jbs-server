@@ -75,6 +75,10 @@ export const EventSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
     }
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }

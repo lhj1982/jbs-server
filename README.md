@@ -44,6 +44,14 @@ rs.initiate(config)
 rs.reconfig(config,{force: true});
 
 
+### Install Redis
+
+Redis is used for server side cache.
+
+```
+docker run -p 6379:6379 --name jbs-api-redis -d redis redis-server --appendonly yes
+```
+
 # Certificate
 
 generate pfx for wechat pay api

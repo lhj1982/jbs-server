@@ -39,6 +39,12 @@ export const ShopSchema = new Schema({
   district: {
     type: String
   },
+  supportedPaymentMethods: [
+    {
+      type: String,
+      enum: ['wechat']
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now

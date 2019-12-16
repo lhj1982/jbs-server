@@ -41,7 +41,7 @@ paths:
   /oauth/login:
     post:
       tags:
-      - auth
+      - "auth"
       summary: "Authorize user via wechat"
       description: ""
       operationId: "authrozieUserByWechat"
@@ -61,10 +61,42 @@ paths:
                 $ref: '#/components/schemas/OauthResponse'
         default:
           description: "Invalid input"
+  /oauth/code2session:
+    post:
+      tags:
+      - "auth"
+      summary: "Exchange wechat code to session"
+      description: "Exchange wechat code to session"
+      operationId: "authorizeCode2Session"
+      requestBody: 
+        description: Request content
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                code:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:    
+              schema:
+                type: "object"
+                properties:
+                  openid:
+                    type: "string"
+                  session_key:
+                    type: "string"
+        default:
+          description: "Invalid input"
+
   /auth/login:
     post:
       tags:
-      - auth
+      - "auth"
       summary: "Authorize user using username and passsword"
       description: ""
       operationId: "authrozieUserByUsernameAndPassword"
@@ -1392,6 +1424,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
+  /profile/wechat-data:
+    post:
+      tags:
+      - "profile"
+      summary: "Get wechat encrypted data"
+      description: "Get wechat encrypted data, such as phoneNumber"
+      operationId: "getWeChatData"
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: "Request object"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                encryptedData:
+                  type: "string"
+                iv:
+                  type: "string"
+                sessionKey:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Event'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
   
   /price/price-schema:
     post:
@@ -2052,7 +2123,11 @@ components:
           type: "string"
         wechatName:
           type: "string"
-
+        supportedPaymentMethods:
+          type: "array"
+          items:
+            type: "string"
+            enum: ["wechat"]
     
     ArrayOfShops:
       type: "array"
@@ -2123,6 +2198,8 @@ components:
         discountRule:
           type: "object"
           $ref: '#/components/schemas/DiscountRule'
+        supportPayment:
+          type: "boolean"
 
 
     EventDetails:

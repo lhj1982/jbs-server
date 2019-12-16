@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { EventsController } from '../controllers/events.controller';
 import { verifyToken } from '../middleware/verifyToken';
 import permit from '../middleware/permission.middleware';
+import cacheMiddleware from '../middleware/cache.middleware';
+import config from '../config';
 
 export class EventsRoutes {
   eventsController: EventsController = new EventsController();

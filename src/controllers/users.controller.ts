@@ -6,6 +6,7 @@ import EventUsersRepo from '../repositories/eventUsers.repository';
 import EventsRepo from '../repositories/events.repository';
 import TagsRepo from '../repositories/tags.repository';
 import UserService from '../services/user.service';
+import CacheService from '../services/cache.service';
 import * as _ from 'lodash';
 
 export class UsersController {
@@ -80,6 +81,7 @@ export class UsersController {
         ageTag
       });
       const updatedUser = await UsersRepo.saveOrUpdateUser(user);
+      await CacheService.purgeUserCache(user, req);
       res.json({ code: 'SUCCESS', data: updatedUser });
     } catch (err) {
       res.send(err);

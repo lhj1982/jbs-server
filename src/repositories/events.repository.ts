@@ -30,7 +30,7 @@ class EventsRepo extends CommonRepo {
     return await Event.where({ _id: id, status: { $in: status } })
       .findOne()
       .populate('script')
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
       .populate({
         path: 'members',
@@ -82,7 +82,7 @@ class EventsRepo extends CommonRepo {
       .exec();
   }
 
-  async find(params, filter = { status: ['ready'], availableSpots: -1 }) {
+  async find(params, filter = { status: ['ready'], availableSpots: -1 }, sort = undefined) {
     const { status, availableSpots } = filter;
     const { offset, limit, keyword, scriptId, shopId } = params;
     const condition = {
@@ -100,6 +100,10 @@ class EventsRepo extends CommonRepo {
     // console.log(condition);
     // const total = await Event.countDocuments(condition).exec();
 
+    let sortObj = { startTime: 1 };
+    if (sort) {
+      sortObj = Object.assign({}, sort);
+    }
     let pagination = undefined;
     let pagedEvents = [];
     if (keyword) {
@@ -111,7 +115,7 @@ class EventsRepo extends CommonRepo {
       // get all matched events, filter away those have null script or shop
       let events = await Event.find(condition)
         .populate('script')
-        .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+        .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
         .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
         .populate('commissions')
         .populate({
@@ -119,7 +123,7 @@ class EventsRepo extends CommonRepo {
           match: { status: { $in: ['unpaid', 'paid'] } },
           select: '_id user source status mobile wechatId createdAt'
         })
-        .sort({ startTime: 1 })
+        .sort(sortObj)
         .exec();
       events = events.filter(event => {
         const { script, shop } = event;
@@ -138,7 +142,7 @@ class EventsRepo extends CommonRepo {
         path: 'script',
         match: { name: regex }
       })
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
       .populate('commissions')
       .populate({
@@ -160,7 +164,7 @@ class EventsRepo extends CommonRepo {
     const regex = new RegExp(escapeRegex(keyword), 'gi');
     let events = await Event.find(condition)
       .populate('script')
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate({
         path: 'hostUser',
         match: { nickName: regex },
@@ -197,7 +201,7 @@ class EventsRepo extends CommonRepo {
     // console.log(condition);
     return await Event.find(condition)
       .populate('script')
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate('hostUser', ['_id', 'openId', 'nickName', 'mobile', 'wechatId', 'ageTag'])
       .populate('script')
       .sort({ startTime: 1 })
@@ -272,11 +276,13 @@ class EventsRepo extends CommonRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { id: eventId, shop, script, startTime, endTime, hostUser } = event;
+    const { _id: eventId, shop, script, startTime, endTime, hostUser, status, createdAt } = event;
     if (eventId) {
       return await Event.findOneAndUpdate({ _id: eventId }, event, options).exec();
+    } else if (status === 'ready') {
+      return await Event.findOneAndUpdate({ shop, script, startTime, status, hostUser }, event, options).exec();
     } else {
-      return await Event.findOneAndUpdate({ shop, script, startTime, endTime, hostUser }, event, options).exec();
+      return await Event.findOneAndUpdate({ shop, script, startTime, hostUser, createdAt }, event, options).exec();
     }
   }
 
@@ -312,25 +318,27 @@ class EventsRepo extends CommonRepo {
         },
         select: '_id source status mobile wechatId createdAt'
       })
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
+      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate('script')
       .sort({ startTime: 1 })
       .exec();
-    const eventsUserJoined = (await Event.find({ status: { $in: status } })
-      .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
-      .populate({
-        path: 'members',
-        match: { user: userId, status: { $in: ['unpaid', 'paid'] } },
-        select: 'nickName openId avatarUrl gender country province city language',
-        populate: {
-          path: 'user',
-          select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
-        }
-      })
-      .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName'])
-      .populate('script')
-      .sort({ startTime: 1 })
-      .exec()).filter(event => {
+    const eventsUserJoined = (
+      await Event.find({ status: { $in: status } })
+        .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
+        .populate({
+          path: 'members',
+          match: { user: userId, status: { $in: ['unpaid', 'paid'] } },
+          select: 'nickName openId avatarUrl gender country province city language',
+          populate: {
+            path: 'user',
+            select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
+          }
+        })
+        .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
+        .populate('script')
+        .sort({ startTime: 1 })
+        .exec()
+    ).filter(event => {
       const { members } = event;
       return members.length > 0;
     });

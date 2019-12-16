@@ -40,6 +40,7 @@ import { PricesRoutes } from './routes/prices.routes';
 import { NotificationsRoutes } from './routes/notifications.routes';
 import { OrdersRoutes } from './routes/orders.routes';
 import errorMiddleware from './middleware/error.middleare';
+const compression = require('compression');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
@@ -103,8 +104,12 @@ class App {
       logger.info(`Request type: ${req.method}`);
       next();
     });
+    this.app.get('/', function(req, res) {
+      res.send('boogoogoo api v1.0');
+    });
     // serving static files
     this.app.use(express.static('public'));
+    this.app.use(compression());
   }
 
   mongoSetup(): void {

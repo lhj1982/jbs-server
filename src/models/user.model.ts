@@ -105,5 +105,5 @@ export const UserSchema = new Schema(
       }
     ]
   },
-  { toJSON: { virtuals: true } }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

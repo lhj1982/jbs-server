@@ -20,8 +20,9 @@ import { BaseController } from './base.controller';
 import MessageService from '../services/message.service';
 import EventService from '../services/event.service';
 import OrderService from '../services/order.service';
+import CacheService from '../services/cache.service';
 import config from '../config';
-import { string2Date, formatDate, addDays, add } from '../utils/dateUtil';
+import { nowDate, string2Date, formatDate, addDays, add } from '../utils/dateUtil';
 import { getRandomString } from '../utils/stringUtil';
 import logger from '../utils/logger';
 // import * as _ from 'lodash';
@@ -31,12 +32,17 @@ export class EventsController extends BaseController {
     try {
       let offset = parseInt(req.query.offset);
       let limit = parseInt(req.query.limit);
-      const { keyword, filter: filterStr } = req.query;
+      const { keyword, filter: filterStr, sort: sortStr } = req.query;
       let filterToUpdate = { status: ['ready'], availableSpots: -1 };
+      let sortToUpdate = {};
       if (filterStr) {
         const filter = JSON.parse(decodeURIComponent(filterStr));
         filterToUpdate = Object.assign(filterToUpdate, filter);
         // console.log(filterToUpdate);
+      }
+      if (sortStr) {
+        const sort = JSON.parse(decodeURIComponent(sortStr));
+        sortToUpdate = Object.assign(sortToUpdate, sort);
       }
       if (!offset) {
         offset = config.query.offset;
@@ -45,7 +51,7 @@ export class EventsController extends BaseController {
         limit = config.query.limit;
       }
       // console.log(filterToUpdate);
-      let result = await EventsRepo.find({ keyword, offset, limit }, filterToUpdate);
+      let result = await EventsRepo.find({ keyword, offset, limit }, filterToUpdate, sortToUpdate);
       const links = this.generateLinks(result.pagination, req.route.path, '');
       result = Object.assign({}, result, links);
       res.json(result);
@@ -161,9 +167,6 @@ export class EventsController extends BaseController {
       next(new InvalidRequestException('AddEvent', ['startTime']));
       return;
     }
-    if (!supportPayment) {
-      supportPayment = false;
-    }
     // if (!numberOfPersons) {
     //   next(new InvalidRequestException('AddEvent', ['numberOfPersons']));
     //   return;
@@ -226,6 +229,9 @@ export class EventsController extends BaseController {
       if (applicableDiscountRules.length > 0) {
         discountRule = applicableDiscountRules[0];
       }
+      if (typeof supportPayment === 'undefined') {
+        supportPayment = EventService.isPaymentSupported(shop);
+      }
 
       newEvent = await EventsRepo.saveOrUpdate(
         {
@@ -246,6 +252,7 @@ export class EventsController extends BaseController {
           price,
           discountRule,
           isHostJoin,
+          status: 'ready',
           supportPayment,
           createdAt: new Date()
         },
@@ -289,6 +296,7 @@ export class EventsController extends BaseController {
       await MessageService.saveNewEventNotifications(newEvent, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(newEvent, req);
       // get participators for given event
       const eventUsers = await EventUsersRepo.findByEvent(newEvent.id);
       newEvent = await this.updateEventParticpantsNumber(newEvent, eventUsers);
@@ -346,23 +354,30 @@ export class EventsController extends BaseController {
       updateData['endTime'] = endTime;
     }
     const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
+    // console.log(applicableDiscountRules);
     let discountRule = undefined;
     if (applicableDiscountRules.length > 0) {
       discountRule = applicableDiscountRules[0]._id;
     }
+    // console.log(event.discountRule);
     const session = await EventsRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
-      // updateData['discountRule'] = discountRule;
-      const eventToUpdate = Object.assign(event, updateData);
+      updateData['discountRule'] = discountRule;
+      const eventToUpdate = Object.assign(event.toObject(), updateData, {
+        updatedAt: nowDate()
+      });
+      // console.log(eventToUpdate.discountRule);
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       // if price has changed, refund all paid players
       if (price && originalPrice != price) {
-        // await EventService.cancelBookings(event, 'price_updated', 'refund - cancelled event', opts);
+        logger.info(`Detecting price is changed, cancel all paid bookings, event: ${eventId}`);
+        await EventService.cancelBookings(event, 'price_updated', '退款 - 价格改变', true, opts);
       }
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(newEvent, req);
       res.json({ code: 'SUCCESS', data: newEvent });
     } catch (err) {
       await session.abortTransaction();
@@ -420,14 +435,42 @@ export class EventsController extends BaseController {
     // }
 
     // get participators for given event
-    const eventUsers = await EventUsersRepo.findByEvent(eventId, {
+    let eventUsers = await EventUsersRepo.findByEvent(eventId, {
       status: ['paid', 'unpaid']
     });
     await this.updateEventParticpantsNumber(event, eventUsers);
+    const existingEventUsers = eventUsers.filter(_ => {
+      const {
+        user: { _id: eventUserId }
+      } = _;
+      return userId === eventUserId.toString();
+    });
+    // console.log(existingEventUser);
+    // if there is an entry already, return existing booking
+    if (existingEventUsers && existingEventUsers.length > 0) {
+      logger.info(`Found existing booking for user ${userId}`);
+      const existingEventUser = existingEventUsers[0];
+      // const { _id } = existingEventUser;
+      // let order = await OrderService.findByObjectId(_id, 'created');
+      const order = await this.createOrder(userId, event, existingEventUser, {});
+
+      // console.log(order);
+      // console.log(Object.assign(existingEventUser, { order: order }));
+      res.json({
+        code: 'SUCCESS',
+        data: Object.assign(existingEventUser.toObject(), {
+          order: order.toObject()
+        })
+      });
+      return;
+    }
     if (!this.canJoinEvent(event, eventUsers)) {
       next(new EventIsFullBookedException(eventId));
       return;
     }
+    eventUsers = await EventUsersRepo.findByEvent(eventId, {
+      status: ['paid', 'unpaid', 'blacklisted']
+    });
     if (this.isBlacklistedUser(userId, eventUsers)) {
       next(new UserIsBlacklistedException(eventId, userId));
       return;
@@ -456,24 +499,12 @@ export class EventsController extends BaseController {
       });
       await UsersRepo.saveOrUpdateUser(user);
       const event = await EventsRepo.findById(eventId);
-      const { price, supportPayment } = event;
-      let newOrder;
-      if (supportPayment) {
-        const order = {
-          createdBy: userId,
-          type: 'event_join',
-          objectId: newEventUser.id,
-          amount: price * 100,
-          outTradeNo: getRandomString(32),
-          status: 'created'
-        };
-        newOrder = await OrderService.createOrder(order, opts);
-      }
+      const newOrder = await this.createOrder(userId, event, newEventUser, opts);
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
-
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(event, req);
       res.json({
         code: 'SUCCESS',
         data: Object.assign(newEventUser.toObject(), { order: newOrder })
@@ -483,6 +514,23 @@ export class EventsController extends BaseController {
       await EventsRepo.endSession();
       next(err);
     }
+  };
+
+  createOrder = async (userId, event, eventUser, opts) => {
+    const { price, supportPayment } = event;
+    let newOrder;
+    if (supportPayment) {
+      const order = {
+        createdBy: userId,
+        type: 'event_join',
+        objectId: eventUser.id,
+        amount: price * 100,
+        outTradeNo: getRandomString(32),
+        status: 'created'
+      };
+      newOrder = await OrderService.createOrder(order, opts);
+    }
+    return newOrder;
   };
 
   getEventDetails = async (req: Request, res: Response, next: NextFunction) => {
@@ -611,15 +659,17 @@ export class EventsController extends BaseController {
       const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
       // console.log(eventUser);
       if (supportPayment) {
-        await EventService.cancelBooking(eventUser, 'refund - cancelled user event', opts);
+        await EventService.cancelBooking(eventUser, '退款 - 参团人取消', true, opts);
       }
       const eventUserToUpdate = Object.assign(eventUser, {
         status: status,
-        statusNote: 'cancel_user_event'
+        statusNote: 'user_event_cancelled'
       });
+      console.log(eventUserToUpdate);
       const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(event, req);
       res.json({ code: 'SUCCESS', data: newEventUser });
     } catch (err) {
       await session.abortTransaction();
@@ -779,10 +829,11 @@ export class EventsController extends BaseController {
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       if (supportPayment) {
         logger.info(`Event is payment enabled, cancel all paid bookings if exists`);
-        await EventService.cancelBookings(event, 'event_cancelled', 'refund - cancelled event', opts);
+        await EventService.cancelBookings(event, 'event_cancelled', '退款 - 参团人取消', true, opts);
       }
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(newEvent, req);
       res.json({ code: 'SUCCESS', data: newEvent });
     } catch (err) {
       await session.abortTransaction();
@@ -847,6 +898,7 @@ export class EventsController extends BaseController {
       await MessageService.saveCompleteEventNotifications(newEvent, eventCommissions, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
+      await CacheService.purgeEventCache(newEvent, req);
       res.json({ code: 'SUCCESS', data: newEvent });
     } catch (err) {
       await session.abortTransaction();
