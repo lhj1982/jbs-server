@@ -38,13 +38,13 @@ class UserService {
     }
   }
 
-  async addUserTag(params) {
+  async addUserTag(tag, eventUser) {
     const session = await UsersRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
 
-      const userTag = await UserTagsRepo.saveOrUpdate(params, opts);
+      const userTag = await UserTagsRepo.saveOrUpdate(tag, opts);
       await session.commitTransaction();
       await UsersRepo.endSession();
       return userTag;

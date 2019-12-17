@@ -728,6 +728,47 @@ export class EventsController extends BaseController {
     }
   };
 
+  updateEventUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { eventId } = req.params;
+    const event = await EventsRepo.findById(eventId);
+    if (!event) {
+      next(new ResourceNotFoundException('Event', eventId));
+      return;
+    }
+    const { loggedInUser } = res.locals;
+    const { userId, numberOfLikes } = req.body;
+    const {
+      hostUser: { id: hostUserId }
+    } = event;
+    const { id: loggedInUserId } = loggedInUser;
+
+    if (typeof numberOfLikes === 'undefined') {
+      next(new InvalidRequestException('EventUser', ['numberOfLikes']));
+      return;
+    }
+
+    const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
+    if (!eventUser) {
+      next(new AccessDeinedException(loggedInUserId, 'Cannot update user booking'));
+      return;
+    }
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const eventUserToUpdate = Object.assign(eventUser, { numberOfLikes });
+      const newEventUser = await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
+
+      await session.commitTransaction();
+      await EventsRepo.endSession();
+      res.json({ code: 'SUCCESS', data: newEventUser });
+    } catch (err) {
+      await session.abortTransaction();
+      await EventsRepo.endSession();
+      next(err);
+    }
+  };
+
   getEventDiscountRolesByScriptAndShop = async (req: Request, res: Response, next: NextFunction) => {
     const { scriptId, shopId } = req.params;
     if (!shopId) {

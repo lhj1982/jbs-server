@@ -986,6 +986,51 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /events/{eventId}/users/update:
+    put:
+      tags:
+      - "event"
+      summary: "Update a user event"
+      description: "Update a user event, for example, numberOfLikes"
+      operationId: "updateEventUser"
+      security:
+        - bearerAuth: []
+      requestBody: 
+        required: true
+        description: update user event status request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - userId
+              properties:
+                numberOfLikes:
+                  type: "integer"
+                  format: "int32"
+                userId:
+                  type: "string"
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          description: event id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventUser'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /events/{eventId}/cancel:
     put:
       tags:

@@ -39,7 +39,7 @@ class EventsRepo extends CommonRepo {
           path: 'user',
           select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
         },
-        select: '_id source status mobile wechatId createdAt'
+        select: '_id source status mobile wechatId createdAt numberOfLikes'
       })
       .populate('discountRule')
       .populate({
@@ -62,7 +62,7 @@ class EventsRepo extends CommonRepo {
           path: 'user',
           select: 'nickName mobile wechatId'
         },
-        select: 'source status mobile wechatId createdAt'
+        select: 'source status mobile wechatId createdAt numberOfLikes'
       })
       .populate({
         path: 'commissions'
@@ -121,7 +121,7 @@ class EventsRepo extends CommonRepo {
         .populate({
           path: 'members',
           match: { status: { $in: ['unpaid', 'paid'] } },
-          select: '_id user source status mobile wechatId createdAt'
+          select: '_id user source status mobile wechatId createdAt numberOfLikes'
         })
         .sort(sortObj)
         .exec();
@@ -148,7 +148,7 @@ class EventsRepo extends CommonRepo {
       .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
-        select: '_id user source status mobile wechatId createdAt'
+        select: '_id user source status mobile wechatId createdAt numberOfLikes'
       })
       .sort({ startTime: 1 })
       .exec();
@@ -174,7 +174,7 @@ class EventsRepo extends CommonRepo {
       .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
-        select: '_id user source status mobile wechatId createdAt'
+        select: '_id user source status mobile wechatId createdAt numberOfLikes'
       })
       .sort({ startTime: 1 })
       .exec();

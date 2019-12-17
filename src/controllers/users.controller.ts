@@ -170,12 +170,21 @@ export class UsersController {
         next(new AccessDeinedException(loggedInUserId, 'You are not allowed to tag yourself'));
         return;
       }
+      let eventUser = undefined;
       if (type === 'event') {
         const event = await EventsRepo.findById(objectId);
         if (!event) {
           throw new ResourceNotFoundException('Event', objectId);
           return;
         }
+        eventUser = await EventUsersRepo.findEventUser(objectId, userId);
+        if (!eventUser) {
+          throw new AccessDeinedException(loggedInUserId, 'Cannot add tag');
+          return;
+        }
+      } else {
+        throw new InvalidRequestException('User', ['type']);
+        return;
       }
       const tag = await TagsRepo.findById(tagId);
       if (!tag) {
@@ -188,7 +197,7 @@ export class UsersController {
         tag: tagId,
         type: 'event',
         objectId
-      });
+      }, eventUser);
       res.json({ code: 'SUCCESS', data: userTag });
     } catch (err) {
       next(err);

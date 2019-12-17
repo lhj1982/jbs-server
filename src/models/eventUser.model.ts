@@ -32,6 +32,10 @@ export const EventUserSchema = new Schema(
       type: String,
       enum: ['price_updated', 'event_cancelled', 'user_event_cancelled']
     },
+    numberOfLikes: {
+      type: Number,
+      default: 0
+    },
     createdAt: {
       type: Date,
       default: Date.now
