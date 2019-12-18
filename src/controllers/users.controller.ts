@@ -191,13 +191,16 @@ export class UsersController {
         throw new ResourceNotFoundException('Tag', tagId);
         return;
       }
-      const userTag = await UserService.addUserTag({
-        taggedBy: loggedInUserId,
-        user: userId,
-        tag: tagId,
-        type: 'event',
-        objectId
-      }, eventUser);
+      const userTag = await UserService.addUserTag(
+        {
+          taggedBy: loggedInUserId,
+          user: userId,
+          tag: tagId,
+          type: 'event',
+          objectId
+        },
+        eventUser
+      );
       res.json({ code: 'SUCCESS', data: userTag });
     } catch (err) {
       next(err);
