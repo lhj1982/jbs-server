@@ -31,6 +31,8 @@ tags:
   description: "Operations about refunds"
 - name: "landing-page"
   description: "Operations about services will be shown on home page"
+- name: "report"
+  description: "Operations about report"
 
 servers:
   - url: http://localhost:3000
@@ -1985,6 +1987,102 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /reports/orders:
+    get:
+      tags:
+      - "report"
+      summary: "Get orders report"
+      description: "Get order report"
+      operationId: "getOrdersReport"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: offset
+          description: The number of items to skip before starting to collect the result set
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          description: The numbers of items to return
+          schema:
+            type: integer
+        - in: query
+          name: shopName
+          required: true
+          description: shop name
+          schema:
+            type: string
+        - in: query
+          name: fromDate
+          required: true
+          description: search from date, inclusive
+        - in: query
+          name: toDate
+          required: true
+          description: search to date, exclusive
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrdersResponse'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /reports/events:
+    get:
+      tags:
+      - "report"
+      summary: "Get events report"
+      description: "Get events report"
+      operationId: "getEventsReport"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: offset
+          description: The number of items to skip before starting to collect the result set
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          description: The numbers of items to return
+          schema:
+            type: integer
+        - in: query
+          name: shopName
+          required: true
+          description: shop name
+          schema:
+            type: string
+        - in: query
+          name: fromDate
+          required: true
+          description: search from date, inclusive
+        - in: query
+          name: toDate
+          required: true
+          description: search to date, exclusive
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsResponse'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
@@ -2475,6 +2573,20 @@ components:
         createdAt:
           type: "string"
           format: "date-time"
+
+    OrdersResponse:
+      allOf: 
+        - $ref: '#/components/schemas/PaginatedDataResponse'
+        - 
+          type: "object"
+          properties:
+            data:
+              $ref: '#/components/schemas/ArrayOfOrders'
+
+    ArrayOfOrders:
+      type: array
+      items:
+        $ref: '#/components/schemas/Order'
 
     Order:
       type: "object"

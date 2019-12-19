@@ -21,6 +21,7 @@ import MessageService from '../services/message.service';
 import EventService from '../services/event.service';
 import OrderService from '../services/order.service';
 import CacheService from '../services/cache.service';
+import UserService from '../services/user.service';
 import config from '../config';
 import { nowDate, string2Date, formatDate, addDays, add } from '../utils/dateUtil';
 import { getRandomString } from '../utils/stringUtil';
@@ -937,6 +938,7 @@ export class EventsController extends BaseController {
         }
       }
       await MessageService.saveCompleteEventNotifications(newEvent, eventCommissions, opts);
+      // await UserService.saveUserPoints(newEvent, eventUsers, opts);
       await session.commitTransaction();
       await EventsRepo.endSession();
       await CacheService.purgeEventCache(newEvent, req);

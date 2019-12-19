@@ -3,6 +3,7 @@ import logger from '../utils/logger';
 import { pp } from '../utils/stringUtil';
 import UsersRepo from '../repositories/users.repository';
 import UserTagsRepo from '../repositories/userTags.repository';
+import UserPointsRepo from '../repositories/userPoints.repository';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 
 class UserService {
@@ -53,6 +54,22 @@ class UserService {
       await UsersRepo.endSession();
       throw err;
     }
+  }
+
+  /**
+   * Save user points.
+   *
+   * @param {[type]} event     [description]
+   * @param {[type]} eventUser [description]
+   */
+  async saveUserPoints(event, eventUser, options = {}) {
+    const { hostUser } = event;
+    await UserPointsRepo.saveOrUpdate(
+      {
+        type: ''
+      },
+      options
+    );
   }
 }
 

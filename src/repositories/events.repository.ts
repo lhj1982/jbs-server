@@ -7,7 +7,7 @@ import { EventCommissionSchema } from '../models/eventCommissions.model';
 import { CommonRepo } from './common.repository';
 import * as moment from 'moment';
 import { escapeRegex } from '../utils/stringUtil';
-import { nowDate } from '../utils/dateUtil';
+import { nowDate, string2Date } from '../utils/dateUtil';
 const Event = mongoose.model('Event', EventSchema, 'events');
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
@@ -248,6 +248,118 @@ class EventsRepo extends CommonRepo {
         }
       }
     ]).exec();
+  }
+
+  /**
+   * Used for report.
+   *
+   */
+  async getEvents(params: any = {}) {
+    const { shopName, fromDate, toDate, statuses, limit, offset } = params;
+    const aggregate: any[] = [
+      {
+        $match: {
+          startTime: {
+            $gte: string2Date(fromDate).toDate(),
+            $lt: string2Date(toDate).toDate()
+          },
+          status: {
+            $in: statuses
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'eventUsers',
+          localField: '_id',
+          foreignField: 'event',
+          as: 'members'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'hostUser',
+          foreignField: '_id',
+          as: 'hostUserObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$hostUserObj',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'shops',
+          localField: 'shop',
+          foreignField: '_id',
+          as: 'shopObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$shopObj',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'scripts',
+          localField: 'script',
+          foreignField: '_id',
+          as: 'scriptObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$scriptObj',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'eventCommissions',
+          localField: '_id',
+          foreignField: 'event',
+          as: 'commissions'
+        }
+      },
+      {
+        $sort: {
+          createdAt: -1
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          convertedObjectId: 0,
+          shop: 0,
+          script: 0,
+          hostUser: 0,
+          'hostUserObj.password': 0,
+          'hostUserObj.roles': 0,
+          'hostUserObj.sessionKey': 0
+        }
+      }
+    ];
+    if (shopName) {
+      const regex = new RegExp(escapeRegex(shopName), 'gi');
+      const shopMatch = { $match: { 'shopObj.name': regex } };
+      // const match['booking.eventObj.shopObj.name'] = {$regex: ''};
+      aggregate.push(shopMatch);
+    }
+    const result = await Event.aggregate([...aggregate, { $count: 'total' }]).exec();
+    let total = 0;
+    if (result.length > 0) {
+      total = result[0];
+    }
+    // console.log(total);
+    const data = await Event.aggregate([...aggregate, { $limit: limit }, { $skip: offset }]).exec();
+    // console.log(data);
+    const pagination = { offset, limit, total };
+    return { pagination, data };
   }
 
   async findOne(params) {

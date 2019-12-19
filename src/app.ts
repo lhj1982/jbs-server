@@ -17,6 +17,7 @@ import { RefundSchema } from './models/refund.model';
 import { TagSchema } from './models/tag.model';
 import { UserTagSchema } from './models/userTag.model';
 import { LeadingBoardSchema } from './models/leadingBoard.model';
+import { UserPointSchema } from './models/userPoint.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -32,6 +33,7 @@ const Order = mongoose.model('Order', OrderSchema, 'orders');
 const Tag = mongoose.model('Tag', TagSchema, 'tags');
 const UserTag = mongoose.model('UserTag', UserTagSchema, 'userTags');
 const LeadingBoard = mongoose.model('LeadingBoard', LeadingBoardSchema, 'leadingBoard');
+const UserPoint = mongoose.model('UserPoint', UserPointSchema, 'userPoints');
 
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';
@@ -42,6 +44,7 @@ import { PricesRoutes } from './routes/prices.routes';
 import { NotificationsRoutes } from './routes/notifications.routes';
 import { OrdersRoutes } from './routes/orders.routes';
 import { LeadingBoardRoutes } from './routes/leadingBoard.routes';
+import { ReportsRoutes } from './routes/reports.routes';
 import errorMiddleware from './middleware/error.middleare';
 const compression = require('compression');
 const path = require('path');
@@ -63,6 +66,7 @@ class App {
   notificationsRoutes: NotificationsRoutes = new NotificationsRoutes();
   ordersRoutes: OrdersRoutes = new OrdersRoutes();
   leadingBoardRoutes: LeadingBoardRoutes = new LeadingBoardRoutes();
+  reportsRoutes: ReportsRoutes = new ReportsRoutes();
   // mongoUrl: string = 'mongodb://localhost/CRMdb';
   mongoUrl: string = config.dbUri;
 
@@ -81,6 +85,7 @@ class App {
     this.notificationsRoutes.routes(this.app);
     this.ordersRoutes.routes(this.app);
     this.leadingBoardRoutes.routes(this.app);
+    this.reportsRoutes.routes(this.app);
     this.app.use(errorMiddleware);
   }
 

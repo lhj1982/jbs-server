@@ -2,6 +2,7 @@ import * as mongoose from 'mongoose';
 import { escapeRegex } from '../utils/stringUtil';
 import { OrderSchema } from '../models/order.model';
 import { CommonRepo } from './common.repository';
+import { string2Date } from '../utils/dateUtil';
 const Order = mongoose.model('Order', OrderSchema, 'orders');
 mongoose.set('useFindAndModify', false);
 
@@ -77,6 +78,126 @@ class OrdersRepo extends CommonRepo {
     };
     const { orderStatus } = filter;
     return await Order.find({ orderStatus }).exec();
+  }
+
+  /**
+   * Used for admin report system.
+   *
+   * @param {any = {}} params [description]
+   */
+  async getOrders(params: any = {}) {
+    const { shopName, fromDate, toDate, statuses, limit, offset } = params;
+    const aggregate: any[] = [
+      {
+        $match: {
+          createdAt: {
+            $gte: string2Date(fromDate).toDate(),
+            $lt: string2Date(toDate).toDate()
+          }
+        }
+      },
+      {
+        $addFields: {
+          convertedObjectId: {
+            $toObjectId: '$objectId'
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'refunds',
+          localField: '_id',
+          foreignField: 'order',
+          as: 'refunds'
+        }
+      },
+      {
+        $lookup: {
+          from: 'eventUsers',
+          localField: 'convertedObjectId',
+          foreignField: '_id',
+          as: 'booking'
+        }
+      },
+      {
+        $unwind: {
+          path: '$booking',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'booking.event',
+          foreignField: '_id',
+          as: 'booking.eventObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$booking.eventObj',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: {
+          'booking.eventObj.status': { $in: statuses }
+        }
+      },
+      {
+        $lookup: {
+          from: 'shops',
+          localField: 'booking.eventObj.shop',
+          foreignField: '_id',
+          as: 'booking.eventObj.shopObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$booking.eventObj.shopObj',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'eventCommissions',
+          localField: 'booking.eventObj._id',
+          foreignField: 'event',
+          as: 'booking.eventObj.commissions'
+        }
+      },
+      {
+        $sort: {
+          createdAt: -1
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          convertedObjectId: 0,
+          'booking.eventObj.shop': 0,
+          'booking.event': 0
+        }
+      }
+    ];
+    if (shopName) {
+      const regex = new RegExp(escapeRegex(shopName), 'gi');
+      const shopMatch = { $match: { 'booking.eventObj.shopObj.name': regex } };
+      // const match['booking.eventObj.shopObj.name'] = {$regex: ''};
+      aggregate.push(shopMatch);
+    }
+
+    // console.log(aggregate);
+    const result = await Order.aggregate([...aggregate, { $count: 'total' }]).exec();
+    let total = 0;
+    if (result.length > 0) {
+      total = result[0];
+    }
+    // console.log(total);
+    const data = await Order.aggregate([...aggregate, { $limit: limit }, { $skip: offset }]).exec();
+    // console.log(data);
+    const pagination = { offset, limit, total };
+    return { pagination, data };
   }
 
   async createOrder(order, opts = {}) {

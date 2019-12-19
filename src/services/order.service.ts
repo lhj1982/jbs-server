@@ -26,7 +26,7 @@ class OrderService {
   }
 
   async searchOrders(params): Promise<any> {
-    const { limit, offset, outTradeNo } = params;
+    const { limit, offset, outTradeNo, shopName, fromDate, toDate } = params;
     const orders = await OrdersRepo.find({ outTradeNo, offset, limit });
     return orders;
   }
