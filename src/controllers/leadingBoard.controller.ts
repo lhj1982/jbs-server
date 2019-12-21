@@ -11,4 +11,13 @@ export class LeadingBoardController extends BaseController {
       next(err);
     }
   };
+
+  updateLeadingBoard = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await LeadingBoardService.updateLeadingBoard();
+      res.json({ code: 'SUCCESS' });
+    } catch (err) {
+      next(err);
+    }
+  };
 }

@@ -194,7 +194,7 @@ class OrdersRepo extends CommonRepo {
       total = result[0];
     }
     // console.log(total);
-    const data = await Order.aggregate([...aggregate, { $limit: limit }, { $skip: offset }]).exec();
+    const data = await Order.aggregate([...aggregate, { $skip: offset }, { $limit: limit }]).exec();
     // console.log(data);
     const pagination = { offset, limit, total };
     return { pagination, data };

@@ -8,6 +8,9 @@ export class LeadingBoardRoutes {
 
   routes(app): void {
     //
-    app.route('/leading-board').get(this.leadingBoardController.getLeadingBoard);
+    app
+      .route('/leading-board')
+      .get(this.leadingBoardController.getLeadingBoard)
+      .post(verifyToken, this.leadingBoardController.updateLeadingBoard);
   }
 }

@@ -11,6 +11,9 @@ export const LeadingBoardSchema = new Schema({
   value: {
     type: String
   },
+  validFor: {
+    type: String
+  },
   createdAt: {
     type: Date,
     default: Date.now

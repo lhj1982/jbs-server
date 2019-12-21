@@ -356,7 +356,7 @@ class EventsRepo extends CommonRepo {
       total = result[0];
     }
     // console.log(total);
-    const data = await Event.aggregate([...aggregate, { $limit: limit }, { $skip: offset }]).exec();
+    const data = await Event.aggregate([...aggregate, { $skip: offset }, { $limit: limit }]).exec();
     // console.log(data);
     const pagination = { offset, limit, total };
     return { pagination, data };
@@ -366,6 +366,33 @@ class EventsRepo extends CommonRepo {
     return await Event.where(params)
       .findOne()
       .exec();
+  }
+
+  async getMostCommissionEntry() {
+    const commissions = await EventCommission.aggregate([
+      {
+        $sort: {
+          'commissions.host.amount': -1
+        }
+      },
+      {
+        $limit: 1
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'commissions.host.user',
+          foreignField: '_id',
+          as: 'hostUser'
+        }
+      },
+      {
+        $unwind: {
+          path: '$hostUser',
+          preserveNullAndEmptyArrays: true
+        }
+      }
+    ]).exec();
   }
 
   async saveEventCommissions(commissions, opt: object = {}) {

@@ -17,10 +17,10 @@ class UserService {
    */
   async getWechatEncryptedData(data) {
     logger.info(`${pp(data)}`);
-    const session = await UsersRepo.getSession();
+    // const session = await UsersRepo.getSession();
     // session.startTransaction();
     try {
-      const opts = { session };
+      // const opts = { session };
       const { encryptedData, iv, sessionKey } = data;
       const { appId } = config;
       const newWBDC = new WXBizDataCrypt(appId, sessionKey);
@@ -30,12 +30,12 @@ class UserService {
         phoneNumber: resultPhone.phoneNumber,
         countryCode: resultPhone.countryCode
       };
-      return result;
       // await session.commitTransaction();
       // await UsersRepo.endSession();
+      return result;
     } catch (err) {
       // await session.abortTransaction();
-      await UsersRepo.endSession();
+      // await UsersRepo.endSession();
     }
   }
 

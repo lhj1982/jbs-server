@@ -24,7 +24,7 @@ import CacheService from '../services/cache.service';
 import UserService from '../services/user.service';
 import config from '../config';
 import { nowDate, string2Date, formatDate, addDays, add } from '../utils/dateUtil';
-import { getRandomString } from '../utils/stringUtil';
+import { getRandomString, pp } from '../utils/stringUtil';
 import logger from '../utils/logger';
 // import * as _ from 'lodash';
 
@@ -369,6 +369,7 @@ export class EventsController extends BaseController {
       const eventToUpdate = Object.assign(event.toObject(), updateData, {
         updatedAt: nowDate()
       });
+      logger.info(`Update event ${pp(eventToUpdate)}`);
       // console.log(eventToUpdate.discountRule);
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
       // if price has changed, refund all paid players
@@ -823,6 +824,7 @@ export class EventsController extends BaseController {
         const { discountRule } = rule;
         return discountRule;
       });
+    logger.info(`Found available discountRules, ${availableDiscountRules}, for script ${scriptId}, shopId ${shopId}, startTime ${startTime}`);
     return availableDiscountRules;
   };
 

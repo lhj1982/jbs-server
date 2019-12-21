@@ -13,5 +13,17 @@ class LeadingBoardRepo {
       })
       .exec();
   }
+
+  async createLeadingBoardEntry(leadingBoard, opt = {}) {
+    const options = {
+      ...opt,
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true,
+      returnNewDocument: true
+    };
+    const { type, validFor } = leadingBoard;
+    return await LeadingBoard.findOneAndUpdate({ type, validFor }, leadingBoard, options).exec();
+  }
 }
 export default new LeadingBoardRepo();
