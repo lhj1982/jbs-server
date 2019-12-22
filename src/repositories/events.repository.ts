@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ScriptSchema } from '../models/script.model';
 import { EventSchema } from '../models/event.model';
+import { EventUserSchema } from '../models/eventUser.model';
 import { PriceWeeklySchemaSchema } from '../models/priceWeeklySchema.model';
 import { DiscountRuleSchema } from '../models/discountRule.model';
 import { EventCommissionSchema } from '../models/eventCommissions.model';
@@ -9,6 +10,7 @@ import * as moment from 'moment';
 import { escapeRegex } from '../utils/stringUtil';
 import { nowDate, string2Date } from '../utils/dateUtil';
 const Event = mongoose.model('Event', EventSchema, 'events');
+const EventUser = mongoose.model('EventUser', EventUserSchema, 'eventUsers');
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
 const EventCommission = mongoose.model('EventCommission', EventCommissionSchema, 'eventCommissions');
@@ -368,31 +370,101 @@ class EventsRepo extends CommonRepo {
       .exec();
   }
 
-  async getMostCommissionEntry() {
-    const commissions = await EventCommission.aggregate([
+  async getMostHostEventCount() {
+    const events = await Event.aggregate([
       {
-        $sort: {
-          'commissions.host.amount': -1
+        $match: { status: 'completed' }
+      },
+      {
+        $group: {
+          _id: '$hostUser',
+          count: { $sum: 1 }
         }
       },
       {
-        $limit: 1
+        $sort: {
+          count: -1
+        }
       },
       {
+        $addFields: { user: '$_id' }
+      },
+      {
+        $project: { _id: 0 }
+      },
+      {
+        $limit: 1
+      }
+    ]).exec();
+    let result = undefined;
+    if (events.length > 0) {
+      result = events[0];
+    }
+    return result;
+  }
+
+  async getMostJoinEventCountByGender(gender: string) {
+    const events = await EventUser.aggregate([
+      {
         $lookup: {
-          from: 'users',
-          localField: 'commissions.host.user',
+          from: 'events',
+          localField: 'event',
           foreignField: '_id',
-          as: 'hostUser'
+          as: 'eventObj'
         }
       },
       {
         $unwind: {
-          path: '$hostUser',
-          preserveNullAndEmptyArrays: true
+          path: '$eventObj'
         }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$userObj'
+        }
+      },
+      {
+        $match: {
+          status: 'paid',
+          'eventObj.status': 'completed',
+          'userObj.gender': gender
+        }
+      },
+      {
+        $group: {
+          _id: '$user',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $addFields: { user: '$_id' }
+      },
+      {
+        $project: { _id: 0 }
+      },
+      {
+        $sort: {
+          count: -1
+        }
+      },
+      {
+        $limit: 1
       }
     ]).exec();
+    let result = undefined;
+    if (events.length > 0) {
+      result = events[0];
+    }
+
+    return result;
   }
 
   async saveEventCommissions(commissions, opt: object = {}) {

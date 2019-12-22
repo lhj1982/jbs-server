@@ -1,9 +1,12 @@
 import * as mongoose from 'mongoose';
 import { UserSchema } from '../models/user.model';
+import { EventCommissionSchema } from '../models/eventCommissions.model';
 import EventUsersRepo from './eventUsers.repository';
 import { CommonRepo } from './common.repository';
 import * as bcrypt from 'bcrypt';
 const User = mongoose.model('User', UserSchema);
+const EventCommission = mongoose.model('EventCommission', EventCommissionSchema, 'eventCommissions');
+
 mongoose.set('useFindAndModify', false);
 
 class UsersRepo extends CommonRepo {
@@ -50,6 +53,106 @@ class UsersRepo extends CommonRepo {
       }
     }
     return null;
+  }
+
+  async getMostCommissionEntry() {
+    const commissions = await EventCommission.aggregate([
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'event',
+          foreignField: '_id',
+          as: 'eventObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$eventObj'
+        }
+      },
+      {
+        $match: {
+          'eventObj.status': 'completed'
+        }
+      },
+      {
+        $sort: {
+          'commissions.host.amount': -1
+        }
+      },
+      {
+        $limit: 1
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'commissions.host.user',
+          foreignField: '_id',
+          as: 'hostUser'
+        }
+      },
+      {
+        $unwind: {
+          path: '$hostUser',
+          preserveNullAndEmptyArrays: true
+        }
+      }
+    ]).exec();
+    const commission = undefined;
+    if (commissions.length > 0) {
+      return commissions[0];
+    }
+    return commission;
+  }
+
+  async getMostCommissionAllEventEntry() {
+    const commissions = await EventCommission.aggregate([
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'event',
+          foreignField: '_id',
+          as: 'eventObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$eventObj'
+        }
+      },
+      {
+        $match: {
+          'eventObj.status': 'completed'
+        }
+      },
+      {
+        $group: {
+          _id: '$commissions.host.user',
+          totalHostAmount: {
+            $sum: '$commissions.host.amount'
+          }
+        }
+      },
+      {
+        $addFields: { user: '$_id' }
+      },
+      {
+        $sort: {
+          totalHostAmount: -1
+        }
+      },
+      {
+        $project: { _id: 0 }
+      },
+      {
+        $limit: 1
+      }
+    ]).exec();
+    const commission = undefined;
+    if (commissions.length > 0) {
+      return commissions[0];
+    }
+    return commission;
   }
 
   async saveAccessToken(user) {

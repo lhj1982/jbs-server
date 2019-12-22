@@ -4,9 +4,10 @@ const LeadingBoard = mongoose.model('LeadingBoard', LeadingBoardSchema);
 mongoose.set('useFindAndModify', false);
 
 class LeadingBoardRepo {
-  async find({}) {
+  async find(params) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
-    return await LeadingBoard.find({})
+    const { validFor } = params;
+    return await LeadingBoard.find({ validFor })
       .populate({
         path: 'user',
         select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
