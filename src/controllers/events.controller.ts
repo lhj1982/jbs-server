@@ -279,7 +279,7 @@ export class EventsController extends BaseController {
           const order = {
             createdBy: hostUserId,
             type: 'event_join',
-            amount: price * 100,
+            amount: (price * 100).toFixed(),
             objectId: newEventUser.id,
             outTradeNo: getRandomString(32),
             orderStatus: 'created'
@@ -526,7 +526,7 @@ export class EventsController extends BaseController {
         createdBy: userId,
         type: 'event_join',
         objectId: eventUser.id,
-        amount: price * 100,
+        amount: (price * 100).toFixed(),
         outTradeNo: getRandomString(32),
         status: 'created'
       };

@@ -450,9 +450,9 @@ class OrderService {
       });
       const refundParams = {
         user: userId,
-        totalAmount: price * 100,
-        refundAmount: amount * 100,
-        refundRemainingAmount: refundRemainingAmount * 100,
+        totalAmount: (price * 100).toFixed(),
+        refundAmount: (amount * 100).toFixed(),
+        refundRemainingAmount: (refundRemainingAmount * 100).toFixed(),
         outRefundNo: getRandomString(32),
         refundDesc,
         type: 'commission',
@@ -470,8 +470,8 @@ class OrderService {
       // if there is no booking for this user, it should not happen, but if happens, create a refund anyway without objectId
       const refundParams = {
         user: userId,
-        totalAmount: amount * 100,
-        refundAmount: amount * 100,
+        totalAmount: (amount * 100).toFixed(),
+        refundAmount: (amount * 100).toFixed(),
         outRefundNo: getRandomString(32),
         refundDesc,
         type: 'commission',
