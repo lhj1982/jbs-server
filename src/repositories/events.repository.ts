@@ -435,7 +435,8 @@ class EventsRepo extends CommonRepo {
         $match: {
           status: 'paid',
           'eventObj.status': 'completed',
-          'userObj.gender': gender
+          'userObj.gender': gender,
+          $expr: { $ne: ['$eventObj.hostUser', '$userObj._id'] }
         }
       },
       {
@@ -456,7 +457,7 @@ class EventsRepo extends CommonRepo {
         }
       },
       {
-        $limit: 1
+        $limit: 2
       }
     ]).exec();
     let result = undefined;
