@@ -1,4 +1,4 @@
-import * as redis from 'redis';
+// import * as redis from 'redis';
 import logger from '../utils/logger';
 // const client = redis.createClient();
 
