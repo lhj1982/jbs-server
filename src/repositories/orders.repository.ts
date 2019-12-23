@@ -38,7 +38,13 @@ class OrdersRepo extends CommonRepo {
       .exec();
     const pagination = { offset, limit, total };
     const pagedOrders = await Order.find(condition)
-      .populate('refunds')
+      .populate({
+        path: 'refunds',
+        populate: {
+          path: 'user',
+          select: '-sessionKey -password -roles'
+        }
+      })
       .sort({ createdAt: -1 })
       .skip(offset)
       .limit(limit)
