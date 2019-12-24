@@ -5,6 +5,7 @@ import DiscountRulesRepo from '../repositories/discountRules.repository';
 import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import FileService from '../services/file.service';
+import ScriptService from '../services/script.service';
 import config from '../config';
 
 export class ScriptsController extends BaseController {
@@ -31,13 +32,12 @@ export class ScriptsController extends BaseController {
 
   getScript = async (req: Request, res: Response, next: NextFunction) => {
     const { scriptId } = req.params;
-    const script = await ScriptsRepo.findById(scriptId);
-    // console.log(script);
-    if (!script) {
-      next(new ResourceNotFoundException(`Script`, scriptId));
-      return;
+    try {
+      const script = await ScriptService.findById(scriptId);
+      res.json({ code: 'SUCCESS', data: script });
+    } catch (err) {
+      next(err);
     }
-    res.json({ code: 'SUCCESS', data: script });
   };
 
   getScriptsFeed = async (req: Request, res: Response, next: NextFunction) => {

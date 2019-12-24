@@ -18,6 +18,7 @@ import { TagSchema } from './models/tag.model';
 import { UserTagSchema } from './models/userTag.model';
 import { LeadingBoardSchema } from './models/leadingBoard.model';
 import { UserPointSchema } from './models/userPoint.model';
+import { UserEndorsementSchema } from './models/userEndorsement.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');

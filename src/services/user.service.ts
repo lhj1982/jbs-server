@@ -2,7 +2,9 @@ import config from '../config';
 import logger from '../utils/logger';
 import { pp } from '../utils/stringUtil';
 import UsersRepo from '../repositories/users.repository';
+import EventUsersRepo from '../repositories/eventUsers.repository';
 import UserTagsRepo from '../repositories/userTags.repository';
+import UserEndorsementsRepo from '../repositories/userEndorsements.repository';
 import UserPointsRepo from '../repositories/userPoints.repository';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 
@@ -49,6 +51,24 @@ class UserService {
       await session.commitTransaction();
       await UsersRepo.endSession();
       return userTag;
+    } catch (err) {
+      await session.abortTransaction();
+      await UsersRepo.endSession();
+      throw err;
+    }
+  }
+
+  async endorseUser(endorsement, eventUser, options = {}) {
+    const session = await UsersRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+
+      const userEndorsement = await UserEndorsementsRepo.saveOrUpdate(endorsement, opts);
+      // await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
+      await session.commitTransaction();
+      await UsersRepo.endSession();
+      return userEndorsement;
     } catch (err) {
       await session.abortTransaction();
       await UsersRepo.endSession();

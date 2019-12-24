@@ -170,15 +170,20 @@ export class UsersController {
         next(new AccessDeinedException(loggedInUserId, 'You are not allowed to tag yourself'));
         return;
       }
-      let eventUser = undefined;
-      if (type === 'event') {
-        const event = await EventsRepo.findById(objectId);
-        if (!event) {
-          throw new ResourceNotFoundException('Event', objectId);
+      const eventUser = undefined;
+      if (type === 'event_user') {
+        const eventUser = await EventUsersRepo.findById(objectId);
+        if (!eventUser) {
+          throw new ResourceNotFoundException('EventUser', objectId);
           return;
         }
-        eventUser = await EventUsersRepo.findEventUser(objectId, userId);
-        if (!eventUser) {
+        const { event: eventId, user: userIdToTag } = eventUser;
+        if (!event) {
+          throw new ResourceNotFoundException('Event', eventId);
+          return;
+        }
+
+        if (userIdToTag != userId) {
           throw new AccessDeinedException(loggedInUserId, 'Cannot add tag');
           return;
         }
@@ -196,12 +201,60 @@ export class UsersController {
           taggedBy: loggedInUserId,
           user: userId,
           tag: tagId,
-          type: 'event',
+          type: 'event_user',
           objectId
         },
         eventUser
       );
       res.json({ code: 'SUCCESS', data: userTag });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  endorseUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { userId } = req.params;
+    const {
+      body: { type, objectId }
+    } = req;
+    try {
+      const { _id: loggedInUserId } = loggedInUser;
+      if (userId === loggedInUserId.toString()) {
+        next(new AccessDeinedException(loggedInUserId, 'You are not allowed to endorse yourself'));
+        return;
+      }
+      const eventUser = undefined;
+      if (type === 'event_user') {
+        const eventUser = await EventUsersRepo.findById(objectId);
+        if (!eventUser) {
+          throw new ResourceNotFoundException('EventUser', objectId);
+          return;
+        }
+        const { event: eventId, user: userIdToEndorse } = eventUser;
+        if (!event) {
+          throw new ResourceNotFoundException('Event', eventId);
+          return;
+        }
+
+        if (userIdToEndorse != userId) {
+          throw new AccessDeinedException(loggedInUserId, 'Cannot add endorsement');
+          return;
+        }
+      } else {
+        throw new InvalidRequestException('User', ['type']);
+        return;
+      }
+      const userEndorsement = await UserService.endorseUser(
+        {
+          taggedBy: loggedInUserId,
+          user: userId,
+          type: 'event_user',
+          objectId
+        },
+        eventUser
+      );
+      res.json({ code: 'SUCCESS', data: userEndorsement });
     } catch (err) {
       next(err);
     }

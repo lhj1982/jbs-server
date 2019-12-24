@@ -43,7 +43,7 @@ export const ScriptSchema = new Schema(
     tags: [String]
     // shops: [{ type: String, ref: 'Shop' }]
   },
-  { toJSON: { virtuals: true } }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 ScriptSchema.virtual('shops', {

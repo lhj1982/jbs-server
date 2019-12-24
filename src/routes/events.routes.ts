@@ -39,7 +39,7 @@ export class EventsRoutes {
       .get(verifyToken, this.eventsController.getEventDetails)
       .put(verifyToken, permit({ domain: 'event', operations: ['updateEventById'] }), this.eventsController.updateEvent);
     app.route('/events/:eventId/join').post(verifyToken, permit({ domain: 'event-user', operations: ['joinEvent'] }), this.eventsController.joinUserEvent);
-    app.route('/events/:eventId/users/update').put(verifyToken, permit({ domain: 'event-user', operations: ['updateEventUser'] }), this.eventsController.updateEventUser);
+    // app.route('/events/:eventId/users/update').put(verifyToken, permit({ domain: 'event-user', operations: ['updateEventUser'] }), this.eventsController.updateEventUser);
     // ppl can cancel his own booking, host can cancel others booking, when host cancel booking, he has option to blacklist a person
     app.route('/events/:eventId/users/cancel').put(verifyToken, permit({ domain: 'event-user', operations: ['cancelEventUser'] }), this.eventsController.cancelEventUser);
     // only host can update payment data

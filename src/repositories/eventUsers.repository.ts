@@ -22,6 +22,62 @@ class EventUsersRepo {
       .exec();
   }
 
+  async findByScript(scriptId: string, filter = { status: ['completed'] }) {
+    const { status } = filter;
+    const eventUsers = await EventUser.aggregate([
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'event',
+          foreignField: '_id',
+          as: 'eventObj'
+        }
+      },
+      {
+        $unwind: { path: '$eventObj' }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userObj'
+        }
+      },
+      {
+        $unwind: { path: '$userObj' }
+      },
+      {
+        $match: {
+          'eventObj.status': { $in: ['completed'] },
+          'eventObj.script': mongoose.Types.ObjectId(scriptId)
+        }
+      },
+      {
+        $group: {
+          _id: '$userObj._id',
+          user: { $addToSet: '$userObj' }
+        }
+      },
+      {
+        $unwind: {
+          path: '$user'
+        }
+      },
+      {
+        $sort: { 'eventObj.startTime': -1 }
+      },
+      {
+        $project: {
+          _id: 0,
+          user: 1
+        }
+      }
+    ]).exec();
+
+    return eventUsers;
+  }
+
   async findEventUser(eventId: string, userId: string, userName?: string) {
     // console.log(eventId);
     // console.log(userName);
