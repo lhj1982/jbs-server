@@ -1,5 +1,5 @@
 #!/bin/sh
-
-curl -X GET "https://api.boogoogoo.com/events/archive-events" -H "accept: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1NzgzMDIzNDAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc1NzEwMzQwfQ.qR__9_oEbwGEh-zpb5NP5x3yq8-nRjSeRmioRMNDt28"
+export $(cat .env | sed 's/#.*//g' | xargs)
+curl -X GET "https://api.boogoogoo.com/events/archive-events" -H "accept: application/json" -H "Authorization: Bearer ${ACCESS_TOKEN}"
 
 exit 0

@@ -5,3 +5,4 @@ tmp
 *.png
 data
 docker/db/mongo-data
+**/.env
