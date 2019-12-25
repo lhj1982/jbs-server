@@ -36,6 +36,12 @@ export const EventUserSchema = new Schema(
       type: Number,
       default: 0
     },
+    tags: [
+      {
+        tag: { type: Schema.Types.ObjectId, ref: 'Tag' },
+        count: Number
+      }
+    ],
     createdAt: {
       type: Date,
       default: Date.now

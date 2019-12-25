@@ -4,6 +4,10 @@ const UserEndorsement = mongoose.model('UserEndorsement', UserEndorsementSchema,
 mongoose.set('useFindAndModify', false);
 
 class UserEndorsementsRepo {
+  async getEndorsements(params) {
+    return await UserEndorsement.find(params).exec();
+  }
+
   async saveOrUpdate(userEndorsement, opt: object = {}) {
     const options = {
       ...opt,
@@ -12,9 +16,9 @@ class UserEndorsementsRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { taggedBy, user, type, objectId } = userEndorsement;
+    const { endorsedBy, user, type, objectId } = userEndorsement;
 
-    return await UserEndorsement.findOneAndUpdate({ taggedBy, user, type, objectId }, userEndorsement, options).exec();
+    return await UserEndorsement.findOneAndUpdate({ endorsedBy, user, type, objectId }, userEndorsement, options).exec();
   }
 }
 

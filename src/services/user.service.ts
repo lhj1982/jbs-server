@@ -41,17 +41,26 @@ class UserService {
     }
   }
 
-  async addUserTag(tag, eventUser) {
+  async addUserTag(userTag, eventUser) {
     const session = await UsersRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
 
-      const userTag = await UserTagsRepo.saveOrUpdate(tag, opts);
+      const newUserTag = await UserTagsRepo.saveOrUpdate(userTag, opts);
       await session.commitTransaction();
       await UsersRepo.endSession();
-      return userTag;
+
+      // update eventUser tags after successfully update user tags
+      const tags = await this.getEventUserTags(newUserTag);
+      const eventUserToUpdate = Object.assign(eventUser.toObject(), {
+        tags
+      });
+      // console.log(eventUserToUpdate);
+      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, {});
+      return newUserTag;
     } catch (err) {
+      console.error(err);
       await session.abortTransaction();
       await UsersRepo.endSession();
       throw err;
@@ -63,17 +72,56 @@ class UserService {
     session.startTransaction();
     try {
       const opts = { session };
-
+      // console.log(eventUser);
       const userEndorsement = await UserEndorsementsRepo.saveOrUpdate(endorsement, opts);
-      // await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
       await session.commitTransaction();
       await UsersRepo.endSession();
+
+      // update eventUser number of endorsements after successfully update user endorsements
+      const numberOfEndorsements = await this.getNumberOfEndorsements(endorsement);
+      const eventUserToUpdate = Object.assign(eventUser.toObject(), {
+        numberOfEndorsements
+      });
+      // console.log(eventUserToUpdate);
+      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, {});
+
       return userEndorsement;
     } catch (err) {
       await session.abortTransaction();
       await UsersRepo.endSession();
       throw err;
     }
+  }
+
+  /**
+   * Get tags for given event user.
+   *
+   * return data is like
+   *
+   * [ { count: 1, tag: 5de6859193c0f4662f4374e7 } ]
+   *
+   * @param {any} userTag [description]
+   */
+  async getEventUserTags(userTag: any) {
+    const { type, taggedBy, tag, user, objectId } = userTag;
+    const userTags = await UserTagsRepo.getUserTagsByTagId({
+      tag,
+      type,
+      objectId,
+      user
+    });
+    return userTags;
+  }
+
+  async getNumberOfEndorsements(endorsement: any) {
+    const { type, endorsedBy, user, objectId } = endorsement;
+    const endorsements = await UserEndorsementsRepo.getEndorsements({
+      type,
+      objectId,
+      user
+    });
+    const numberOfEndorsements = endorsements.length;
+    return numberOfEndorsements;
   }
 
   /**

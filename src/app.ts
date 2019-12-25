@@ -46,6 +46,7 @@ import { NotificationsRoutes } from './routes/notifications.routes';
 import { OrdersRoutes } from './routes/orders.routes';
 import { LeadingBoardRoutes } from './routes/leadingBoard.routes';
 import { ReportsRoutes } from './routes/reports.routes';
+import { TagsRoutes } from './routes/tags.routes';
 import errorMiddleware from './middleware/error.middleare';
 const compression = require('compression');
 const path = require('path');
@@ -68,6 +69,7 @@ class App {
   ordersRoutes: OrdersRoutes = new OrdersRoutes();
   leadingBoardRoutes: LeadingBoardRoutes = new LeadingBoardRoutes();
   reportsRoutes: ReportsRoutes = new ReportsRoutes();
+  tagsRoutes: TagsRoutes = new TagsRoutes();
   // mongoUrl: string = 'mongodb://localhost/CRMdb';
   mongoUrl: string = config.dbUri;
 
@@ -87,6 +89,7 @@ class App {
     this.ordersRoutes.routes(this.app);
     this.leadingBoardRoutes.routes(this.app);
     this.reportsRoutes.routes(this.app);
+    this.tagsRoutes.routes(this.app);
     this.app.use(errorMiddleware);
   }
 

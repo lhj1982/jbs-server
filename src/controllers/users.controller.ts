@@ -174,39 +174,41 @@ export class UsersController {
       if (type === 'event_user') {
         const eventUser = await EventUsersRepo.findById(objectId);
         if (!eventUser) {
-          throw new ResourceNotFoundException('EventUser', objectId);
+          next(new ResourceNotFoundException('EventUser', objectId));
           return;
         }
         const { event: eventId, user: userIdToTag } = eventUser;
+        const event = await EventsRepo.findById(eventId);
         if (!event) {
-          throw new ResourceNotFoundException('Event', eventId);
+          next(new ResourceNotFoundException('Event', eventId));
           return;
         }
 
         if (userIdToTag != userId) {
-          throw new AccessDeinedException(loggedInUserId, 'Cannot add tag');
+          next(new AccessDeinedException(loggedInUserId, 'Cannot add tag'));
           return;
         }
+
+        const tag = await TagsRepo.findById(tagId);
+        if (!tag) {
+          next(new ResourceNotFoundException('Tag', tagId));
+          return;
+        }
+        const userTag = await UserService.addUserTag(
+          {
+            taggedBy: loggedInUserId,
+            user: userId,
+            tag: tagId,
+            type: 'event_user',
+            objectId
+          },
+          eventUser
+        );
+        res.json({ code: 'SUCCESS', data: userTag });
       } else {
-        throw new InvalidRequestException('User', ['type']);
+        next(new InvalidRequestException('User', ['type']));
         return;
       }
-      const tag = await TagsRepo.findById(tagId);
-      if (!tag) {
-        throw new ResourceNotFoundException('Tag', tagId);
-        return;
-      }
-      const userTag = await UserService.addUserTag(
-        {
-          taggedBy: loggedInUserId,
-          user: userId,
-          tag: tagId,
-          type: 'event_user',
-          objectId
-        },
-        eventUser
-      );
-      res.json({ code: 'SUCCESS', data: userTag });
     } catch (err) {
       next(err);
     }
@@ -219,8 +221,8 @@ export class UsersController {
       body: { type, objectId }
     } = req;
     try {
-      const { _id: loggedInUserId } = loggedInUser;
-      if (userId === loggedInUserId.toString()) {
+      const { id: loggedInUserId } = loggedInUser;
+      if (userId === loggedInUserId) {
         next(new AccessDeinedException(loggedInUserId, 'You are not allowed to endorse yourself'));
         return;
       }
@@ -228,33 +230,45 @@ export class UsersController {
       if (type === 'event_user') {
         const eventUser = await EventUsersRepo.findById(objectId);
         if (!eventUser) {
-          throw new ResourceNotFoundException('EventUser', objectId);
+          next(new ResourceNotFoundException('EventUser', objectId));
           return;
         }
         const { event: eventId, user: userIdToEndorse } = eventUser;
+        const event = await EventsRepo.findById(eventId);
         if (!event) {
-          throw new ResourceNotFoundException('Event', eventId);
+          next(new ResourceNotFoundException('Event', eventId));
           return;
         }
-
-        if (userIdToEndorse != userId) {
-          throw new AccessDeinedException(loggedInUserId, 'Cannot add endorsement');
+        const eventUsers = await EventUsersRepo.findByEvent(eventId);
+        const loggedInUserInEvent = eventUsers.filter(_ => {
+          const {
+            user: { _id: userId }
+          } = _;
+          return userId.toString() === loggedInUserId;
+        });
+        // console.log(loggedInUserInEvent);
+        if (!loggedInUserInEvent || loggedInUserInEvent.length === 0) {
+          next(new AccessDeinedException(loggedInUserId, 'You have to join event to be able to endorse others'));
           return;
         }
+        if (userIdToEndorse.toString() != userId) {
+          next(new AccessDeinedException(loggedInUserId, 'The person you endorse has to join the event first'));
+          return;
+        }
+        const userEndorsement = await UserService.endorseUser(
+          {
+            endorsedBy: loggedInUserId,
+            user: userId,
+            type: 'event_user',
+            objectId
+          },
+          eventUser
+        );
+        res.json({ code: 'SUCCESS', data: userEndorsement });
       } else {
-        throw new InvalidRequestException('User', ['type']);
+        next(new InvalidRequestException('User', ['type']));
         return;
       }
-      const userEndorsement = await UserService.endorseUser(
-        {
-          taggedBy: loggedInUserId,
-          user: userId,
-          type: 'event_user',
-          objectId
-        },
-        eventUser
-      );
-      res.json({ code: 'SUCCESS', data: userEndorsement });
     } catch (err) {
       next(err);
     }

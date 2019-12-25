@@ -40,8 +40,7 @@ class EventsRepo extends CommonRepo {
         populate: {
           path: 'user',
           select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
-        },
-        select: '_id source status mobile wechatId createdAt numberOfEndorsements'
+        }
       })
       .populate('discountRule')
       .populate({
@@ -64,7 +63,7 @@ class EventsRepo extends CommonRepo {
           path: 'user',
           select: 'nickName mobile wechatId'
         },
-        select: 'source status mobile wechatId createdAt numberOfEndorsements'
+        select: 'source status mobile wechatId createdAt numberOfEndorsements tags'
       })
       .populate({
         path: 'commissions'
@@ -122,8 +121,7 @@ class EventsRepo extends CommonRepo {
         .populate('commissions')
         .populate({
           path: 'members',
-          match: { status: { $in: ['unpaid', 'paid'] } },
-          select: '_id user source status mobile wechatId createdAt numberOfEndorsements'
+          match: { status: { $in: ['unpaid', 'paid'] } }
         })
         .sort(sortObj)
         .exec();
@@ -149,8 +147,7 @@ class EventsRepo extends CommonRepo {
       .populate('commissions')
       .populate({
         path: 'members',
-        match: { status: { $in: ['unpaid', 'paid'] } },
-        select: '_id user source status mobile wechatId createdAt numberOfEndorsements'
+        match: { status: { $in: ['unpaid', 'paid'] } }
       })
       .sort({ startTime: 1 })
       .exec();
@@ -175,8 +172,7 @@ class EventsRepo extends CommonRepo {
       .populate('commissions')
       .populate({
         path: 'members',
-        match: { status: { $in: ['unpaid', 'paid'] } },
-        select: '_id user source status mobile wechatId createdAt numberOfEndorsements'
+        match: { status: { $in: ['unpaid', 'paid'] } }
       })
       .sort({ startTime: 1 })
       .exec();
@@ -527,8 +523,7 @@ class EventsRepo extends CommonRepo {
         populate: {
           path: 'user',
           select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
-        },
-        select: '_id source status mobile wechatId createdAt'
+        }
       })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate('script')
@@ -540,7 +535,6 @@ class EventsRepo extends CommonRepo {
         .populate({
           path: 'members',
           match: { user: userId, status: { $in: ['unpaid', 'paid'] } },
-          select: 'nickName openId avatarUrl gender country province city language',
           populate: {
             path: 'user',
             select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'

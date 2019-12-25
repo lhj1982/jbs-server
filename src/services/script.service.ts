@@ -15,7 +15,7 @@ class ScriptService {
       } = _;
       return { _id, id: _id, nickName, avatarUrl };
     });
-    return Object.assign({}, script.toObject(), {users});
+    return Object.assign({}, script.toObject(), { users });
   }
 }
 
