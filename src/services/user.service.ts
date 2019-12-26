@@ -139,6 +139,11 @@ class UserService {
       options
     );
   }
+
+  async updateTagsAndEndorsements() {
+    const userEndorsements = await EventUsersRepo.updateAllEndorsementGroupByUser('');
+    return userEndorsements;
+  }
 }
 
 export default new UserService();

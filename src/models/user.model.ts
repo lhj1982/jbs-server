@@ -94,6 +94,9 @@ export const UserSchema = new Schema(
       enum: ['active', 'inactive', 'blocked'],
       default: 'inactive'
     },
+    numberOfEndorsements: {
+      type: Number
+    },
     topTags: [
       {
         tag: {

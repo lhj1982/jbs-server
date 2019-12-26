@@ -292,6 +292,7 @@ export class EventsController extends BaseController {
         script,
         hostUser: loggedInUser
       });
+      // logger.info(`Added event ${pp(newEvent)}`);
       // console.log(newEvent);
       // save notifications in db and send sms if necessary
       await MessageService.saveNewEventNotifications(newEvent, opts);
@@ -328,6 +329,13 @@ export class EventsController extends BaseController {
       next(new ResourceNotFoundException('Event', eventId));
       return;
     }
+    const {
+      script: { id: scriptId },
+      shop: { id: shopId },
+      price: originalPrice
+    } = event;
+    const script = await ScriptsRepo.findById(scriptId);
+
     const updateData = {};
     if (numberOfOfflinePersons) {
       updateData['numberOfOfflinePersons'] = numberOfOfflinePersons;
@@ -340,19 +348,11 @@ export class EventsController extends BaseController {
     }
     if (startTime) {
       updateData['startTime'] = formatDate(startTime, config.eventDateFormatParse);
-    }
-
-    const {
-      script: { id: scriptId },
-      shop: { id: shopId },
-      price: originalPrice
-    } = event;
-
-    const script = await ScriptsRepo.findById(scriptId);
-    const { duration } = script;
-    const endTime = add(startTime, duration, 'm');
-    if (endTime) {
-      updateData['endTime'] = endTime;
+      const { duration } = script;
+      const endTime = add(startTime, duration, 'm');
+      if (endTime) {
+        updateData['endTime'] = endTime;
+      }
     }
     const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
     // console.log(applicableDiscountRules);
@@ -366,9 +366,8 @@ export class EventsController extends BaseController {
     try {
       const opts = { session };
       updateData['discountRule'] = discountRule;
-      const eventToUpdate = Object.assign(event.toObject(), updateData, {
-        updatedAt: nowDate()
-      });
+      updateData['updatedAt'] = new Date();
+      const eventToUpdate = Object.assign(event.toObject(), updateData);
       logger.info(`Update event ${pp(eventToUpdate)}`);
       // console.log(eventToUpdate.discountRule);
       const newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);

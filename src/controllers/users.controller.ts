@@ -274,6 +274,15 @@ export class UsersController {
     }
   };
 
+  updateTagsAndEndorsements = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await UserService.updateTagsAndEndorsements();
+      res.json({ code: 'SUCCESS', data: result });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   // getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
   //   const { loggedInUser } = res.locals;
   //   if (!loggedInUser) {

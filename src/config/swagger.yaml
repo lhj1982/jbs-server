@@ -1372,7 +1372,7 @@ paths:
                   type: "string"
                 type:
                   type: "string"
-                  enum: ["event"]
+                  enum: ["event_user"]
                 taggedBy:
                   type: "string"
                 objectId:
@@ -1384,6 +1384,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserTag'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /users/{userId}/endorse:
+    post:
+      tags:
+      - "user"
+      summary: "Endorse a given user"
+      description: "Endorse a given user"
+      operationId: "endorseUser"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: user id to tag
+          schema:
+            type: string
+      requestBody:
+        description: "Tag user request body"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                type:
+                  type: "string"
+                  enum: ["event_user"]
+                endorsedBy:
+                  type: "string"
+                objectId:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEndorsement'
         default:
           description: "Invalid input"
           content:
@@ -2830,6 +2875,21 @@ components:
           $ref: "#/components/schemas/User"
         tag:
           $ref: "#/components/schemas/Tag"
+        type:
+          type: "string"
+        objectId:
+          type: "string"
+        createdAt:
+          type: "string"
+          format: "date-time"
+
+    UserEndorsement:
+      type: "object"
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        taggedBy:
+          $ref: "#/components/schemas/User"
         type:
           type: "string"
         objectId:

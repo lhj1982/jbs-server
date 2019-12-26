@@ -34,5 +34,7 @@ export class UsersRoutes {
     app.route('/profile/my-events').get(cacheMiddleware(config.cache.duration), verifyToken, permit({ domain: 'user', operations: ['getMyEvents'] }), this.usersController.getMyEvents);
     app.route('/profile/token-status').get(verifyToken, this.usersController.getTokenStatus);
     app.route('/profile/wechat-data').post(verifyToken, this.usersController.getWechatEncryptedData);
+
+    app.route('/users/update-tags-endorsements').post(verifyToken, this.usersController.updateTagsAndEndorsements);
   }
 }

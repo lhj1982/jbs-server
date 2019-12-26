@@ -1,6 +1,8 @@
 import * as mongoose from 'mongoose';
 import { EventUserSchema } from '../models/eventUser.model';
+import { UserSchema } from '../models/user.model';
 const EventUser = mongoose.model('EventUser', EventUserSchema, 'eventUsers');
+const User = mongoose.model('User', UserSchema, 'users');
 mongoose.set('useFindAndModify', false);
 
 class EventUsersRepo {
@@ -76,6 +78,137 @@ class EventUsersRepo {
     ]).exec();
 
     return eventUsers;
+  }
+
+  /**
+   * Get number of endorsements of all users.
+   */
+  async updateAllEndorsementGroupByUser(fromDate: string, status: string[] = ['completed']) {
+    const endorsements = await EventUser.aggregate([
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'event',
+          foreignField: '_id',
+          as: 'eventObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$eventObj'
+        }
+      },
+      {
+        $match: {
+          'eventObj.status': {
+            $in: status
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$user',
+          count: {
+            $sum: '$numberOfEndorsements'
+          }
+        }
+      },
+      {
+        $addFields: { user: '$_id' }
+      },
+      {
+        $project: {
+          _id: 0
+        }
+      },
+      {
+        $sort: {
+          count: -1
+        }
+      }
+    ]).exec();
+
+    return new Promise((resolve, reject) => {
+      const bulk = User.collection.initializeUnorderedBulkOp();
+      endorsements.forEach(endorsement => {
+        const { user, count } = endorsement;
+        // console.log(user + ', ' + count);
+        bulk.find({ _id: user }).update({ $set: { numberOfEndorsements: count } });
+      });
+
+      bulk.execute((err, bulkres) => {
+        if (err) {
+          return reject(err);
+        } else {
+          // console.log(bulkres);
+          resolve(bulkres);
+        }
+      });
+    });
+  }
+
+  async updateAllTagsGroupByUser(fromDate: string, status: string[] = ['completed']) {
+    const tags = await EventUser.aggregate([
+      {
+        $lookup: {
+          from: 'events',
+          localField: 'event',
+          foreignField: '_id',
+          as: 'eventObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$eventObj'
+        }
+      },
+      {
+        $match: {
+          'eventObj.status': {
+            $in: status
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$user',
+          count: {
+            $sum: '$numberOfEndorsements'
+          }
+        }
+      },
+      {
+        $addFields: { user: '$_id' }
+      },
+      {
+        $project: {
+          _id: 0
+        }
+      },
+      {
+        $sort: {
+          count: -1
+        }
+      }
+    ]).exec();
+
+    return new Promise((resolve, reject) => {
+      const bulk = User.collection.initializeUnorderedBulkOp();
+      tags.forEach(endorsement => {
+        const { user, count } = endorsement;
+        // console.log(user + ', ' + count);
+        bulk.find({ _id: user }).update({ $set: { numberOfEndorsements: count } });
+      });
+
+      bulk.execute((err, bulkres) => {
+        if (err) {
+          return reject(err);
+        } else {
+          // console.log(bulkres);
+          resolve(bulkres);
+        }
+      });
+    });
   }
 
   async findEventUser(eventId: string, userId: string, userName?: string) {
