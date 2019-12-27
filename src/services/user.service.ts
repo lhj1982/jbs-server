@@ -104,12 +104,7 @@ class UserService {
    */
   async getEventUserTags(userTag: any) {
     const { type, taggedBy, tag, user, objectId } = userTag;
-    const userTags = await UserTagsRepo.getUserTagsByTagId({
-      tag,
-      type,
-      objectId,
-      user
-    });
+    const userTags = await UserTagsRepo.getByUser({ user, type, objectId });
     return userTags;
   }
 
@@ -142,6 +137,7 @@ class UserService {
 
   async updateTagsAndEndorsements() {
     const userEndorsements = await EventUsersRepo.updateAllEndorsementGroupByUser('');
+    await EventUsersRepo.updateAllTagsGroupByUser('');
     return userEndorsements;
   }
 }

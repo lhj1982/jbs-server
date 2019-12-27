@@ -99,9 +99,7 @@ export const UserSchema = new Schema(
     },
     topTags: [
       {
-        tag: {
-          type: String
-        },
+        tag: { type: Schema.Types.ObjectId, ref: 'Tag' },
         count: {
           type: Number
         }

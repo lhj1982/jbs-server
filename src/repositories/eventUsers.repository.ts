@@ -148,7 +148,7 @@ class EventUsersRepo {
   }
 
   async updateAllTagsGroupByUser(fromDate: string, status: string[] = ['completed']) {
-    const tags = await EventUser.aggregate([
+    const tagsResult = await EventUser.aggregate([
       {
         $lookup: {
           from: 'events',
@@ -172,8 +172,8 @@ class EventUsersRepo {
       {
         $group: {
           _id: '$user',
-          count: {
-            $sum: '$numberOfEndorsements'
+          tagsArr: {
+            $addToSet: '$tags'
           }
         }
       },
@@ -191,6 +191,12 @@ class EventUsersRepo {
         }
       }
     ]).exec();
+
+    const tags = tagsResult.map(_ => {
+      const { tagsArr } = _;
+      const flattedTags = [];
+      for (let i = 0; i < tagsArr.length; i++) {}
+    });
 
     return new Promise((resolve, reject) => {
       const bulk = User.collection.initializeUnorderedBulkOp();

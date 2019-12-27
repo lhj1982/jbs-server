@@ -39,7 +39,7 @@ export const EventUserSchema = new Schema(
     tags: [
       {
         tag: { type: Schema.Types.ObjectId, ref: 'Tag' },
-        count: Number
+        taggedBy: { type: Schema.Types.ObjectId, ref: 'User' }
       }
     ],
     createdAt: {

@@ -4,6 +4,16 @@ const UserTag = mongoose.model('UserTag', UserTagSchema, 'userTags');
 mongoose.set('useFindAndModify', false);
 
 class UserTagsRepo {
+  async getByUser(params) {
+    return await UserTag.find(params)
+      .populate({
+        path: 'taggedBy',
+        select: '-password -sessionKey'
+      })
+      .populate('tag')
+      .exec();
+  }
+
   async getUserTagsByTagId(params) {
     const { tag, type, objectId, user } = params;
     const response = UserTag.aggregate([
