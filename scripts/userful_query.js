@@ -61,6 +61,25 @@ db.orders.aggregate([{
     preserveNullAndEmptyArrays: true
   }
 }, {
+  $lookup: {
+    from: "events",
+    localField: "booking.event",
+    foreignField: "_id",
+    as: "eventObj"
+  }
+}, {
+  $unwind: {
+    path: "$eventObj",
+    preserveNullAndEmptyArrays: true
+  }
+}, {
+  $lookup: {
+    from: "refunds",
+    localField: "_id",
+    foreignField: "order",
+    as: "refunds"
+  }
+}, {
   $match: {
     "booking.event": ObjectId("5df450fe0c4f4618d47fe74f")
   }

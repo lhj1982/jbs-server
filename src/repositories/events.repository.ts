@@ -33,14 +33,27 @@ class EventsRepo extends CommonRepo {
       .findOne()
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
-      .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
+      .populate('hostUser', ['-password', '-sessionKey'])
       .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
-        populate: {
-          path: 'user',
-          select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
-        }
+        populate: [
+          {
+            path: 'user',
+            select: '-password -sessionKey'
+          },
+          {
+            path: 'tags',
+            populate: {
+              path: 'tag'
+            },
+            select: '-user -objectId -type'
+          },
+          {
+            path: 'endorsements',
+            select: '-user -objectId -type'
+          }
+        ]
       })
       .populate('discountRule')
       .populate({
@@ -55,13 +68,13 @@ class EventsRepo extends CommonRepo {
       .findOne()
       .populate('script')
       .populate('shop', ['name', 'key'])
-      .populate('hostUser', ['nickName', 'mobile', 'wechatId'])
+      .populate('hostUser', ['-password', '-sessionKey'])
       .populate({
         path: 'members',
         match: { status: { $in: ['unpaid', 'paid'] } },
         populate: {
           path: 'user',
-          select: 'nickName mobile wechatId'
+          select: '-password -sessionKey'
         },
         select: 'source status mobile wechatId createdAt numberOfEndorsements tags'
       })
@@ -117,7 +130,7 @@ class EventsRepo extends CommonRepo {
       let events = await Event.find(condition)
         .populate('script')
         .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
-        .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
+        .populate('hostUser', ['-password', '-sessionKey'])
         .populate('commissions')
         .populate({
           path: 'members',
@@ -143,7 +156,7 @@ class EventsRepo extends CommonRepo {
         match: { name: regex }
       })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
-      .populate('hostUser', ['_id', 'openId', 'nickName', 'avatarUrl', 'gender', 'country', 'province', 'city', 'language', 'mobile', 'wechatId', 'ageTag'])
+      .populate('hostUser', ['-password', '-sessionKey'])
       .populate('commissions')
       .populate({
         path: 'members',
@@ -167,7 +180,7 @@ class EventsRepo extends CommonRepo {
       .populate({
         path: 'hostUser',
         match: { nickName: regex },
-        select: '_id openId nickName avatarUrl gender country province city language mobile wechatId ageTag'
+        select: '-password -sessionKey'
       })
       .populate('commissions')
       .populate({
@@ -200,7 +213,7 @@ class EventsRepo extends CommonRepo {
     return await Event.find(condition)
       .populate('script')
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
-      .populate('hostUser', ['_id', 'openId', 'nickName', 'mobile', 'wechatId', 'ageTag'])
+      .populate('hostUser', ['-password', '-sessionKey'])
       .populate('script')
       .sort({ startTime: 1 })
       .exec();

@@ -52,9 +52,9 @@ class UserService {
       await UsersRepo.endSession();
 
       // update eventUser tags after successfully update user tags
-      const tags = await this.getEventUserTags(newUserTag);
+      const eventUserTags = await this.getEventUserTags(newUserTag);
       const eventUserToUpdate = Object.assign(eventUser.toObject(), {
-        tags
+        tags: eventUserTags
       });
       // console.log(eventUserToUpdate);
       await EventUsersRepo.saveOrUpdate(eventUserToUpdate, {});
@@ -78,11 +78,11 @@ class UserService {
       await UsersRepo.endSession();
 
       // update eventUser number of endorsements after successfully update user endorsements
-      const numberOfEndorsements = await this.getNumberOfEndorsements(endorsement);
+      const endorsements = await this.getEventUserEndorsement(endorsement);
       const eventUserToUpdate = Object.assign(eventUser.toObject(), {
-        numberOfEndorsements
+        endorsements
       });
-      // console.log(eventUserToUpdate);
+      console.log(eventUserToUpdate);
       await EventUsersRepo.saveOrUpdate(eventUserToUpdate, {});
 
       return userEndorsement;
@@ -104,19 +104,18 @@ class UserService {
    */
   async getEventUserTags(userTag: any) {
     const { type, taggedBy, tag, user, objectId } = userTag;
-    const userTags = await UserTagsRepo.getByUser({ user, type, objectId });
+    const userTags = await UserTagsRepo.findByUser({ user, type, objectId });
     return userTags;
   }
 
-  async getNumberOfEndorsements(endorsement: any) {
+  async getEventUserEndorsement(endorsement: any) {
     const { type, endorsedBy, user, objectId } = endorsement;
-    const endorsements = await UserEndorsementsRepo.getEndorsements({
+    const endorsements = await UserEndorsementsRepo.findByUser({
       type,
       objectId,
       user
     });
-    const numberOfEndorsements = endorsements.length;
-    return numberOfEndorsements;
+    return endorsements;
   }
 
   /**
@@ -136,8 +135,8 @@ class UserService {
   }
 
   async updateTagsAndEndorsements() {
-    const userEndorsements = await EventUsersRepo.updateAllEndorsementGroupByUser('');
-    await EventUsersRepo.updateAllTagsGroupByUser('');
+    const userEndorsements = await UserEndorsementsRepo.updateAllEndorsementGroupByUser('');
+    await UserTagsRepo.updateAllTagsGroupByUser('');
     return userEndorsements;
   }
 }

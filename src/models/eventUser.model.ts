@@ -32,16 +32,12 @@ export const EventUserSchema = new Schema(
       type: String,
       enum: ['price_updated', 'event_cancelled', 'user_event_cancelled']
     },
-    numberOfEndorsements: {
-      type: Number,
-      default: 0
-    },
-    tags: [
-      {
-        tag: { type: Schema.Types.ObjectId, ref: 'Tag' },
-        taggedBy: { type: Schema.Types.ObjectId, ref: 'User' }
-      }
-    ],
+    // numberOfEndorsements: {
+    //   type: Number,
+    //   default: 0
+    // },
+    endorsements: [{ type: Schema.Types.ObjectId, ref: 'UserEndorsement' }],
+    tags: [{ type: Schema.Types.ObjectId, ref: 'UserTag' }],
     createdAt: {
       type: Date,
       default: Date.now
@@ -49,3 +45,9 @@ export const EventUserSchema = new Schema(
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+// EventUserSchema.virtual('tags', {
+//   ref: 'UserTag',
+//   localField: '_id',
+//   foreignField: 'tags'
+// });

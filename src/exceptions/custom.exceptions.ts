@@ -52,6 +52,18 @@ class EventIsFullBookedException extends HttpException {
   }
 }
 
+class EventCannotCreateException extends HttpException {
+  constructor(...params: any[]) {
+    super(500, 'event_cannot_create', `Event ${params} cannot be created`);
+  }
+}
+
+class EventCannotUpdateException extends HttpException {
+  constructor(key: string) {
+    super(500, 'event_cannot_update', `Event ${key} cannot be updated`);
+  }
+}
+
 class EventCannotCompleteException extends HttpException {
   constructor(key: string) {
     super(500, 'event_cannot_complete', `Event ${key} cannot complete, it's either not fully booked or paid`);
@@ -102,6 +114,8 @@ export {
   InvalidRequestException,
   ResourceAlreadyExist,
   EventIsFullBookedException,
+  EventCannotCreateException,
+  EventCannotUpdateException,
   EventCannotCompleteException,
   EventCannotCancelException,
   UserIsBlacklistedException,

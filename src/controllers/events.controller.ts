@@ -11,6 +11,8 @@ import {
   ResourceAlreadyExist,
   ResourceNotFoundException,
   AccessDeinedException,
+  EventCannotCreateException,
+  EventCannotUpdateException,
   EventIsFullBookedException,
   EventCannotCompleteException,
   EventCannotCancelException,
@@ -228,6 +230,10 @@ export class EventsController extends BaseController {
       const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
       let discountRule = undefined;
       if (applicableDiscountRules.length > 0) {
+        if (applicableDiscountRules.length > 1) {
+          next(new EventCannotCreateException([shopId, scriptId, startTime, hostUserId]));
+          return;
+        }
         discountRule = applicableDiscountRules[0];
       }
       if (typeof supportPayment === 'undefined') {
@@ -353,19 +359,24 @@ export class EventsController extends BaseController {
       if (endTime) {
         updateData['endTime'] = endTime;
       }
+      const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
+      // console.log(applicableDiscountRules);
+      let discountRule = undefined;
+      if (applicableDiscountRules.length > 0) {
+        if (applicableDiscountRules.length > 1) {
+          next(new EventCannotUpdateException(eventId));
+          return;
+        }
+        discountRule = applicableDiscountRules[0]._id;
+      }
+      updateData['discountRule'] = discountRule;
     }
-    const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
-    // console.log(applicableDiscountRules);
-    let discountRule = undefined;
-    if (applicableDiscountRules.length > 0) {
-      discountRule = applicableDiscountRules[0]._id;
-    }
+
     // console.log(event.discountRule);
     const session = await EventsRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
-      updateData['discountRule'] = discountRule;
       updateData['updatedAt'] = new Date();
       const eventToUpdate = Object.assign(event.toObject(), updateData);
       logger.info(`Update event ${pp(eventToUpdate)}`);
@@ -902,7 +913,14 @@ export class EventsController extends BaseController {
     const { status } = req.body;
     const { loggedInUser } = res.locals;
 
-    const { hostUser, supportPayment } = event;
+    const {
+      hostUser,
+      supportPayment,
+      script: { _id: scriptId },
+      shop: { _id: shopId },
+      startTime,
+      discountRule: originalDiscountRule
+    } = event;
     const { id: hostUserId } = hostUser;
     const { id: loggedInUserId } = loggedInUser;
     if (loggedInUser.id != hostUser.id) {
@@ -921,6 +939,24 @@ export class EventsController extends BaseController {
       next(new EventCannotCompleteException(eventId));
       return;
     }
+
+    const applicableDiscountRules = await this.generateAvailableDiscountRules(scriptId, shopId, startTime);
+    // if more than one discount found or the found discountRule is not same as the one one in db, it's an error!
+    let discountRule = undefined;
+    if (applicableDiscountRules.length > 0) {
+    if (applicableDiscountRules.length > 1) {
+      logger.error(`More than one discountRules found`);
+      next(new EventCannotCompleteException(eventId));
+      return;
+    }
+    discountRule = applicableDiscountRules[0]._id;
+    }
+    if (!this.isSameDiscountRule(originalDiscountRule, discountRule)) {
+      logger.error(`Different discount rule found`);
+      next(new EventCannotCompleteException(eventId));
+      return;
+    }
+
     const session = await EventsRepo.getSession();
     session.startTransaction();
     try {
@@ -950,6 +986,18 @@ export class EventsController extends BaseController {
       next(err);
     }
   };
+
+  isSameDiscountRule(discountRule1, discountRule2) {
+    if (!discountRule1 && !discountRule2) {
+      return true;
+    }
+    if ((!discountRule1 && discountRule2) || (discountRule1 && !discountRule2)) {
+      return false;
+    }
+    const {_id: ruleId1} = discountRule1;
+    const {_id: ruleId2} = discountRule2;
+    return ruleId1.toString() === ruleId2.toString();
+  }
 
   generateEventCommission = (event, eventUsers) => {
     const { discountRule, hostUser, price } = event;
@@ -1054,7 +1102,7 @@ export class EventsController extends BaseController {
     // console.log(allPaid);
     const { numberOfAvailableSpots, numberOfParticipators, numberOfOfflinePersons, minNumberOfPersons, maxNumberOfPersons } = event;
     const numberOfOnlinePersons = eventUsers.length;
-    // console.log(numberOfOnlinePersons + ', ' + numberOfOfflinePersons + ', ' + minNumberOfPersons + ', ' + maxNumberOfPersons);
+    console.log(allPaid + ', ' + numberOfOnlinePersons + ', ' + numberOfOfflinePersons + ', ' + minNumberOfPersons + ', ' + maxNumberOfPersons);
     return allPaid && numberOfOnlinePersons + numberOfOfflinePersons >= minNumberOfPersons && numberOfOnlinePersons + numberOfOfflinePersons <= maxNumberOfPersons;
   };
 

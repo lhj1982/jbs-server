@@ -1436,6 +1436,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /users/update-tags-endorsements:
+    post:
+      tags:
+      - "user"
+      summary: "Update user tags and endorsements"
+      description: "Update user tags and endorsements."
+      operationId: "updateUserTagsAndEndorsements"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              code:
+                type: "string"
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /profile:
     get:
       tags:
@@ -1458,6 +1481,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
   /profile/token-status:
     get:
       tags:
@@ -2307,6 +2331,21 @@ components:
         status:
           type: "string"
           enum: ['active', 'inactive', 'blocked']
+        numberOfEndorsements:
+          type: "integer"
+          format: "int32"
+        topTags:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              _id:
+                type: "string"
+              name:
+                type: "string"
+              count:
+                type: "integer"
+                format: "int32"
       xml:
         name: "User"
     
