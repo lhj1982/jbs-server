@@ -944,12 +944,12 @@ export class EventsController extends BaseController {
     // if more than one discount found or the found discountRule is not same as the one one in db, it's an error!
     let discountRule = undefined;
     if (applicableDiscountRules.length > 0) {
-    if (applicableDiscountRules.length > 1) {
-      logger.error(`More than one discountRules found`);
-      next(new EventCannotCompleteException(eventId));
-      return;
-    }
-    discountRule = applicableDiscountRules[0]._id;
+      if (applicableDiscountRules.length > 1) {
+        logger.error(`More than one discountRules found`);
+        next(new EventCannotCompleteException(eventId));
+        return;
+      }
+      discountRule = applicableDiscountRules[0]._id;
     }
     if (!this.isSameDiscountRule(originalDiscountRule, discountRule)) {
       logger.error(`Different discount rule found`);
@@ -994,8 +994,8 @@ export class EventsController extends BaseController {
     if ((!discountRule1 && discountRule2) || (discountRule1 && !discountRule2)) {
       return false;
     }
-    const {_id: ruleId1} = discountRule1;
-    const {_id: ruleId2} = discountRule2;
+    const { _id: ruleId1 } = discountRule1;
+    const { _id: ruleId2 } = discountRule2;
     return ruleId1.toString() === ruleId2.toString();
   }
 

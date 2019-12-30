@@ -110,6 +110,7 @@ class EventsRepo extends CommonRepo {
     }
     if (availableSpots !== -1) {
       condition['minNumberOfAvailableSpots'] = { $lte: availableSpots, $gt: 0 };
+      condition['numberOfOfflinePersons'] = { $eq: 0 };
     }
     // console.log(condition);
     // const total = await Event.countDocuments(condition).exec();
