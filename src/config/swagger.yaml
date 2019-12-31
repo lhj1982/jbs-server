@@ -1435,6 +1435,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+    delete:
+      tags:
+      - "user"
+      summary: "Delete endorse a given user"
+      description: "Delete endorse a given user"
+      operationId: "unendorseUser"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: user id to tag
+          schema:
+            type: string
+      requestBody:
+        description: "Tag user request body"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                type:
+                  type: "string"
+                  enum: ["event_user"]
+                endorsedBy:
+                  type: "string"
+                objectId:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEndorsement'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /users/update-tags-endorsements:
     post:

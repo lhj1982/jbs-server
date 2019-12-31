@@ -93,6 +93,32 @@ class UserService {
     }
   }
 
+  async unendorseUser(endorsement, eventUser, options = {}) {
+    const session = await UsersRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      // console.log(eventUser);
+      const userEndorsement = await UserEndorsementsRepo.delete(endorsement, opts);
+      await session.commitTransaction();
+      await UsersRepo.endSession();
+
+      // update eventUser number of endorsements after successfully update user endorsements
+      const endorsements = await this.getEventUserEndorsement(endorsement);
+      const eventUserToUpdate = Object.assign(eventUser.toObject(), {
+        endorsements
+      });
+      console.log(eventUserToUpdate);
+      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, {});
+
+      return userEndorsement;
+    } catch (err) {
+      await session.abortTransaction();
+      await UsersRepo.endSession();
+      throw err;
+    }
+  }
+
   /**
    * Get tags for given event user.
    *

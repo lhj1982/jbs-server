@@ -274,6 +274,66 @@ export class UsersController {
     }
   };
 
+  unendorseUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { userId } = req.params;
+    const {
+      body: { type, objectId }
+    } = req;
+    try {
+      const { id: loggedInUserId } = loggedInUser;
+      if (userId === loggedInUserId) {
+        next(new AccessDeinedException(loggedInUserId, 'You are not allowed to unendorse yourself'));
+        return;
+      }
+      const eventUser = undefined;
+      if (type === 'event_user') {
+        const eventUser = await EventUsersRepo.findById(objectId);
+        if (!eventUser) {
+          next(new ResourceNotFoundException('EventUser', objectId));
+          return;
+        }
+        const { event: eventId, user: userIdToEndorse } = eventUser;
+        const event = await EventsRepo.findById(eventId);
+        if (!event) {
+          next(new ResourceNotFoundException('Event', eventId));
+          return;
+        }
+        const eventUsers = await EventUsersRepo.findByEvent(eventId);
+        const loggedInUserInEvent = eventUsers.filter(_ => {
+          const {
+            user: { _id: userId }
+          } = _;
+          return userId.toString() === loggedInUserId;
+        });
+        // console.log(loggedInUserInEvent);
+        if (!loggedInUserInEvent || loggedInUserInEvent.length === 0) {
+          next(new AccessDeinedException(loggedInUserId, 'You have to join event to be able to unendorse others'));
+          return;
+        }
+        if (userIdToEndorse.toString() != userId) {
+          next(new AccessDeinedException(loggedInUserId, 'The person you unendorse has to join the event first'));
+          return;
+        }
+        const userEndorsement = await UserService.unendorseUser(
+          {
+            endorsedBy: loggedInUserId,
+            user: userId,
+            type: 'event_user',
+            objectId
+          },
+          eventUser
+        );
+        res.json({ code: 'SUCCESS', data: userEndorsement });
+      } else {
+        next(new InvalidRequestException('User', ['type']));
+        return;
+      }
+    } catch (err) {
+      next(err);
+    }
+  };
+
   updateTagsAndEndorsements = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await UserService.updateTagsAndEndorsements();

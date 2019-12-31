@@ -67,6 +67,14 @@ class UserEndorsementsRepo {
     });
   }
 
+  async delete(userEndorsement, opt = {}) {
+    const options = {
+      ...opt
+    };
+    const { endorsedBy, user, type, objectId } = userEndorsement;
+    return await UserEndorsement.findOneAndRemove({ endorsedBy, user, type, objectId }, options).exec();
+  }
+
   async saveOrUpdate(userEndorsement, opt: object = {}) {
     const options = {
       ...opt,
