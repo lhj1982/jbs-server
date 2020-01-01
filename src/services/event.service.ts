@@ -6,6 +6,7 @@ import FileService from './file.service';
 import OrderService from './order.service';
 import { nowDate } from '../utils/dateUtil';
 import { pp, getRandomString } from '../utils/stringUtil';
+import EventsRepo from '../repositories/events.repository';
 import OrdersRepo from '../repositories/orders.repository';
 import RefundsRepo from '../repositories/refunds.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
@@ -153,6 +154,34 @@ class EventService {
       return true;
     }
     return false;
+  }
+
+  async archiveEvents() {
+    const session = await EventsRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const result = await EventsRepo.archiveEvents(opts);
+      const { eventIds } = result;
+      const promises = eventIds.map(async eventId => {
+        const event = await EventsRepo.findById(eventId);
+        const { supportPayment } = event;
+        let response = undefined;
+        if (supportPayment) {
+          logger.info(`Event is payment enabled, cancel all payments if exist for expired events`);
+          response = await this.cancelBookings(event, 'event_cancelled', '退款 - 发团过期', true, opts);
+        }
+        return response;
+      });
+      await Promise.all(promises);
+      await session.commitTransaction();
+      await EventsRepo.endSession();
+      return result;
+    } catch (err) {
+      await session.abortTransaction();
+      await EventsRepo.endSession();
+      throw err;
+    }
   }
 }
 

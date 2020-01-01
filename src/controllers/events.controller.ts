@@ -1002,7 +1002,7 @@ export class EventsController extends BaseController {
   generateEventCommission = (event, eventUsers) => {
     const { discountRule, hostUser, price } = event;
     const totalAmount = price * eventUsers.length;
-    console.log(discountRule);
+    // console.log(discountRule);
     if (discountRule) {
       const { discount } = discountRule;
       const { host, participator } = discount;
@@ -1128,14 +1128,18 @@ export class EventsController extends BaseController {
    * @param {NextFunction} next [description]
    */
   archiveEvents = async (req: Request, res: Response, next: NextFunction) => {
-    const response = await EventsRepo.archiveEvents();
-    // console.log(response);
-    const { eventIds, affectedRows } = response;
-    logger.info(`${affectedRows} record(s) has been updated, data: ${eventIds}`);
-    res.json({
-      code: 'SUCCESS',
-      data: `${affectedRows} record(s) has been updated`
-    });
+    try {
+      const response = await EventService.archiveEvents();
+      // console.log(response);
+      const { eventIds, affectedRows } = response;
+      logger.info(`${affectedRows} record(s) has been updated, data: ${eventIds}`);
+      res.json({
+        code: 'SUCCESS',
+        data: `${affectedRows} record(s) has been updated`
+      });
+    } catch (err) {
+      next(err);
+    }
   };
 
   getEventQrCode = async (req: Request, res: Response, next: NextFunction) => {

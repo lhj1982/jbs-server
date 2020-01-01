@@ -665,7 +665,7 @@ class EventsRepo extends CommonRepo {
     };
     const events = await Event.find(condition).exec();
     const eventIds = events.map(_ => _.id);
-    const response = await Event.updateMany(condition, { status: 'expired' }, options).exec();
+    const response = await Event.updateMany(condition, { status: 'expired', updatedAt: nowDate() }, options).exec();
     const { nModified: affectedRows } = response;
     return { eventIds, affectedRows };
   }
