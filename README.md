@@ -2,13 +2,14 @@
 
 ## Install
 
+### Node and TypeScript
 ```
-nodejs
+install nodejs with nvm
 
 npm install typescript -g
 ```
 
-Mongodb
+### Mongodb
 
 https://linuxize.com/post/how-to-install-mongodb-on-centos-7/
 
@@ -18,7 +19,6 @@ https://stackoverflow.com/questions/51461952/mongodb-v4-0-transaction-mongoerror
 npm install run-rs -g
 run-rs -v 4.0.10 --shell
 ```
-
 
 Docker with replica set on Docker
 
@@ -42,6 +42,28 @@ rs.initiate(config)
 ```
 
 rs.reconfig(config,{force: true});
+
+Don't forget to replace ip addresses with the real one
+
+
+Enable authentication
+
+https://medium.com/mongoaudit/how-to-enable-authentication-on-mongodb-b9e8a924efac
+
+
+
+### Install docker and docker composer on EC2 AMI
+
+```
+sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-`uname -s`-`uname -m` | sudo tee /usr/local/bin/docker-compose > /dev/null
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+
+https://serverfault.com/questions/836198/how-to-install-docker-on-aws-ec2-instance-with-ami-ce-ee-update
+```
 
 
 ### Install Redis

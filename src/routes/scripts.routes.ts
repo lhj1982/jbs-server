@@ -31,6 +31,10 @@ export class ScriptsRoutes {
       .post(verifyToken, permit({ domain: 'script', operations: ['createScript'] }), this.scriptsController.addScript);
 
     app.route('/scripts/feed').get(cacheMiddleware(config.cache.duration), this.scriptsController.getScriptsFeed);
+    app
+      .route('/scripts/:scriptId/watch')
+      .post(verifyToken, this.scriptsController.addToWatchList)
+      .delete(verifyToken, this.scriptsController.removeFromWatchList);
     app.route('/scripts/:scriptId').get(cacheMiddleware(config.cache.duration), this.scriptsController.getScript);
   }
 }

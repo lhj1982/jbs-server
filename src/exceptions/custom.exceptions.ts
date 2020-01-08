@@ -36,7 +36,7 @@ class InvalidRequestException extends HttpException {
 
 class ResourceAlreadyExist extends HttpException {
   constructor(resource: string, ...keys) {
-    super(500, '${resource.toLowerCase()}_already_exist', `Resource ${resource} with key ${keys} is already exist`);
+    super(500, `${resource.toLowerCase()}_already_exist`, `Resource ${resource} with key ${keys} is already exist`);
   }
 }
 

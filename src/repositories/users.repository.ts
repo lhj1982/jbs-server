@@ -23,6 +23,13 @@ class UsersRepo extends CommonRepo {
     return await User.where({ _id: id })
       .findOne()
       .populate('roles', ['name', 'permissions'])
+      .populate({
+        path: 'shops',
+        model: 'ShopStaff',
+        populate: {
+          path: 'shop'
+        }
+      })
       .select('-password')
       .exec();
   }

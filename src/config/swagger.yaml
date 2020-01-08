@@ -250,7 +250,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-  
+
+  /scripts/{id}/watch:
+    post:
+      tags:
+      - 'script'
+      summary: "Add script to watch list"
+      operationId: "addScriptToWatchList"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: script id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchList'
+        default:
+          description: 'Default response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    delete:
+      tags:
+      - 'script'
+      summary: "Remove script from watch list"
+      operationId: "removeScriptToWatchList"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: script id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchList'
+        default:
+          description: 'Default response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /scripts/feed:
     get:
       tags:
@@ -2452,6 +2508,10 @@ components:
                 type: "string"
               avatarUrl:
                 type: "string"
+        watches:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/User'
     
     ArrayOfScripts:
       type: "array"
@@ -2993,6 +3053,22 @@ components:
           type: "string"
           format: "date-time"
         updatedAt:
+          type: "string"
+          format: "date-time"
+
+    WatchList:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        type:
+          type: "string"
+          enum: ['script_interested']
+        objectId:
+          type: "string"
+        user:
+          $ref: "#/components/schemas/User"
+        createdAt:
           type: "string"
           format: "date-time"
 

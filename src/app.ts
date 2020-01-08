@@ -19,6 +19,7 @@ import { UserTagSchema } from './models/userTag.model';
 import { LeadingBoardSchema } from './models/leadingBoard.model';
 import { UserPointSchema } from './models/userPoint.model';
 import { UserEndorsementSchema } from './models/userEndorsement.model';
+import { ShopStaffSchema } from './models/shopStaff.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -35,6 +36,7 @@ const Tag = mongoose.model('Tag', TagSchema, 'tags');
 const UserTag = mongoose.model('UserTag', UserTagSchema, 'userTags');
 const LeadingBoard = mongoose.model('LeadingBoard', LeadingBoardSchema, 'leadingBoard');
 const UserPoint = mongoose.model('UserPoint', UserPointSchema, 'userPoints');
+const ShopStaff = mongoose.model('ShopStaff', ShopStaffSchema, 'shopStaffs');
 
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';

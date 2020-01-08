@@ -114,4 +114,26 @@ export class ScriptsController extends BaseController {
     }
     return shuffled.slice(0, size);
   };
+
+  addToWatchList = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { scriptId } = req.params;
+    try {
+      const resp = await ScriptService.addToWatchList(scriptId, loggedInUser);
+      res.json({ code: 'SUCCESS', data: resp });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  removeFromWatchList = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { scriptId } = req.params;
+    try {
+      const resp = await ScriptService.removeFromWatchList(scriptId, loggedInUser);
+      res.json({ code: 'SUCCESS', data: resp });
+    } catch (err) {
+      next(err);
+    }
+  };
 }

@@ -113,3 +113,9 @@ export const UserSchema = new Schema(
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+UserSchema.virtual('shops', {
+  ref: 'ShopStaff',
+  localField: '_id',
+  foreignField: 'user'
+});
