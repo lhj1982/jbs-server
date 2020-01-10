@@ -5,9 +5,9 @@ import UsersRepo from '../repositories/users.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import UserTagsRepo from '../repositories/userTags.repository';
 import UserEndorsementsRepo from '../repositories/userEndorsements.repository';
-import UserPointsRepo from '../repositories/userPoints.repository';
+import UserRewardsRepo from '../repositories/userRewards.repository';
 import WatchListsRepo from '../repositories/watchLists.repository';
-import { ResourceNotFoundException } from '../exceptions/custom.exceptions';
+import { ResourceNotFoundException, WrongCredentialException } from '../exceptions/custom.exceptions';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 
 class UserService {
@@ -17,6 +17,11 @@ class UserService {
       if (!user) {
         throw new ResourceNotFoundException('User', id);
       }
+      const { shopStaffs } = user;
+      const shops = shopStaffs.map(_ => {
+        const { shop } = _;
+        return shop;
+      });
       const watchList = await WatchListsRepo.find({
         user: user._id,
         type: 'script_interested'
@@ -25,7 +30,47 @@ class UserService {
         const { scriptObj } = _;
         return scriptObj;
       });
-      return { ...user.toObject(), watches };
+      const userObj = user.toObject();
+      delete userObj.shopStaffs;
+      return { ...userObj, shops, watches };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async findOneByParams(params) {
+    try {
+      const user = await UsersRepo.findOne(params);
+      if (!user) {
+        throw new ResourceNotFoundException('User', params);
+      }
+      const { shopStaffs } = user;
+      const shops = shopStaffs.map(_ => {
+        const { shop } = _;
+        return shop;
+      });
+      const userObj = user.toObject();
+      delete userObj.shopStaffs;
+      return { ...userObj, shops };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async findByUserNameAndPassword(username: string, password: string) {
+    try {
+      const user = await UsersRepo.findByUserNameAndPassword(username, password);
+      if (!user) {
+        throw new WrongCredentialException(username, password);
+      }
+      const { shopStaffs } = user;
+      const shops = shopStaffs.map(_ => {
+        const { shop } = _;
+        return shop;
+      });
+      const userObj = user.toObject();
+      delete userObj.shopStaffs;
+      return { ...userObj, shops };
     } catch (err) {
       throw err;
     }
@@ -167,14 +212,14 @@ class UserService {
   }
 
   /**
-   * Save user points.
+   * Save user rewards.
    *
    * @param {[type]} event     [description]
    * @param {[type]} eventUser [description]
    */
-  async saveUserPoints(event, eventUser, options = {}) {
+  async saveUserRewards(event, eventUser, options = {}) {
     const { hostUser } = event;
-    await UserPointsRepo.saveOrUpdate(
+    await UserRewardsRepo.saveOrUpdate(
       {
         type: ''
       },

@@ -17,7 +17,7 @@ import { RefundSchema } from './models/refund.model';
 import { TagSchema } from './models/tag.model';
 import { UserTagSchema } from './models/userTag.model';
 import { LeadingBoardSchema } from './models/leadingBoard.model';
-import { UserPointSchema } from './models/userPoint.model';
+import { UserRewardSchema } from './models/userReward.model';
 import { UserEndorsementSchema } from './models/userEndorsement.model';
 import { ShopStaffSchema } from './models/shopStaff.model';
 
@@ -35,7 +35,7 @@ const Order = mongoose.model('Order', OrderSchema, 'orders');
 const Tag = mongoose.model('Tag', TagSchema, 'tags');
 const UserTag = mongoose.model('UserTag', UserTagSchema, 'userTags');
 const LeadingBoard = mongoose.model('LeadingBoard', LeadingBoardSchema, 'leadingBoard');
-const UserPoint = mongoose.model('UserPoint', UserPointSchema, 'userPoints');
+const UserReward = mongoose.model('UserReward', UserRewardSchema, 'userRewards');
 const ShopStaff = mongoose.model('ShopStaff', ShopStaffSchema, 'shopStaffs');
 
 import { UsersRoutes } from './routes/users.routes';

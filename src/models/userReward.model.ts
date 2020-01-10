@@ -2,11 +2,14 @@ import * as mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const UserPointSchema = new Schema({
+export const UserRewardSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   type: {
     type: String,
     enum: ['host_event_completed', 'join_event_completed', 'like_clicked', 'tag_sent', 'other']
+  },
+  objectId: {
+    type: String
   },
   points: {
     type: Number,

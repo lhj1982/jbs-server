@@ -55,7 +55,7 @@ export const ShopSchema = new Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-ShopSchema.virtual('staffs', {
+ShopSchema.virtual('shopStaffs', {
   ref: 'ShopStaff',
   localField: '_id',
   foreignField: 'shop'

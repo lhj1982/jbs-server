@@ -24,7 +24,7 @@ class UsersRepo extends CommonRepo {
       .findOne()
       .populate('roles', ['name', 'permissions'])
       .populate({
-        path: 'shops',
+        path: 'shopStaffs',
         model: 'ShopStaff',
         populate: {
           path: 'shop'
@@ -46,6 +46,13 @@ class UsersRepo extends CommonRepo {
     return await User.where(params)
       .findOne()
       .populate('roles', ['name'])
+      .populate({
+        path: 'shopStaffs',
+        model: 'ShopStaff',
+        populate: {
+          path: 'shop'
+        }
+      })
       .select('-password')
       .exec();
   }
@@ -53,6 +60,14 @@ class UsersRepo extends CommonRepo {
   async findByUserNameAndPassword(username, password) {
     const user = await User.where({ username })
       .findOne()
+      .populate('roles', ['name', 'permissions'])
+      .populate({
+        path: 'shopStaffs',
+        model: 'ShopStaff',
+        populate: {
+          path: 'shop'
+        }
+      })
       .exec();
     if (user) {
       if (bcrypt.compareSync(password, user.password)) {

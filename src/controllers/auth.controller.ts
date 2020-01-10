@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import AuthApi from '../api/auth';
 import UsersRepo from '../repositories/users.repository';
 import RolesRepo from '../repositories/roles.repository';
+import UserService from '../services/user.service';
 import { InvalidRequestException, WrongCredentialException } from '../exceptions/custom.exceptions';
 import * as moment from 'moment';
 import * as jwt from 'jsonwebtoken';
@@ -53,7 +54,7 @@ export class AuthController {
             roles
           };
           // update user info only if there is no data from wechat.
-          const user = await UsersRepo.findOne({ openId });
+          const user = await UserService.findOneByParams({ openId });
           if (user) {
             if (user.nickName) {
               userToUpdate.nickName = user.nickName;
@@ -84,7 +85,7 @@ export class AuthController {
             }
           }
           await UsersRepo.saveOrUpdateUser(userToUpdate);
-          const newUser = await UsersRepo.findOne({ openId });
+          const newUser = await UserService.findOneByParams({ openId });
           // create a token string
           // console.log(this.getTokenPayload);
           // console.log(user._id);
@@ -92,14 +93,14 @@ export class AuthController {
           // console.log(token);
           res.json({ openId, token, newUser });
         } else {
-          throw new Error(`Cannot get sessionKey, errorCode: ${errorCode}`);
+          next(new Error(`Cannot get sessionKey, errorCode: ${errorCode}`));
         }
       } else {
-        throw new Error(`Unknown login type, ${type}`);
+        next(new Error(`Unknown login type, ${type}`));
       }
       // const contact = await UsersRepo.find({});
     } catch (err) {
-      res.send(err);
+      next(err);
     }
   };
 
@@ -114,12 +115,8 @@ export class AuthController {
       return;
     }
     try {
-      const user = await UsersRepo.findByUserNameAndPassword(username, password);
-      console.log(user);
-      if (!user) {
-        next(new WrongCredentialException(username, password));
-        return;
-      }
+      const user = await UserService.findByUserNameAndPassword(username, password);
+      // console.log(user);
       const token = jwt.sign(this.getTokenPayload(user), config.jwt.secret);
       res.json({ token, user });
     } catch (err) {
