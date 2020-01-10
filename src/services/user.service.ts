@@ -6,9 +6,31 @@ import EventUsersRepo from '../repositories/eventUsers.repository';
 import UserTagsRepo from '../repositories/userTags.repository';
 import UserEndorsementsRepo from '../repositories/userEndorsements.repository';
 import UserPointsRepo from '../repositories/userPoints.repository';
+import WatchListsRepo from '../repositories/watchLists.repository';
+import { ResourceNotFoundException } from '../exceptions/custom.exceptions';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 
 class UserService {
+  async findById(id: string) {
+    try {
+      const user = await UsersRepo.findById(id);
+      if (!user) {
+        throw new ResourceNotFoundException('User', id);
+      }
+      const watchList = await WatchListsRepo.find({
+        user: user._id,
+        type: 'script_interested'
+      });
+      const watches = watchList.map(_ => {
+        const { scriptObj } = _;
+        return scriptObj;
+      });
+      return { ...user.toObject(), watches };
+    } catch (err) {
+      throw err;
+    }
+  }
+
   /**
    * 1. check user session key
    * 2. if it's expired, request a new one.

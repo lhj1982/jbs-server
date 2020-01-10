@@ -1,3 +1,5 @@
-const loggerMiddleware = (req, res, next) => {};
+const loggerMiddleware = (req, res, next) => {
+  next();
+};
 
 export { loggerMiddleware };

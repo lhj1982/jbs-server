@@ -23,7 +23,7 @@ class ScriptService {
     });
     const watches = watchList.map(_ => {
       const {
-        user: { _id, id, avatarUrl, nickName }
+        userObj: { _id, id, avatarUrl, nickName }
       } = _;
       return { _id, id, avatarUrl, nickName };
     });

@@ -42,21 +42,21 @@ export class UsersController {
   getUserDetails = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
     const { status } = req.query;
-    // default status filter
-    let statusArr = ['ready', 'completed', 'expired'];
-    if (status) {
-      statusArr = status.split(',');
+    try {
+      // default status filter
+      let statusArr = ['ready', 'completed', 'expired'];
+      if (status) {
+        statusArr = status.split(',');
+      }
+      const user = await UserService.findById(userId);
+      const events = await EventsRepo.findEventsByUser(userId, {
+        status: statusArr
+      });
+      const response = Object.assign(user, { events });
+      res.json({ code: 'SUCCESS', data: response });
+    } catch (err) {
+      next(err);
     }
-    const user = await UsersRepo.findById(userId);
-    if (!user) {
-      next(new ResourceNotFoundException('User', userId));
-      return;
-    }
-    const events = await EventsRepo.findEventsByUser(userId, {
-      status: statusArr
-    });
-    const response = Object.assign(user.toObject(), { events });
-    res.json({ code: 'SUCCESS', data: response });
   };
 
   updateUser = async (req: Request, res: Response, next: NextFunction) => {

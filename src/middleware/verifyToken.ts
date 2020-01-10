@@ -1,5 +1,5 @@
 import { AuthorizationException, ResourceNotFoundException, AccessDeinedException } from '../exceptions/custom.exceptions';
-import UsersRepo from '../repositories/users.repository';
+import UserService from '../services/user.service';
 import config from '../config';
 const jwt = require('jsonwebtoken');
 
@@ -28,7 +28,7 @@ const verifyToken = (req, res, next) => {
     res.locals.tokenIssuedAt = issuedAt;
     res.locals.tokenExpiredAt = expiredAt;
     try {
-      const user = await UsersRepo.findById(userId);
+      const user = await UserService.findById(userId);
       const { status } = user;
       if (status === 'blocked') {
         next(new AccessDeinedException(userId, `User is blocked`));
@@ -41,7 +41,7 @@ const verifyToken = (req, res, next) => {
       res.locals.loggedInUser = user;
       return next();
     } catch (err) {
-      next(new ResourceNotFoundException(`User`, `${userId}`));
+      next(err);
       return;
     }
   });

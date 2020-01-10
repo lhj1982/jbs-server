@@ -6,10 +6,68 @@ mongoose.set('useFindAndModify', false);
 
 class WatchListsRepo extends CommonRepo {
   async find(params) {
-    return await WatchList.find(params)
-      .populate('user', ['-password'])
-      .populate('script')
-      .populate('shop')
+    const { user, type, objectId } = params;
+    const match = {
+      type
+    };
+    if (user) {
+      match['user'] = user;
+    }
+    if (objectId) {
+      match['objectId'] = objectId;
+    }
+    return await WatchList.aggregate([
+      {
+        $match: match
+      },
+      {
+        $addFields: {
+          convertedObjectId: {
+            $toObjectId: '$objectId'
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$userObj'
+        }
+      },
+
+      {
+        $lookup: {
+          from: 'scripts',
+          localField: 'convertedObjectId',
+          foreignField: '_id',
+          as: 'scriptObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$scriptObj'
+        }
+      },
+      {
+        $sort: {
+          createdAt: -1
+        }
+      },
+      {
+        $project: {
+          convertedObjectId: 0,
+          user: 0
+        }
+      }
+    ])
+      // .populate('user', ['-password'])
+      // .populate('script')
       .exec();
   }
 
