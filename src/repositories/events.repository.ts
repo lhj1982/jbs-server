@@ -9,6 +9,7 @@ import { CommonRepo } from './common.repository';
 import * as moment from 'moment';
 import { escapeRegex } from '../utils/stringUtil';
 import { nowDate, string2Date } from '../utils/dateUtil';
+import { getTopRole } from '../utils/user';
 const Event = mongoose.model('Event', EventSchema, 'events');
 const EventUser = mongoose.model('EventUser', EventUserSchema, 'eventUsers');
 const PriceWeeklySchema = mongoose.model('PriceWeeklySchema', PriceWeeklySchemaSchema, 'priceWeeklySchema');
@@ -369,16 +370,26 @@ class EventsRepo extends CommonRepo {
       const shopMatch = { $match: { 'shopObj.name': regex } };
       // if scope has user, it means need filter result by shops
       if (user) {
-        const { shops } = user;
-        const shopIds = shops.map(_ => {
-          _._id;
-        });
-        // shopMatch['$match']['shopObj._id'] = { $in: shopIds };
+        const { shops, roles } = user;
+        const topRole = getTopRole(roles);
+        if (topRole !== 'admin') {
+          const shopIds = shops
+            .map(_ => {
+              return _._id;
+            })
+            .filter(_ => {
+              return _;
+            });
+          shopMatch['$match']['shopObj._id'] = { $in: shopIds };
+        }
+      } else {
+        // if no user is given, it should not show report
+        shopMatch['$match']['shopObj._id'] = { $in: [] };
       }
       // const match['booking.eventObj.shopObj.name'] = {$regex: ''};
       aggregate.push(shopMatch);
     }
-    console.log(aggregate);
+    // console.log(aggregate);
     const result = await Event.aggregate([...aggregate, { $count: 'total' }]).exec();
     let total = 0;
     if (result.length > 0) {

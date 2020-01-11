@@ -1,7 +1,6 @@
 import OrdersRepo from '../repositories/orders.repository';
 import EventsRepo from '../repositories/events.repository';
 import { AccessDeniedException } from '../exceptions/custom.exceptions';
-import { isShopStaff } from '../utils/user';
 
 class ReportService {
   async getOrders(shopName: string, fromDate: string, toDate: string, limit: number, offset: number) {
