@@ -6,7 +6,7 @@ import {
   InvalidRequestException,
   ResourceAlreadyExist,
   ResourceNotFoundException,
-  AccessDeinedException,
+  AccessDeniedException,
   OrderCannotPayException,
   OrderAlreadyPaidException,
   RefundAlreadyPerformedException,
@@ -63,7 +63,7 @@ export class OrdersController extends BaseController {
     // console.log(loggedInUserId);
     // console.log(createdByUserId);
     if (loggedInUserId != createdByUserId) {
-      next(new AccessDeinedException(loggedInUserId, `You can only pay your own order`));
+      next(new AccessDeniedException(loggedInUserId, `You can only pay your own order`));
       return;
     }
 

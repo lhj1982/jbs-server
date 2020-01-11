@@ -2445,6 +2445,10 @@ components:
               count:
                 type: "integer"
                 format: "int32"
+        shops:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/Shop'
       xml:
         name: "User"
     

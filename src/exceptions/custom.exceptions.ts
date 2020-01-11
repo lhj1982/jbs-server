@@ -12,7 +12,7 @@ class WrongCredentialException extends HttpException {
   }
 }
 
-class AccessDeinedException extends HttpException {
+class AccessDeniedException extends HttpException {
   constructor(id: string, message = '') {
     if (message) {
       super(403, 'access_denied', `${message}, id: ${id}`);
@@ -109,7 +109,7 @@ class CannotRefundException extends HttpException {
 export {
   AuthorizationException,
   WrongCredentialException,
-  AccessDeinedException,
+  AccessDeniedException,
   ResourceNotFoundException,
   InvalidRequestException,
   ResourceAlreadyExist,

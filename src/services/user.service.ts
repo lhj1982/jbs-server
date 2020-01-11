@@ -41,17 +41,18 @@ class UserService {
   async findOneByParams(params) {
     try {
       const user = await UsersRepo.findOne(params);
-      if (!user) {
-        throw new ResourceNotFoundException('User', params);
+      if (user) {
+        const { shopStaffs } = user;
+        const shops = shopStaffs.map(_ => {
+          const { shop } = _;
+          return shop;
+        });
+        const userObj = user.toObject();
+        delete userObj.shopStaffs;
+        return { ...userObj, shops };
+      } else {
+        return undefined;
       }
-      const { shopStaffs } = user;
-      const shops = shopStaffs.map(_ => {
-        const { shop } = _;
-        return shop;
-      });
-      const userObj = user.toObject();
-      delete userObj.shopStaffs;
-      return { ...userObj, shops };
     } catch (err) {
       throw err;
     }

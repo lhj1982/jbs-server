@@ -10,7 +10,7 @@ import {
   InvalidRequestException,
   ResourceAlreadyExist,
   ResourceNotFoundException,
-  AccessDeinedException,
+  AccessDeniedException,
   EventCannotCreateException,
   EventCannotUpdateException,
   EventIsFullBookedException,
@@ -435,7 +435,7 @@ export class EventsController extends BaseController {
       return;
     }
     if (userId != loggedInUser.id) {
-      next(new AccessDeinedException(userId, 'You are only join event yourself'));
+      next(new AccessDeniedException(userId, 'You are only join event yourself'));
       return;
     }
     // if (userId) {
@@ -651,13 +651,13 @@ export class EventsController extends BaseController {
 
       if (status === 'cancelled') {
         if (loggedInUser.id != hostUserId && loggedInUser.id != userId) {
-          next(new AccessDeinedException(loggedInUser.id, 'You are not a host or you are trying to cancel others booking'));
+          next(new AccessDeniedException(loggedInUser.id, 'You are not a host or you are trying to cancel others booking'));
           return;
         }
       }
 
       if (status === 'blacklisted' && hostUserId != loggedInUser.id) {
-        next(new AccessDeinedException(loggedInUser.id, 'Only host can blacklist user'));
+        next(new AccessDeniedException(loggedInUser.id, 'Only host can blacklist user'));
         return;
       }
     } catch (err) {
@@ -711,13 +711,13 @@ export class EventsController extends BaseController {
       return;
     }
     // if (userId != loggedInUser._id) {
-    // 	next(new AccessDeinedException(''));
+    // 	next(new AccessDeniedException(''));
     // }
     const { hostUser } = event;
     const { id: hostUserId } = hostUser;
     const { id: loggedInUserId } = loggedInUser;
     if (loggedInUser.id != hostUser.id) {
-      next(new AccessDeinedException(loggedInUser._id, 'Only host can update status'));
+      next(new AccessDeniedException(loggedInUser._id, 'Only host can update status'));
       return;
     }
 
@@ -761,7 +761,7 @@ export class EventsController extends BaseController {
 
   //   const eventUser = await EventUsersRepo.findEventUser(eventId, userId);
   //   if (!eventUser) {
-  //     next(new AccessDeinedException(loggedInUserId, 'Cannot update user booking'));
+  //     next(new AccessDeniedException(loggedInUserId, 'Cannot update user booking'));
   //     return;
   //   }
   //   const session = await EventsRepo.getSession();
@@ -871,7 +871,7 @@ export class EventsController extends BaseController {
     const { id: hostUserId } = hostUser;
     const { id: loggedInUserId } = loggedInUser;
     if (loggedInUser.id != hostUser.id) {
-      next(new AccessDeinedException(loggedInUser._id, 'Only host can cancel event'));
+      next(new AccessDeniedException(loggedInUser._id, 'Only host can cancel event'));
       return;
     }
     const session = await EventsRepo.getSession();
@@ -924,7 +924,7 @@ export class EventsController extends BaseController {
     const { id: hostUserId } = hostUser;
     const { id: loggedInUserId } = loggedInUser;
     if (loggedInUser.id != hostUser.id) {
-      next(new AccessDeinedException(loggedInUser._id, 'Only host can complete event'));
+      next(new AccessDeniedException(loggedInUser._id, 'Only host can complete event'));
       return;
     }
 

@@ -266,8 +266,16 @@ class EventsRepo extends CommonRepo {
    * Used for report.
    *
    */
-  async getEvents(params: any = {}) {
-    const { shopName, fromDate, toDate, statuses, limit, offset } = params;
+  async getEvents(params: any = { scope: { user: undefined } }) {
+    const {
+      shopName,
+      fromDate,
+      toDate,
+      statuses,
+      limit,
+      offset,
+      scope: { user }
+    } = params;
     const aggregate: any[] = [
       {
         $match: {
@@ -359,9 +367,18 @@ class EventsRepo extends CommonRepo {
     if (shopName) {
       const regex = new RegExp(escapeRegex(shopName), 'gi');
       const shopMatch = { $match: { 'shopObj.name': regex } };
+      // if scope has user, it means need filter result by shops
+      if (user) {
+        const { shops } = user;
+        const shopIds = shops.map(_ => {
+          _._id;
+        });
+        // shopMatch['$match']['shopObj._id'] = { $in: shopIds };
+      }
       // const match['booking.eventObj.shopObj.name'] = {$regex: ''};
       aggregate.push(shopMatch);
     }
+    console.log(aggregate);
     const result = await Event.aggregate([...aggregate, { $count: 'total' }]).exec();
     let total = 0;
     if (result.length > 0) {

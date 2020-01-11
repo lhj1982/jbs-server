@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import AuthApi from '../api/auth';
-import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException } from '../exceptions/custom.exceptions';
+import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeniedException } from '../exceptions/custom.exceptions';
 import UsersRepo from '../repositories/users.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import EventsRepo from '../repositories/events.repository';
@@ -34,7 +34,7 @@ export class UsersController {
     const { userId } = req.params;
     const { loggedInUser } = res.locals;
     if (userId && userId != loggedInUser.id) {
-      next(new AccessDeinedException(userId, 'You can only show your own profile'));
+      next(new AccessDeniedException(userId, 'You can only show your own profile'));
     }
     res.json({ code: 'SUCCESS', data: loggedInUser });
   };
@@ -91,7 +91,7 @@ export class UsersController {
   getMyEvents = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedInUser } = res.locals;
     if (!loggedInUser) {
-      next(new AccessDeinedException(''));
+      next(new AccessDeniedException(''));
       return;
     }
     const { status } = req.query;
@@ -122,7 +122,7 @@ export class UsersController {
   blockUser = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedInUser } = res.locals;
     if (!loggedInUser) {
-      next(new AccessDeinedException(''));
+      next(new AccessDeniedException(''));
       return;
     }
     try {
@@ -145,7 +145,7 @@ export class UsersController {
   getWechatEncryptedData = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedInUser } = res.locals;
     if (!loggedInUser) {
-      next(new AccessDeinedException(''));
+      next(new AccessDeniedException(''));
       return;
     }
     const { body } = req;
@@ -167,7 +167,7 @@ export class UsersController {
     try {
       const { _id: loggedInUserId } = loggedInUser;
       if (userId === loggedInUserId.toString()) {
-        next(new AccessDeinedException(loggedInUserId, 'You are not allowed to tag yourself'));
+        next(new AccessDeniedException(loggedInUserId, 'You are not allowed to tag yourself'));
         return;
       }
       const eventUser = undefined;
@@ -185,7 +185,7 @@ export class UsersController {
         }
 
         if (userIdToTag != userId) {
-          next(new AccessDeinedException(loggedInUserId, 'Cannot add tag'));
+          next(new AccessDeniedException(loggedInUserId, 'Cannot add tag'));
           return;
         }
 
@@ -223,7 +223,7 @@ export class UsersController {
     try {
       const { id: loggedInUserId } = loggedInUser;
       if (userId === loggedInUserId) {
-        next(new AccessDeinedException(loggedInUserId, 'You are not allowed to endorse yourself'));
+        next(new AccessDeniedException(loggedInUserId, 'You are not allowed to endorse yourself'));
         return;
       }
       const eventUser = undefined;
@@ -248,11 +248,11 @@ export class UsersController {
         });
         // console.log(loggedInUserInEvent);
         if (!loggedInUserInEvent || loggedInUserInEvent.length === 0) {
-          next(new AccessDeinedException(loggedInUserId, 'You have to join event to be able to endorse others'));
+          next(new AccessDeniedException(loggedInUserId, 'You have to join event to be able to endorse others'));
           return;
         }
         if (userIdToEndorse.toString() != userId) {
-          next(new AccessDeinedException(loggedInUserId, 'The person you endorse has to join the event first'));
+          next(new AccessDeniedException(loggedInUserId, 'The person you endorse has to join the event first'));
           return;
         }
         const userEndorsement = await UserService.endorseUser(
@@ -283,7 +283,7 @@ export class UsersController {
     try {
       const { id: loggedInUserId } = loggedInUser;
       if (userId === loggedInUserId) {
-        next(new AccessDeinedException(loggedInUserId, 'You are not allowed to unendorse yourself'));
+        next(new AccessDeniedException(loggedInUserId, 'You are not allowed to unendorse yourself'));
         return;
       }
       const eventUser = undefined;
@@ -308,11 +308,11 @@ export class UsersController {
         });
         // console.log(loggedInUserInEvent);
         if (!loggedInUserInEvent || loggedInUserInEvent.length === 0) {
-          next(new AccessDeinedException(loggedInUserId, 'You have to join event to be able to unendorse others'));
+          next(new AccessDeniedException(loggedInUserId, 'You have to join event to be able to unendorse others'));
           return;
         }
         if (userIdToEndorse.toString() != userId) {
-          next(new AccessDeinedException(loggedInUserId, 'The person you unendorse has to join the event first'));
+          next(new AccessDeniedException(loggedInUserId, 'The person you unendorse has to join the event first'));
           return;
         }
         const userEndorsement = await UserService.unendorseUser(
@@ -346,7 +346,7 @@ export class UsersController {
   // getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
   //   const { loggedInUser } = res.locals;
   //   if (!loggedInUser) {
-  //     next(new AccessDeinedException(''));
+  //     next(new AccessDeniedException(''));
   //   }
   //   const eventUsers = await UsersRepo.getUserEvents(loggedInUser._id);
   //   res.json({ code: 'SUCCESS', data: eventUsers });

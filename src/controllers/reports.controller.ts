@@ -43,8 +43,10 @@ export class ReportsController extends BaseController {
       next(new InvalidRequestException('Report', ['shopName', 'fromDate', 'toDate']));
       return;
     }
+    const { loggedInUser } = res.locals;
+
     try {
-      let result = await ReportService.getEvents(shopName, fromDate, toDate, limit, offset);
+      let result = await ReportService.getEvents(shopName, fromDate, toDate, limit, offset, { user: loggedInUser });
       const links = this.generateLinks(result.pagination, req.route.path, '');
       result = Object.assign({}, result, links);
       res.json(result);

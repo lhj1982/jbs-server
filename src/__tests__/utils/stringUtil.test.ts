@@ -14,7 +14,7 @@ test('get random string, fixed length', () => {
 test('generate password', () => {
   const saltRounds = 10;
   const salt = bcrypt.genSaltSync(saltRounds);
-  const password = bcrypt.hashSync('password', salt);
+  const password = bcrypt.hashSync('passw0rd', salt);
   console.log(password);
 });
 

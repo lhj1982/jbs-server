@@ -3,6 +3,7 @@ import { string2Date } from '../utils/dateUtil';
 import { pp } from '../utils/stringUtil';
 import logger from '../utils/logger';
 import NotificationsRepo from '../repositories/notifications.repository';
+import NotificationService from '../services/notification.service';
 import { BaseController } from './base.controller';
 import config from '../config';
 import { ResourceNotFoundException } from '../exceptions/custom.exceptions';
@@ -28,7 +29,10 @@ export class NotificationsController extends BaseController {
       if (!limit) {
         limit = config.query.limit;
       }
-      let result = await NotificationsRepo.find({
+      const { loggedInUser } = res.locals;
+      const { shops } = loggedInUser;
+
+      let result = await NotificationService.getNotifications({
         offset,
         limit,
         audience,

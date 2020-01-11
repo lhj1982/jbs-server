@@ -3,7 +3,7 @@ import ScriptsRepo from '../repositories/scripts.repository';
 import UsersRepo from '../repositories/users.repository';
 import ShopsRepo from '../repositories/shops.repository';
 import PricesRepo from '../repositories/prices.repository';
-import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeinedException } from '../exceptions/custom.exceptions';
+import { InvalidRequestException, ResourceAlreadyExist, ResourceNotFoundException, AccessDeniedException } from '../exceptions/custom.exceptions';
 import { BaseController } from './base.controller';
 import * as _ from 'lodash';
 
