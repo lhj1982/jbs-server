@@ -5,6 +5,7 @@ import UsersRepo from '../repositories/users.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import EventsRepo from '../repositories/events.repository';
 import TagsRepo from '../repositories/tags.repository';
+import EventService from '../services/event.service';
 import UserService from '../services/user.service';
 import CacheService from '../services/cache.service';
 import * as _ from 'lodash';
@@ -178,7 +179,7 @@ export class UsersController {
           return;
         }
         const { event: eventId, user: userIdToTag } = eventUser;
-        const event = await EventsRepo.findById(eventId);
+        const event = await EventService.findById(eventId);
         if (!event) {
           next(new ResourceNotFoundException('Event', eventId));
           return;
@@ -234,7 +235,7 @@ export class UsersController {
           return;
         }
         const { event: eventId, user: userIdToEndorse } = eventUser;
-        const event = await EventsRepo.findById(eventId);
+        const event = await EventService.findById(eventId);
         if (!event) {
           next(new ResourceNotFoundException('Event', eventId));
           return;
@@ -294,7 +295,7 @@ export class UsersController {
           return;
         }
         const { event: eventId, user: userIdToEndorse } = eventUser;
-        const event = await EventsRepo.findById(eventId);
+        const event = await EventService.findById(eventId);
         if (!event) {
           next(new ResourceNotFoundException('Event', eventId));
           return;

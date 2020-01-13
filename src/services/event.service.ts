@@ -13,6 +13,19 @@ import EventUsersRepo from '../repositories/eventUsers.repository';
 import { ResourceNotFoundException } from '../exceptions/custom.exceptions';
 
 class EventService {
+  async findById(id: string, filter = { status: ['ready', 'completed', 'expired'] }) {
+    const event = await EventsRepo.findById(id, filter);
+    if (!event) {
+      throw new ResourceNotFoundException('Event', id);
+    }
+    const { _id, script } = event;
+    if (!script) {
+      logger.warn(`No online script is found for event: ${id}`);
+      return undefined;
+    }
+    return event;
+  }
+
   async getQrCode(eventId: string) {
     const time2 = 0,
       accessToken = '';

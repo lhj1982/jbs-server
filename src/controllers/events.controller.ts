@@ -330,7 +330,7 @@ export class EventsController extends BaseController {
     const { numberOfOfflinePersons, hostComment, price, startTime } = req.body;
     const { loggedInUser } = res.locals;
     const { eventId } = req.params;
-    const event = await EventsRepo.findById(eventId);
+    const event = await EventService.findById(eventId);
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
       return;
@@ -409,7 +409,7 @@ export class EventsController extends BaseController {
     const { eventId } = req.params;
     const { userName, source, userId, mobile, wechatId } = req.body;
     const { loggedInUser } = res.locals;
-    const event = await EventsRepo.findById(eventId);
+    const event = await EventService.findById(eventId);
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
       return;
@@ -510,7 +510,7 @@ export class EventsController extends BaseController {
         wechatId
       });
       await UsersRepo.saveOrUpdateUser(user);
-      const event = await EventsRepo.findById(eventId);
+      const event = await EventService.findById(eventId);
       const newOrder = await this.createOrder(userId, event, newEventUser, opts);
       // save notifications in db and send sms if necessary
       await MessageService.saveNewJoinEventNotifications(event, newEventUser, opts);
@@ -548,7 +548,7 @@ export class EventsController extends BaseController {
   getEventDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { eventId } = req.params;
-      let event = await EventsRepo.findById(eventId);
+      let event = await EventService.findById(eventId);
       if (!event) {
         next(new ResourceNotFoundException('Event', eventId));
         return;
@@ -556,7 +556,7 @@ export class EventsController extends BaseController {
       // get participators for given event
       const eventUsers = await EventUsersRepo.findByEvent(eventId);
       await this.updateEventParticpantsNumber(event, eventUsers);
-      event = await EventsRepo.findById(eventId);
+      event = await EventService.findById(eventId);
       if (!event) {
         next(new ResourceNotFoundException('Event', eventId));
         return;
@@ -632,7 +632,7 @@ export class EventsController extends BaseController {
    */
   cancelEventUser = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
-    const event = await EventsRepo.findById(eventId);
+    const event = await EventService.findById(eventId);
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
       return;
@@ -699,7 +699,7 @@ export class EventsController extends BaseController {
    */
   updateEventUserStatus = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
-    const event = await EventsRepo.findById(eventId);
+    const event = await EventService.findById(eventId);
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
       return;
@@ -742,7 +742,7 @@ export class EventsController extends BaseController {
 
   // updateEventUser = async (req: Request, res: Response, next: NextFunction) => {
   //   const { eventId } = req.params;
-  //   const event = await EventsRepo.findById(eventId);
+  //   const event = await EventService.findById(eventId);
   //   if (!event) {
   //     next(new ResourceNotFoundException('Event', eventId));
   //     return;
@@ -855,7 +855,7 @@ export class EventsController extends BaseController {
    */
   cancelEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
-    const event = await EventsRepo.findById(eventId);
+    const event = await EventService.findById(eventId);
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
       return;
@@ -905,7 +905,7 @@ export class EventsController extends BaseController {
    */
   completeEvent = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
-    const event = await EventsRepo.findById(eventId);
+    const event = await EventService.findById(eventId);
     if (!event) {
       next(new ResourceNotFoundException('Event', eventId));
       return;
@@ -963,7 +963,7 @@ export class EventsController extends BaseController {
       const opts = { session };
       const eventToUpdate = Object.assign(newEvent, { status });
       newEvent = await EventsRepo.saveOrUpdate(eventToUpdate, opts);
-      newEvent = await EventsRepo.findById(eventId);
+      newEvent = await EventService.findById(eventId);
       const eventCommissions = this.generateEventCommission(newEvent, eventUsers);
       // console.log(eventCommissions);
       if (eventCommissions) {
@@ -1156,7 +1156,7 @@ export class EventsController extends BaseController {
   getEventOrders = async (req: Request, res: Response, next: NextFunction) => {
     const { eventId } = req.params;
     const { loggedInUser } = res.locals;
-    const event = await EventsRepo.findById(eventId, {
+    const event = await EventService.findById(eventId, {
       status: ['ready', 'completed', 'expired', 'cancelled']
     });
     if (!event) {

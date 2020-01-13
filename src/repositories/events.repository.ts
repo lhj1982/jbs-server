@@ -32,7 +32,12 @@ class EventsRepo extends CommonRepo {
     const { status } = filter;
     return await Event.where({ _id: id, status: { $in: status } })
       .findOne()
-      .populate('script')
+      .populate({
+        path: 'script',
+        match: {
+          status: 'online'
+        }
+      })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate('hostUser', ['-password', '-sessionKey'])
       .populate({
@@ -67,7 +72,12 @@ class EventsRepo extends CommonRepo {
     const { status } = filter;
     return await Event.where({ _id: id, status: { $in: status } })
       .findOne()
-      .populate('script')
+      .populate({
+        path: 'script',
+        match: {
+          status: 'online'
+        }
+      })
       .populate('shop', ['name', 'key'])
       .populate('hostUser', ['-password', '-sessionKey'])
       .populate({
@@ -130,7 +140,12 @@ class EventsRepo extends CommonRepo {
     } else {
       // get all matched events, filter away those have null script or shop
       let events = await Event.find(condition)
-        .populate('script')
+        .populate({
+          path: 'script',
+          match: {
+            status: 'online'
+          }
+        })
         .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
         .populate('hostUser', ['-password', '-sessionKey'])
         .populate('commissions')
@@ -155,7 +170,7 @@ class EventsRepo extends CommonRepo {
     let events = await Event.find(condition)
       .populate({
         path: 'script',
-        match: { name: regex }
+        match: { name: regex, status: 'online' }
       })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate('hostUser', ['-password', '-sessionKey'])
@@ -177,7 +192,12 @@ class EventsRepo extends CommonRepo {
   async getEventsFilteredByHostName(keyword: string, condition: any) {
     const regex = new RegExp(escapeRegex(keyword), 'gi');
     let events = await Event.find(condition)
-      .populate('script')
+      .populate({
+        path: 'script',
+        match: {
+          status: 'online'
+        }
+      })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate({
         path: 'hostUser',
@@ -212,13 +232,23 @@ class EventsRepo extends CommonRepo {
       };
     }
     // console.log(condition);
-    return await Event.find(condition)
-      .populate('script')
+    const eventsRaw = await Event.find(condition)
+      .populate({
+        path: 'script',
+        match: {
+          status: 'online'
+        }
+      })
       .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
       .populate('hostUser', ['-password', '-sessionKey'])
       .populate('script')
       .sort({ startTime: 1 })
       .exec();
+    const events = eventsRaw.filter(event => {
+      const { script, shop } = event;
+      return script != null && shop != null;
+    });
+    return events;
   }
 
   async findEventsCountByDates(from: moment.Moment, to: moment.Moment, filter: any = { status: ['ready', 'completed', 'expired'] }) {
@@ -583,7 +613,12 @@ class EventsRepo extends CommonRepo {
           }
         })
         .populate('shop', ['_id', 'name', 'key', 'address', 'mobile', 'phone', 'wechatId', 'wechatName', 'supportedPaymentMethods'])
-        .populate('script')
+        .populate({
+          path: 'script',
+          match: {
+            status: 'online'
+          }
+        })
         .sort({ startTime: 1 })
         .exec()
     ).filter(event => {
