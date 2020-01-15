@@ -27,6 +27,7 @@ import UserService from '../services/user.service';
 import config from '../config';
 import { nowDate, string2Date, formatDate, addDays, add } from '../utils/dateUtil';
 import { getRandomString, pp } from '../utils/stringUtil';
+import { getTopRole } from '../utils/user';
 import logger from '../utils/logger';
 // import * as _ from 'lodash';
 
@@ -922,9 +923,10 @@ export class EventsController extends BaseController {
       discountRule: originalDiscountRule
     } = event;
     const { id: hostUserId } = hostUser;
-    const { id: loggedInUserId } = loggedInUser;
-    if (loggedInUser.id != hostUser.id) {
-      next(new AccessDeniedException(loggedInUser._id, 'Only host can complete event'));
+    const { id: loggedInUserId, roles } = loggedInUser;
+    const topRole = getTopRole(roles);
+    if (topRole !== 'admin' && loggedInUser.id != hostUser.id) {
+      next(new AccessDeniedException(loggedInUser._id, 'Only host or admin can complete event'));
       return;
     }
 
