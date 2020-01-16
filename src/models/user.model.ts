@@ -109,7 +109,11 @@ export const UserSchema = new Schema(
           type: Number
         }
       }
-    ]
+    ],
+    credits: {
+      type: Number,
+      default: 0
+    }
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

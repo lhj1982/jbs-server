@@ -28,6 +28,10 @@ const date2String = (date: Date, pattern = 'YYYY-MM-DD HH:mm') => {
   return moment(date).format(pattern);
 };
 
+const addDays2 = (date: moment.Moment, daysToAdd: number) => {
+  return date.add(daysToAdd, 'days');
+};
+
 const addDays = (fromDate: string, daysToAdd: number) => {
   return formatDate(fromDate).add(daysToAdd, 'days');
 };
@@ -51,4 +55,4 @@ const getTime = (dateStr: string) => {
   return date.format('HH:mm');
 };
 
-export { string2Date, formatDate, addDays, add, getDay, getTime, nowDate, date2String };
+export { string2Date, formatDate, addDays, addDays2, add, getDay, getTime, nowDate, date2String };

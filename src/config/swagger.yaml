@@ -1557,6 +1557,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+  /users/update-credits:
+    post:
+      tags:
+      - "user"
+      summary: "Update user credits"
+      description: "Update user credits."
+      operationId: "updateUserCredits"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              code:
+                type: "string"
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 
   /profile:
     get:

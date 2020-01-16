@@ -39,5 +39,6 @@ export class UsersRoutes {
     app.route('/profile/wechat-data').post(verifyToken, this.usersController.getWechatEncryptedData);
 
     app.route('/users/update-tags-endorsements').post(verifyToken, this.usersController.updateTagsAndEndorsements);
+    app.route('/users/update-credits').post(verifyToken, this.usersController.updateCredits);
   }
 }

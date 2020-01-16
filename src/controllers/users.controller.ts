@@ -344,6 +344,22 @@ export class UsersController {
     }
   };
 
+  updateCredits = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await UserService.updateCredits();
+      const updatedResult = result.filter(_ => {
+        // console.log(_);
+        return typeof _ !== 'undefined';
+      });
+      res.json({
+        code: 'SUCCESS',
+        data: `${updatedResult.length} data are updated`
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   // getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
   //   const { loggedInUser } = res.locals;
   //   if (!loggedInUser) {

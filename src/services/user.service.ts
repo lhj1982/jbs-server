@@ -1,11 +1,13 @@
 import config from '../config';
 import logger from '../utils/logger';
 import { pp } from '../utils/stringUtil';
+import { nowDate, addDays2, date2String } from '../utils/dateUtil';
 import UsersRepo from '../repositories/users.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import UserTagsRepo from '../repositories/userTags.repository';
 import UserEndorsementsRepo from '../repositories/userEndorsements.repository';
 import UserRewardsRepo from '../repositories/userRewards.repository';
+import UserRewardRedemptionsRepo from '../repositories/userRewardRedemptions.repository';
 import WatchListsRepo from '../repositories/watchLists.repository';
 import { ResourceNotFoundException, WrongCredentialException } from '../exceptions/custom.exceptions';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
@@ -125,7 +127,15 @@ class UserService {
         tags: eventUserTags
       });
       // console.log(eventUserToUpdate);
-      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, {});
+      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
+      const { taggedBy, objectId } = userTag;
+      const rewardToAdd = {
+        user: taggedBy,
+        objectId,
+        type: 'user_tagged',
+        points: 2
+      };
+      await this.saveUserRewardsForEndorsementAndTag(rewardToAdd, opts);
       return newUserTag;
     } catch (err) {
       console.error(err);
@@ -150,8 +160,17 @@ class UserService {
       const eventUserToUpdate = Object.assign(eventUser.toObject(), {
         endorsements
       });
-      console.log(eventUserToUpdate);
-      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, {});
+      // console.log(eventUserToUpdate);
+      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
+      const { endorsedBy, objectId } = endorsement;
+      const rewardToAdd = {
+        user: endorsedBy,
+        objectId,
+        type: 'user_endorsed',
+        points: 1
+      };
+      await this.saveUserRewardsForEndorsementAndTag(rewardToAdd, opts);
+      await UserRewardsRepo.saveOrUpdate(rewardToAdd, opts);
 
       return userEndorsement;
     } catch (err) {
@@ -176,9 +195,16 @@ class UserService {
       const eventUserToUpdate = Object.assign(eventUser.toObject(), {
         endorsements
       });
-      console.log(eventUserToUpdate);
-      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, {});
-
+      // console.log(eventUserToUpdate);
+      await EventUsersRepo.saveOrUpdate(eventUserToUpdate, opts);
+      const { endorsedBy, objectId } = endorsement;
+      const rewardToRemove = {
+        user: endorsedBy,
+        objectId,
+        type: 'user_endorsed',
+        points: 1
+      };
+      await UserRewardsRepo.delete(rewardToRemove, opts);
       return userEndorsement;
     } catch (err) {
       await session.abortTransaction();
@@ -212,26 +238,123 @@ class UserService {
     return endorsements;
   }
 
+  async saveUserRewardsForEndorsementAndTag(reward, options = {}) {
+    const { user } = reward;
+    const now = nowDate();
+    // const expiredDate = addDays2(now, 365);
+    const rewardToAdd = Object.assign(reward, {
+      createdAt: now,
+      updatedAt: now
+      // expiredAt: expiredDate
+    });
+    logger.info(`Save user reward for endorsement and tag, user ${user}`);
+    return await UserRewardsRepo.saveOrUpdate(rewardToAdd, options);
+  }
+
   /**
-   * Save user rewards.
+   * Save user rewards when an event is completed.
    *
    * @param {[type]} event     [description]
-   * @param {[type]} eventUser [description]
    */
-  async saveUserRewards(event, eventUser, options = {}) {
-    const { hostUser } = event;
-    await UserRewardsRepo.saveOrUpdate(
-      {
-        type: ''
-      },
-      options
+  async saveUserRewardsWhenEventCompleted(event, options = {}) {
+    const {
+      _id: eventId,
+      hostUser: { _id: hostUserId },
+      members
+    } = event;
+    const now = nowDate();
+    // const expiredDate = addDays2(now, 365);
+    let result = [];
+    result.push(
+      await UserRewardsRepo.saveOrUpdate(
+        {
+          type: 'host_event_completed',
+          user: hostUserId,
+          objectId: eventId,
+          createdAt: now,
+          updatedAt: now,
+          // expiredAt: expiredDate,
+          points: 50
+        },
+        options
+      )
     );
+    logger.info(`Save user reward for host event, user ${hostUserId}`);
+    const promises = members.map(async member => {
+      const {
+        _id: eventUserId,
+        status,
+        user: { _id: userId }
+      } = member;
+      if (status === 'paid') {
+        logger.info(`Save user reward for join event, user ${userId}`);
+        return await UserRewardsRepo.saveOrUpdate(
+          {
+            type: 'join_event_completed',
+            user: userId,
+            objectId: eventUserId,
+            createdAt: now,
+            updatedAt: now,
+            // expiredAt: expiredDate,
+            points: 15
+          },
+          options
+        );
+      } else {
+        return new Promise(resolve => {
+          resolve(undefined);
+        });
+      }
+    });
+    result = result.concat(await Promise.all(promises));
+    return result;
   }
 
   async updateTagsAndEndorsements() {
     const userEndorsements = await UserEndorsementsRepo.updateAllEndorsementGroupByUser('');
     await UserTagsRepo.updateAllTagsGroupByUser('');
     return userEndorsements;
+  }
+
+  async updateCredits() {
+    const expiredAt = nowDate().toDate();
+    const userRewards = await UserRewardsRepo.getTotalRewardPointsByUser(expiredAt);
+    await UserRewardRedemptionsRepo.getTotalRedemptionPointsByUser(expiredAt);
+    const users = await UsersRepo.find({
+      status: 'active',
+      openId: { $ne: null }
+    });
+    // console.log(userRewards);
+    const promises = users.map(async user => {
+      await this.updateCredit(user, userRewards);
+    });
+    return await Promise.all(promises);
+  }
+
+  async updateCredit(user, userRewards) {
+    const { _id: srcUserId } = user;
+    const filteredResult = userRewards.filter(_ => {
+      const {
+        userObj: { _id: userId },
+        totalPoints
+      } = _;
+      // console.log(srcUserId + ', ' + userId);
+      return srcUserId.toString() === userId.toString();
+    });
+    if (filteredResult.length > 0) {
+      const {
+        userObj: { _id: userId },
+        totalPoints
+      } = filteredResult[0];
+      logger.info(`Update credits for ${userId}, points: ${totalPoints}`);
+      const userToUpdate = Object.assign(user.toObject(), {
+        credits: totalPoints
+      });
+      // console.log(userToUpdate);
+      return await UsersRepo.saveOrUpdateUser(userToUpdate);
+    } else {
+      return new Promise(resolve => resolve(undefined));
+    }
   }
 }
 

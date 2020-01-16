@@ -20,6 +20,7 @@ import { LeadingBoardSchema } from './models/leadingBoard.model';
 import { UserRewardSchema } from './models/userReward.model';
 import { UserEndorsementSchema } from './models/userEndorsement.model';
 import { ShopStaffSchema } from './models/shopStaff.model';
+import { ExternalCustomerSchema } from './models/externalCustomer.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -37,6 +38,7 @@ const UserTag = mongoose.model('UserTag', UserTagSchema, 'userTags');
 const LeadingBoard = mongoose.model('LeadingBoard', LeadingBoardSchema, 'leadingBoard');
 const UserReward = mongoose.model('UserReward', UserRewardSchema, 'userRewards');
 const ShopStaff = mongoose.model('ShopStaff', ShopStaffSchema, 'shopStaffs');
+const ExternalCustomer = mongoose.model('ExternalCustomer', ExternalCustomerSchema, 'externalCustomers');
 
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';

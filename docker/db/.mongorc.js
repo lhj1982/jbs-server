@@ -1,14 +1,29 @@
 rs.slaveOk()
 
+
+// localhost
 config={
     _id : 'rs0',
     protocolVersion: 1,
     members: [
-      { _id : 0, host : "mongo0:27017", priority: 10 },
-      { _id : 1, host : "mongo1:27017", arbiterOnly: true },
-      { _id : 2, host : "mongo2:27017", priority: 9 }
+      { _id : 0, host : "mongo0:27017", priority: 1 },
+      { _id : 1, host : "mongo1:27017", priority: 0.5 },
+      { _id : 2, host : "mongo2:27017", priority: 0.5 }
     ]
   }
+
+
+// production
+config={
+    _id : 'rs0',
+    protocolVersion: 1,
+    members: [
+      { _id : 0, host : "<ip>:27017", priority: 1 },
+      { _id : 1, host : "<ip>:27018", priority: 0.5 },
+      { _id : 2, host : "<ip>:27019", priority: 0.5 }
+    ]
+  }
+
 rs.initiate(
   config
 )

@@ -6,10 +6,10 @@ export const UserRewardSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   type: {
     type: String,
-    enum: ['host_event_completed', 'join_event_completed', 'like_clicked', 'tag_sent', 'other']
+    enum: ['host_event_completed', 'join_event_completed', 'user_endorsed', 'user_tagged', 'other']
   },
   objectId: {
-    type: String
+    type: String // host_event_completed - eventId; join_event_completed - eventUserId; user_endorsed - eventUserId; user_tagged - eventUserId
   },
   points: {
     type: Number,

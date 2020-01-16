@@ -976,6 +976,7 @@ export class EventsController extends BaseController {
           logger.info(`Created ${refunds.length} commission refunds`);
         }
       }
+      await UserService.saveUserRewardsWhenEventCompleted(newEvent, opts);
       await MessageService.saveCompleteEventNotifications(newEvent, eventCommissions, opts);
       // await UserService.saveUserPoints(newEvent, eventUsers, opts);
       await session.commitTransaction();
