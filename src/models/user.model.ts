@@ -123,3 +123,9 @@ UserSchema.virtual('shopStaffs', {
   localField: '_id',
   foreignField: 'user'
 });
+
+UserSchema.virtual('userRewardRedemptions', {
+  ref: 'UserRewardRedemption',
+  localField: '_id',
+  foreignField: 'user'
+});

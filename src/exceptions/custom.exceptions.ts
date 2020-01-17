@@ -106,6 +106,18 @@ class CannotRefundException extends HttpException {
   }
 }
 
+class InsufficientCreditsException extends HttpException {
+  constructor(id: string, message: string) {
+    super(500, 'insufficient_credits', `User ${id}, ${message}`);
+  }
+}
+
+class InsufficientRedemptionsException extends HttpException {
+  constructor(id: string, message: string) {
+    super(500, 'insufficient_redemption', `Redemption ${id}, ${message}`);
+  }
+}
+
 export {
   AuthorizationException,
   WrongCredentialException,
@@ -123,5 +135,7 @@ export {
   OrderAlreadyPaidException,
   RefundAlreadyPerformedException,
   InvalidPaymentSignatureException,
-  CannotRefundException
+  CannotRefundException,
+  InsufficientCreditsException,
+  InsufficientRedemptionsException
 };

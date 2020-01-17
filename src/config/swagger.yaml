@@ -2354,6 +2354,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
+  /rewards/redemptions/{rewardRedemptionId}/apply:
+    post:
+      tags:
+      - "reward"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: rewardRedemptionId
+          description: Reward redemption id
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/UserRewardRedemption'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
@@ -3166,6 +3195,36 @@ components:
         status:
           type: "string"
           enum: ['active', 'expired']
+        createdAt:
+          type: "string"
+          format: "date-time"
+        expiredAt:
+          type: "string"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+
+    UserRewardRedemption:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        user:
+          $ref: "#/components/schemas/User"
+        rewardRedemption:
+          $ref: "#/components/schemas/RewardRedemption"
+        voucherCode:
+          type: "string"
+        voucherValue:
+          type: "integer"
+          format: "int32"
+        points:
+          type: "integer"
+          format: "int32"
+        status:
+          type: "string"
+          enum: ['created', 'used', 'invalid', 'expired']
         createdAt:
           type: "string"
           format: "date-time"

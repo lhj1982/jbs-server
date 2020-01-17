@@ -5,6 +5,21 @@ const RewardRedemption = mongoose.model('RewardRedemption', RewardRedemptionSche
 mongoose.set('useFindAndModify', false);
 
 class RewardRedemptionsRepo extends CommonRepo {
+  async getSession() {
+    return super.getSession(RewardRedemption);
+  }
+
+  async endSession() {
+    super.endSession();
+  }
+
+  async findById(id: string) {
+    return await RewardRedemption.where({ _id: id })
+      .findOne()
+      .populate('externalCustomer')
+      .exec();
+  }
+
   async find(params) {
     return await RewardRedemption.find(params)
       .populate('externalCustomer')

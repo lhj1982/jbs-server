@@ -9,6 +9,12 @@ class UserRewardRedemptionsRepo extends CommonRepo {
     return null;
   }
 
+  async findUnique(params) {
+    return await UserRewardRedemption.where(params)
+      .findOne()
+      .exec();
+  }
+
   async saveOrUpdate(userRewardRedemption, opts: object = {}) {
     const options = {
       ...opts,
@@ -17,8 +23,8 @@ class UserRewardRedemptionsRepo extends CommonRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { user, type, status, voucherCode } = userRewardRedemption;
-    return await UserRewardRedemption.findOneAndUpdate({ user, type, status, voucherCode }, userRewardRedemption, options).exec();
+    const { user, rewardRedemption, voucherCode } = userRewardRedemption;
+    return await UserRewardRedemption.findOneAndUpdate({ user, rewardRedemption, voucherCode }, userRewardRedemption, options).exec();
   }
 }
 

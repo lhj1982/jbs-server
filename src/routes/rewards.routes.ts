@@ -8,5 +8,6 @@ export class RewardsRoutes {
   routes(app): void {
     //
     app.route('/rewards/redemptions').get(verifyToken, this.rewardRedemptionsController.getActiveRewardRedemptions);
+    app.route('/rewards/redemptions/:rewardRedemptionId/apply').post(verifyToken, this.rewardRedemptionsController.applyRewardRedemption);
   }
 }

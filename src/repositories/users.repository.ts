@@ -30,6 +30,20 @@ class UsersRepo extends CommonRepo {
           path: 'shop'
         }
       })
+      .populate({
+        path: 'userRewardRedemptions',
+        model: 'UserRewardRedemption',
+        match: {
+          status: 'created'
+        },
+        populate: {
+          path: 'rewardRedemption',
+          model: 'RewardRedemption',
+          populate: {
+            path: 'externalCustomer'
+          }
+        }
+      })
       .select('-password')
       .exec();
   }

@@ -11,6 +11,9 @@ export const UserRewardRedemptionSchema = new Schema({
   voucherValue: {
     type: Number // voucher equivlent value, in cent
   },
+  points: {
+    type: Number
+  },
   status: {
     type: String,
     enum: ['created', 'used', 'invalid', 'expired']

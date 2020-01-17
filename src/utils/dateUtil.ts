@@ -29,7 +29,8 @@ const date2String = (date: Date, pattern = 'YYYY-MM-DD HH:mm') => {
 };
 
 const addDays2 = (date: moment.Moment, daysToAdd: number) => {
-  return date.add(daysToAdd, 'days');
+  const clone = moment(date);
+  return clone.add(daysToAdd, 'days');
 };
 
 const addDays = (fromDate: string, daysToAdd: number) => {

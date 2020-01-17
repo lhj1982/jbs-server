@@ -22,6 +22,7 @@ import { UserEndorsementSchema } from './models/userEndorsement.model';
 import { ShopStaffSchema } from './models/shopStaff.model';
 import { ExternalCustomerSchema } from './models/externalCustomer.model';
 import { RewardRedemptionSchema } from './models/rewardRedemption.model';
+import { UserRewardRedemptionSchema } from './models/userRewardRedemption.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -41,6 +42,7 @@ const UserReward = mongoose.model('UserReward', UserRewardSchema, 'userRewards')
 const ShopStaff = mongoose.model('ShopStaff', ShopStaffSchema, 'shopStaffs');
 const ExternalCustomer = mongoose.model('ExternalCustomer', ExternalCustomerSchema, 'externalCustomers');
 const RewardRedemption = mongoose.model('RewardRedemption', RewardRedemptionSchema, 'rewardRedemptions');
+const UserRewardRedemption = mongoose.model('UserRewardRedemption', UserRewardRedemptionSchema, 'userRewardRedemptions');
 
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';
