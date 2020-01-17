@@ -21,6 +21,7 @@ import { UserRewardSchema } from './models/userReward.model';
 import { UserEndorsementSchema } from './models/userEndorsement.model';
 import { ShopStaffSchema } from './models/shopStaff.model';
 import { ExternalCustomerSchema } from './models/externalCustomer.model';
+import { RewardRedemptionSchema } from './models/rewardRedemption.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -39,6 +40,7 @@ const LeadingBoard = mongoose.model('LeadingBoard', LeadingBoardSchema, 'leading
 const UserReward = mongoose.model('UserReward', UserRewardSchema, 'userRewards');
 const ShopStaff = mongoose.model('ShopStaff', ShopStaffSchema, 'shopStaffs');
 const ExternalCustomer = mongoose.model('ExternalCustomer', ExternalCustomerSchema, 'externalCustomers');
+const RewardRedemption = mongoose.model('RewardRedemption', RewardRedemptionSchema, 'rewardRedemptions');
 
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';
@@ -51,6 +53,7 @@ import { OrdersRoutes } from './routes/orders.routes';
 import { LeadingBoardRoutes } from './routes/leadingBoard.routes';
 import { ReportsRoutes } from './routes/reports.routes';
 import { TagsRoutes } from './routes/tags.routes';
+import { RewardsRoutes } from './routes/rewards.routes';
 import errorMiddleware from './middleware/error.middleare';
 const compression = require('compression');
 const path = require('path');
@@ -74,6 +77,7 @@ class App {
   leadingBoardRoutes: LeadingBoardRoutes = new LeadingBoardRoutes();
   reportsRoutes: ReportsRoutes = new ReportsRoutes();
   tagsRoutes: TagsRoutes = new TagsRoutes();
+  rewardsRoutes: RewardsRoutes = new RewardsRoutes();
   // mongoUrl: string = 'mongodb://localhost/CRMdb';
   mongoUrl: string = config.dbUri;
 
@@ -94,6 +98,7 @@ class App {
     this.leadingBoardRoutes.routes(this.app);
     this.reportsRoutes.routes(this.app);
     this.tagsRoutes.routes(this.app);
+    this.rewardsRoutes.routes(this.app);
     this.app.use(errorMiddleware);
   }
 
