@@ -1,4 +1,4 @@
-import { string2Date, date2String } from '../../utils/dateUtil';
+import { string2Date, date2String, getDate } from '../../utils/dateUtil';
 
 test('test date', () => {
   const date = string2Date('2019-10-31');
@@ -16,4 +16,9 @@ test('get first and end of given month', () => {
   const lastDay = date.clone().endOf('month');
   console.log(firstDay.utc());
   console.log(lastDay.utc());
+});
+
+test('test getDate', () => {
+  const actual = getDate('2019-02-10 14:00:01');
+  console.log(actual);
 });

@@ -17,6 +17,9 @@ export const DiscountRuleSchema = new Schema({
     host: { type: Number },
     participator: { type: Number }
   },
+  exception: {
+    dates: [{ type: String }]
+  },
   createdAt: {
     type: Date,
     default: Date.now

@@ -559,7 +559,7 @@ paths:
                   type: "string"
                 startTime:
                   type: "string"
-                  format: 'date-time'
+                  format: "date-time"
                 hostUserId:
                   type: "string"
                 hostUserMobile:

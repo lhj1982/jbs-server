@@ -56,4 +56,9 @@ const getTime = (dateStr: string) => {
   return date.format('HH:mm');
 };
 
-export { string2Date, formatDate, addDays, addDays2, add, getDay, getTime, nowDate, date2String };
+const getDate = (dateStr: string) => {
+  const date = moment(dateStr);
+  return date.format('MM-DD');
+};
+
+export { string2Date, formatDate, addDays, addDays2, add, getDay, getTime, nowDate, date2String, getDate };

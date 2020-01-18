@@ -25,7 +25,7 @@ import OrderService from '../services/order.service';
 import CacheService from '../services/cache.service';
 import UserService from '../services/user.service';
 import config from '../config';
-import { nowDate, string2Date, formatDate, addDays, add } from '../utils/dateUtil';
+import { nowDate, string2Date, formatDate, addDays, add, getDate } from '../utils/dateUtil';
 import { getRandomString, pp } from '../utils/stringUtil';
 import { getTopRole } from '../utils/user';
 import logger from '../utils/logger';
@@ -828,7 +828,9 @@ export class EventsController extends BaseController {
     const availableDiscountRules = availableDiscountRulesRaw
       .filter(rule => {
         const { discountRule } = rule;
-        return discountRule != null;
+        // console.log(startTime);
+        // console.log(rule);
+        return discountRule != null && !this.hasException(startTime, discountRule);
       })
       .map(rule => {
         // console.log(rule);
@@ -837,6 +839,20 @@ export class EventsController extends BaseController {
       });
     logger.info(`Found available discountRules, ${availableDiscountRules}, for script ${scriptId}, shopId ${shopId}, startTime ${startTime}`);
     return availableDiscountRules;
+  };
+
+  hasException = (startTime: string, discountRule) => {
+    const { _id, exception } = discountRule;
+    const formattedDate = getDate(startTime);
+    let hasException = false;
+    if (exception) {
+      const { dates } = exception;
+      if (dates.indexOf(formattedDate) !== -1) {
+        logger.warn(`Found exception for rule: ${_id}, startTime: ${startTime}`);
+        hasException = true;
+      }
+    }
+    return hasException;
   };
 
   getAvailableDiscountRulesFromDB = async (scriptId: string, shopId: string, startTime: string = undefined) => {

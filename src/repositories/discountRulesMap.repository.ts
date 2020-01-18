@@ -40,8 +40,7 @@ class DiscountRulesMapRepo {
       // .populate('discountRule', ['key', 'description', 'timeDescription', 'days', 'timeSpan', 'discount'])
       .populate({
         path: 'discountRule',
-        match: discountRuleCondition,
-        select: 'key description timeDescription days timeSpan discount'
+        match: discountRuleCondition
       })
       .exec();
   }
