@@ -1,7 +1,10 @@
 import LeadingBoardRepo from '../repositories/leadingBoard.repository';
 import EventsRepo from '../repositories/events.repository';
 import UsersRepo from '../repositories/users.repository';
+import UserEndorsementsRepo from '../repositories/userEndorsements.repository';
+import WatchListsRepo from '../repositories/watchLists.repository';
 import { date2String, nowDate } from '../utils/dateUtil';
+import { pp } from '../utils/stringUtil';
 
 class LeadingBoardService {
   async getLeadingBoard(validFor: string) {
@@ -42,6 +45,12 @@ class LeadingBoardService {
       if (mostJoinEventCountFemale) {
         await LeadingBoardRepo.createLeadingBoardEntry(mostJoinEventCountFemale, opts);
       }
+      // most_user_endorsements
+      const mostTaggedUsers = await this.getMostUserEndorsements('most_user_endorsements', validFor);
+      await LeadingBoardRepo.createLeadingBoardEntry(mostTaggedUsers, opts);
+      // most_watched_scripts
+      const mostWatchedScripts = await this.getMostWatchedScripts('most_watched_scripts', validFor);
+      await LeadingBoardRepo.createLeadingBoardEntry(mostWatchedScripts, opts);
 
       await session.commitTransaction();
       await UsersRepo.endSession();
@@ -50,6 +59,38 @@ class LeadingBoardService {
       await UsersRepo.endSession();
       throw err;
     }
+  }
+
+  async getMostWatchedScripts(type, validFor): Promise<any> {
+    const mostWatchedScripts = await WatchListsRepo.getMostWatchedScripts(5);
+    const data = mostWatchedScripts.map(_ => {
+      const {
+        count,
+        scriptObj: { _id, name, introImage }
+      } = _;
+      return { _id, name, introImage, id: _id, count };
+    });
+    return { type, validFor, data: pp(data), updatedAt: nowDate() };
+  }
+
+  async getMostUserEndorsements(type, validFor): Promise<any> {
+    const userEndorsements = await UserEndorsementsRepo.getMostUserEndorsements(5);
+    const data = userEndorsements.map(_ => {
+      const {
+        count,
+        userObj: { _id, avatarUrl, nickName, ageTag, topTags }
+      } = _;
+      return {
+        _id,
+        avatarUrl,
+        nickName,
+        ageTag,
+        topTags,
+        id: _id,
+        count
+      };
+    });
+    return { type, validFor, data: pp(data), updatedAt: nowDate() };
   }
 
   async getMostJoinEventCountByGender(type, validFor, gender): Promise<any> {

@@ -15,6 +15,41 @@ class UserEndorsementsRepo {
       .exec();
   }
 
+  async getMostUserEndorsements(limit = 5) {
+    return await UserEndorsement.aggregate([
+      {
+        $group: {
+          _id: '$user',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'userObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$userObj'
+        }
+      },
+      {
+        $project: { _id: 0 }
+      },
+      {
+        $sort: {
+          count: -1
+        }
+      },
+      {
+        $limit: limit
+      }
+    ]);
+  }
+
   // async getEndorsements(params) {
   //   return await UserEndorsement.find(params).exec();
   // }

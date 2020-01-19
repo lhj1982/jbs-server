@@ -71,6 +71,51 @@ class WatchListsRepo extends CommonRepo {
       .exec();
   }
 
+  async getMostWatchedScripts(limit = 5) {
+    return await WatchList.aggregate([
+      {
+        $match: { type: 'script_interested' }
+      },
+      {
+        $group: {
+          _id: '$objectId',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $addFields: {
+          convertedObjectId: {
+            $toObjectId: '$_id'
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'scripts',
+          localField: 'convertedObjectId',
+          foreignField: '_id',
+          as: 'scriptObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$scriptObj'
+        }
+      },
+      {
+        $project: { _id: 0, convertedObjectId: 0 }
+      },
+      {
+        $sort: {
+          count: -1
+        }
+      },
+      {
+        $limit: limit
+      }
+    ]);
+  }
+
   async delete(watchList, opts = {}) {
     const options = {
       ...opts
