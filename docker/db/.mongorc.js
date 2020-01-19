@@ -18,9 +18,9 @@ config={
     _id : 'rs0',
     protocolVersion: 1,
     members: [
-      { _id : 0, host : "<ip>:27017", priority: 1 },
-      { _id : 1, host : "<ip>:27018", priority: 0.5 },
-      { _id : 2, host : "<ip>:27019", priority: 0.5 }
+      { _id : 0, host : "101.133.138.88:27017", priority: 1 },
+      { _id : 1, host : "101.133.138.88:27018", priority: 0.5 },
+      { _id : 2, host : "101.133.138.88:27019", priority: 0.5 }
     ]
   }
 

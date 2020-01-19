@@ -19,6 +19,23 @@ export class RewardRedemptionsController extends BaseController {
     }
   };
 
+  createRewardRedemption = async (req: Request, res: Response, next: NextFunction) => {
+    const { externalCustomerId, type, name, description, points, quantity } = req.body;
+    try {
+      const rewardRedeption = await RewardService.createRewardRedemption({
+        externalCustomerId,
+        type,
+        name,
+        description,
+        points,
+        quantity
+      });
+      res.json({ code: 'SUCCESS', data: rewardRedeption });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   applyRewardRedemption = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedInUser } = res.locals;
     const { rewardRedemptionId } = req.params;

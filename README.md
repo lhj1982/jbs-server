@@ -20,22 +20,22 @@ npm install run-rs -g
 run-rs -v 4.0.10 --shell
 ```
 
-Docker with replica set on Docker
+#### Install mongodb replica with docker
 
-https://37yonub.ru/articles/mongo-replica-set-docker-localhost
+https://blog.csdn.net/biao0309/article/details/87641272
 
-don't forget to add mongo0 ,mongo1 mongo2 to /etc/hosts file
-
+1. 
 ```
-172.18.0.4   mongo0 
-172.18.0.2   mongo1 
-172.18.0.3   mongo2
+openssl rand -base64 756 > mongodb.key
+chmod 400 mongodb.key
 ```
 
+2. 
 ```
 docker-compose up
 ```
 
+3. Login with authentication
 ```
 config={"_id":"rs0","members":[{"_id":0,"host":"192.168.0.102:27017"},{"_id":1,"host":"192.168.0.102:27017"},{"_id":2,"host":"192.168.0.102:27017"}]}
 rs.initiate(config)
