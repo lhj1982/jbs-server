@@ -11,7 +11,13 @@ export const ExternalCustomerSchema = new Schema(
       type: String,
       required: 'customer name is required.'
     },
+    description: {
+      type: String
+    },
     address: {
+      type: String
+    },
+    imageUrl: {
       type: String
     },
     createdAt: {

@@ -11,14 +11,35 @@ export const RewardRedemptionSchema = new Schema({
     // product_shop - offer relevant internal product
     // other - other way of redemption, such as donation, charity etc
   },
-  name: {
+  title: {
     type: String,
     required: 'Redemption Name is required.'
+  },
+  subtitle: {
+    type: String
   },
   description: {
     type: String
   },
-  longDescritpion: {
+  scope: {
+    type: String
+  },
+  validPeriod: {
+    type: String
+  },
+  reminder: {
+    type: String
+  },
+  instruction1: {
+    type: String
+  },
+  instruction2: {
+    type: String
+  },
+  note: {
+    type: String
+  },
+  imageUrl: {
     type: String
   },
   quantity: {

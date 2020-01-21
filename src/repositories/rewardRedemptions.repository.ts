@@ -28,8 +28,13 @@ class RewardRedemptionsRepo extends CommonRepo {
   }
 
   async findUnique(params) {
-    const { externalCustomer, type, name } = params;
-    return await RewardRedemption.where({ externalCustomer, type, name })
+    const { externalCustomer, type, title, subtitle } = params;
+    return await RewardRedemption.where({
+      externalCustomer,
+      type,
+      title,
+      subtitle
+    })
       .findOne()
       .exec();
   }
@@ -42,8 +47,8 @@ class RewardRedemptionsRepo extends CommonRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { externalCustomer, type, name } = rewardRedemption;
-    return await RewardRedemption.findOneAndUpdate({ externalCustomer, type, name }, rewardRedemption, options);
+    const { externalCustomer, type, title, subtitle } = rewardRedemption;
+    return await RewardRedemption.findOneAndUpdate({ externalCustomer, type, title, subtitle }, rewardRedemption, options);
   }
 }
 

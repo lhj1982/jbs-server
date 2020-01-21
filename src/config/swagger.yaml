@@ -2362,6 +2362,13 @@ paths:
       operationId: "createRewardRedemption"
       security:
         - bearerAuth: []
+      requestBody: 
+        description: Request content
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRewardRedemptionRequest'
       responses:
         200:
           description: "Success"
@@ -3149,9 +3156,12 @@ components:
       properties:
         type:
           type: "string"
+          enum: ['most_commission_single_event', 'most_host_event_count', 'most_commission_all_events', 'most_join_event_count_male', 'most_join_event_count_female', 'most_user_endorsements', 'most_watched_scripts']
         user:
           $ref: "#/components/schemas/User"
         value:
+          type: "string"
+        data:
           type: "string"
         createdAt:
           type: "string"
@@ -3257,6 +3267,44 @@ components:
         updatedAt:
           type: "string"
           format: "date-time"
+    CreateRewardRedemptionRequest:
+      type: "object"
+      required:
+        - externalCustomerId
+        - type
+        - title
+        - subtitle
+      properties:
+        externalCustomerId:
+          type: "string"
+        type:
+          type: "string"
+        title:
+          type: "string"
+        subtitle:
+          type: "string"
+        description:
+          type: "string"
+        points:
+          type: "integer"
+          format: "int32"
+        quantity:
+          type: "integer"
+          format: "int32"
+        scope:
+          type: "string"
+        validPeriod:
+          type: "string"
+        reminder:
+          type: "string"
+        instruction1:
+          type: "string"
+        instruction2:
+          type: "string"
+        note:
+          type: "string"
+        imageUrl:
+          type: "string"
 
     PaginatedDataResponse:
       type: "object"

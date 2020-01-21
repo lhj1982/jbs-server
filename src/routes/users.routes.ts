@@ -38,7 +38,14 @@ export class UsersRoutes {
     app.route('/profile/token-status').get(verifyToken, this.usersController.getTokenStatus);
     app.route('/profile/wechat-data').post(verifyToken, this.usersController.getWechatEncryptedData);
 
-    app.route('/users/update-tags-endorsements').post(verifyToken, this.usersController.updateTagsAndEndorsements);
-    app.route('/users/update-credits').post(verifyToken, this.usersController.updateCredits);
+    app.route('/users/update-tags-endorsements').post(
+      verifyToken,
+      permit({
+        domain: 'user',
+        operations: ['updateUserTagsAndEndorsements']
+      }),
+      this.usersController.updateTagsAndEndorsements
+    );
+    app.route('/users/update-credits').post(verifyToken, permit({ domain: 'user', operations: ['updateUserCredits'] }), this.usersController.updateCredits);
   }
 }

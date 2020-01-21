@@ -12,13 +12,13 @@ class RewardService {
   }
 
   async createRewardRedemption(params) {
-    const { externalCustomerId, type, name, description, points, quantity } = params;
+    const { externalCustomerId, type, title, subtitle, description, points, quantity, scope, validPeriod, reminder, instruction1, instruction2, note, imageUrl } = params;
     const externalCustomer = await ExternalCustomersRepo.findById(externalCustomerId);
     if (!externalCustomer) {
       throw new ResourceNotFoundException('ExternalCustomer', externalCustomerId);
     }
-    if (!type || !name || !description || !points || !quantity) {
-      throw new InvalidRequestException('RewardRedeption', ['type', 'name', 'description', 'points', 'quantity']);
+    if (!type || !title || !subtitle || !points || !quantity) {
+      throw new InvalidRequestException('RewardRedeption', ['type', 'title', 'subtitle', 'points', 'quantity']);
     }
     const session = await RewardRedemptionsRepo.getSession();
     session.startTransaction();
@@ -27,11 +27,19 @@ class RewardService {
       const rewardRedemptionToAdd = {
         externalCustomer: externalCustomerId,
         type,
-        name,
+        title,
+        subtitle,
         description,
         points,
         quantity,
         available: quantity,
+        scope,
+        validPeriod,
+        reminder,
+        instruction1,
+        instruction2,
+        note,
+        imageUrl,
         status: 'active'
       };
       const rewardRedemption = await RewardRedemptionsRepo.findUnique(rewardRedemptionToAdd);
