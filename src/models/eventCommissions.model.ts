@@ -20,6 +20,10 @@ export const EventCommissionSchema = new Schema(
           amount: Number
         }
       ]
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
     }
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
