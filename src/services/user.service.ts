@@ -319,42 +319,52 @@ class UserService {
   async updateCredits() {
     const expiredAt = nowDate().toDate();
     const userRewards = await UserRewardsRepo.getTotalRewardPointsByUser(expiredAt);
-    await UserRewardRedemptionsRepo.getTotalRedemptionPointsByUser(expiredAt);
-    const users = await UsersRepo.find({
-      status: 'active',
-      openId: { $ne: null }
-    });
-    // console.log(userRewards);
-    const promises = users.map(async user => {
-      await this.updateCredit(user, userRewards);
-    });
-    return await Promise.all(promises);
+    const userRewardsRedemptions = await UserRewardRedemptionsRepo.getTotalRedemptionPointsByUser(expiredAt);
+    // const users = await UsersRepo.find({
+    //   status: 'active',
+    //   openId: { $ne: null }
+    // });
+    // // console.log(userRewards);
+    // const promises = users.map(async user => {
+    //   await this.updateCredit(user, userRewards, userRewardsRedemptions);
+    // });
+    // return await Promise.all(promises);
+    const usersToUpdate = this.getUpdatedUsers(userRewards, userRewardsRedemptions);
+    const result = await this.updateCredit(usersToUpdate);
+    logger.info(pp(result));
+    // await this.updateRewardRedemptionCredits(userRewardsRedemptions);
+
+    return usersToUpdate;
   }
 
-  async updateCredit(user, userRewards) {
-    const { _id: srcUserId } = user;
-    const filteredResult = userRewards.filter(_ => {
-      const {
-        userObj: { _id: userId },
-        totalPoints
-      } = _;
-      // console.log(srcUserId + ', ' + userId);
-      return srcUserId.toString() === userId.toString();
+  getUpdatedUsers(userRewards, userRewardsRedemptions) {
+    const result = userRewards.map(userReward => {
+      const { userObj: user, totalPoints } = userReward;
+      const { _id: userId } = user;
+      return { userId, gain: totalPoints };
     });
-    if (filteredResult.length > 0) {
-      const {
-        userObj: { _id: userId },
-        totalPoints
-      } = filteredResult[0];
-      logger.info(`Update credits for ${userId}, points: ${totalPoints}`);
-      const userToUpdate = Object.assign(user.toObject(), {
-        credits: totalPoints
-      });
-      // console.log(userToUpdate);
-      return await UsersRepo.saveOrUpdateUser(userToUpdate);
-    } else {
-      return new Promise(resolve => resolve(undefined));
-    }
+    userRewardsRedemptions.forEach(userRewardRedemption => {
+      const { userObj: user, totalPoints } = userRewardRedemption;
+      const { _id: userId1 } = user;
+      let matched = 0;
+      for (let i = 0; i < result.length; i++) {
+        let entry = result[i];
+        const { userId: userId2, gain } = entry;
+        if (userId1.toString() === userId2.toString()) {
+          matched = 1;
+          entry = Object.assign(entry, { spend: totalPoints });
+          break;
+        }
+      }
+      if (!matched) {
+        result.push({ userId: userId1, spend: totalPoints });
+      }
+    });
+    return result;
+  }
+
+  async updateCredit(usersToUpdate): Promise<any> {
+    return await UsersRepo.batchUpdateCredits(usersToUpdate);
   }
 }
 

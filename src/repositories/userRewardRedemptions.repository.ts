@@ -8,7 +8,38 @@ mongoose.set('useFindAndModify', false);
 
 class UserRewardRedemptionsRepo extends CommonRepo {
   async getTotalRedemptionPointsByUser(expiredAt) {
-    return null;
+    return await UserRewardRedemption.aggregate([
+      {
+        $match: { user: { $ne: null } }
+      },
+      {
+        $group: {
+          _id: '$user',
+          totalPoints: {
+            $sum: '$points'
+          }
+        }
+      },
+      {
+        $addFields: { user: '$_id' }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userObj'
+        }
+      },
+      {
+        $unwind: {
+          path: '$userObj'
+        }
+      },
+      {
+        $project: { _id: 0 }
+      }
+    ]).exec();
   }
 
   async findUnique(params) {

@@ -18,6 +18,31 @@ class UsersRepo extends CommonRepo {
     super.endSession();
   }
 
+  async batchUpdateCredits(users) {
+    return new Promise((resolve, reject) => {
+      const bulk = User.collection.initializeUnorderedBulkOp();
+      for (let i = 0; i < users.length; i++) {
+        const { userId } = users[i];
+        let { gain, spend } = users[i];
+        if (!gain) {
+          gain = 0;
+        }
+        if (!spend) {
+          spend = 0;
+        }
+        bulk.find({ _id: userId }).update({ $set: { credits: gain - spend } });
+      }
+      bulk.execute((err, bulkres) => {
+        if (err) {
+          return reject(err);
+        } else {
+          // console.log(bulkres);
+          resolve(bulkres);
+        }
+      });
+    });
+  }
+
   async findById(id: string) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
     return await User.where({ _id: id })

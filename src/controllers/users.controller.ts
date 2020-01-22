@@ -347,13 +347,14 @@ export class UsersController {
   updateCredits = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await UserService.updateCredits();
-      const updatedResult = result.filter(_ => {
-        // console.log(_);
-        return typeof _ !== 'undefined';
-      });
+      // const updatedResult = result.filter(_ => {
+      //   // console.log(_);
+      //   return typeof _ !== 'undefined';
+      // });
+      // console.log(JSON.stringify(result));
       res.json({
         code: 'SUCCESS',
-        data: `${updatedResult.length} data are updated`
+        data: `${result.length} users are updated`
       });
     } catch (err) {
       next(err);
