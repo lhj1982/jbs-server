@@ -42,7 +42,7 @@ class ScriptsRepo {
       if (shopIds.length === 0) {
         const regex = new RegExp(escapeRegex(keyword), 'gi');
         condition = Object.assign(condition, {
-          $or: [{ name: regex }, { description: regex }, { tags: keyword }, { shops: {} }]
+          $or: [{ name: regex }, { tags: keyword }]
         });
       } else {
         shopCondition = {
