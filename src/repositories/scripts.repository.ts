@@ -90,7 +90,8 @@ class ScriptsRepo {
       .populate({
         path: 'shop',
         populate: {
-          path: 'scripts'
+          path: 'scripts',
+          populate: [{ path: 'shops' }]
         }
       })
       .populate('discountRule')
