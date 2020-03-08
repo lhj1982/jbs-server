@@ -1190,4 +1190,50 @@ export class EventsController extends BaseController {
       next(err);
     }
   };
+
+  addOnlineEvent = async (req: Request, res: Response, next: NextFunction) => {
+    const { shopId, scriptId, startTime, endTime, hostUserId, hostComment, numberOfPersons, price, hostUserMobile, hostUserWechatId } = req.body;
+    // let { numberOfOfflinePersons, isHostJoin, supportPayment } = req.body;
+
+    const { loggedInUser } = res.locals;
+    if (!scriptId) {
+      next(new InvalidRequestException('AddEvent', ['scriptId']));
+      return;
+    }
+    if (!shopId) {
+      next(new InvalidRequestException('AddEvent', ['shopId']));
+      return;
+    }
+    if (!hostUserId) {
+      next(new InvalidRequestException('AddEvent', ['hostUserId']));
+      return;
+    }
+    if (!hostUserMobile) {
+      next(new InvalidRequestException('AddEvent', ['hostUserMobile']));
+      return;
+    }
+    if (!hostUserWechatId) {
+      next(new InvalidRequestException('AddEvent', ['hostUserWechatId']));
+      return;
+    }
+    if (!startTime) {
+      next(new InvalidRequestException('AddEvent', ['startTime']));
+      return;
+    }
+    const script = await ScriptsRepo.findById(scriptId);
+    if (!script) {
+      next(new ResourceNotFoundException('Script', scriptId));
+      return;
+    }
+    const shop = await ShopsRepo.findById(shopId);
+    if (!shop) {
+      next(new ResourceNotFoundException('Shop', shopId));
+      return;
+    }
+    const hostUser = await UsersRepo.findById(hostUserId);
+    if (!hostUser) {
+      next(new ResourceNotFoundException('User', hostUserId));
+      return;
+    }
+  };
 }

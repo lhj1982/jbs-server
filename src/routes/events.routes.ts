@@ -47,5 +47,7 @@ export class EventsRoutes {
 
     app.route('/events/:eventId/cancel').put(verifyToken, permit({ domain: 'event', operations: ['cancelEvent'] }), this.eventsController.cancelEvent);
     app.route('/events/:eventId/complete').put(verifyToken, permit({ domain: 'event', operations: ['completeEvent'] }), this.eventsController.completeEvent);
+
+    app.route('/online-events').post(verifyToken, this.eventsController.addOnlineEvent);
   }
 }
