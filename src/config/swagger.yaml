@@ -37,6 +37,8 @@ tags:
   description: "Operations about tags"
 - name: "reward"
   description: "Operations about user rewards"
+- name: "game"
+  description: "Operations about user games"
 
 servers:
   - url: http://localhost:3000
@@ -2413,6 +2415,192 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /games:
+    post:
+      tags:
+      - "game"
+      summary: "Add new game"
+      operationId: "addGame"
+      security:
+        - bearerAuth: []
+      requestBody: 
+        required: true
+        description: add new game request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - scriptId
+                - shopId
+                - startTime
+                - hostUserId
+                - price
+                - code
+              properties:
+                scriptId:
+                  type: "string"
+                shopId:
+                  type: "string"
+                startTime:
+                  type: "string"
+                  format: "date-time"
+                hostUserId:
+                  type: "string"
+                price:
+                  type: "integer"
+                  format: "int32"
+                code:
+                  type: "string"
+                hostUserMobile:
+                  type: "string"
+                hostUserWechatId:
+                  type: "string"
+                hostComment: 
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  games/{gameId}/script/{playerId}:
+    get:
+      tags:
+      - "game"
+      summary: "Get game script rundown by player id"
+      operationId: "getGameScriptRundownByPlayer"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+        - in: path
+          name: playerId
+          required: true
+          description: player id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/ScriptRundown'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  games/{gameId}/join:
+    post:
+      tags:
+      - "game"
+      summary: "Join a game"
+      operationId: "joinGame"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: join game request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - playerId
+                - code
+              properties:
+                playerId:
+                  type: "string"
+                code:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/GamePlayer'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  games/{gameId}/leave:
+    post:
+      tags:
+      - "game"
+      summary: "Leave a game"
+      operationId: "leaveGame"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: leave game request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - playerId
+              properties:
+                playerId:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/GamePlayer'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
@@ -3305,6 +3493,67 @@ components:
           type: "string"
         imageUrl:
           type: "string"
+
+    Game:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        hostUser:
+          $ref: "#/components/schemas/User"
+        script:
+          $ref: "#/components/schemas/Script"
+        shop:
+          $ref: "#/components/schemas/Shop"
+        startTime:
+          type: "string"
+        endTime:
+          type: "string"
+        code:
+          type: "string"
+        hostComment:
+          type: "string"
+        createdAt:
+          type: "string"
+        updatedAt:
+          type: "string"
+    
+    GamePlayer:
+      type: "object"
+      properties:
+        game:
+          $ref: "#/components/schemas/Game"
+        playerId:
+          type: "string"
+        createdAt:
+          type: "string"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+
+    ScriptRundown:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        script:
+          $ref: "#/components/schemas/Script"
+        playerId:
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        rundowns:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+              content:
+                type: "string"
 
     PaginatedDataResponse:
       type: "object"

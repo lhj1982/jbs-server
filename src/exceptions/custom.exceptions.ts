@@ -118,6 +118,18 @@ class InsufficientRedemptionsException extends HttpException {
   }
 }
 
+class CannotJoinGameException extends HttpException {
+  constructor(id: string, message: string) {
+    super(500, 'cannot_join_game', `Cannot join game ${id}, ${message}`);
+  }
+}
+
+class CannotLeaveGameException extends HttpException {
+  constructor(id: string, message: string) {
+    super(500, 'cannot_leave_game', `Cannot leave game ${id}, ${message}`);
+  }
+}
+
 export {
   AuthorizationException,
   WrongCredentialException,
@@ -137,5 +149,7 @@ export {
   InvalidPaymentSignatureException,
   CannotRefundException,
   InsufficientCreditsException,
-  InsufficientRedemptionsException
+  InsufficientRedemptionsException,
+  CannotJoinGameException,
+  CannotLeaveGameException
 };

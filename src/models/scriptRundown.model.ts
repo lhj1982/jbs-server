@@ -4,22 +4,13 @@ const Schema = mongoose.Schema;
 export const ScriptRundownSchema = new Schema(
   {
     script: { type: Schema.Types.ObjectId, ref: 'Script' },
-    players: [
+    playerId: String,
+    name: String,
+    description: String,
+    rundown: [
       {
-        id: String,
-        name: String,
-        description: String,
-        rundown: [
-          {
-            title: String,
-            content: String
-          }
-        ]
-      }
-    ],
-    tags: [
-      {
-        name: String
+        title: String,
+        content: String
       }
     ]
   },

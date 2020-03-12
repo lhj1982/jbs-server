@@ -19,10 +19,6 @@ export const ScriptClueSchema = new Schema(
     round: {
       type: String
     },
-    public: {
-      type: Boolean,
-      default: false
-    },
     images: [
       {
         type: String

@@ -46,7 +46,7 @@ export const ScriptSchema = new Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-ScriptSchema.virtual('rundown', {
+ScriptSchema.virtual('rundowns', {
   ref: 'ScriptRundown',
   localField: '_id',
   foreignField: 'script'

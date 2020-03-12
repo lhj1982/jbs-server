@@ -22,7 +22,7 @@ class ScriptsRepo {
         options: { sort: { startTime: -1 } }
       })
       .populate('discountRuleMap')
-      .populate('rundown')
+      .populate('rundowns')
       .populate({
         path: 'clues',
         populate: 'categories'

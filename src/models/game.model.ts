@@ -21,8 +21,13 @@ export const GameSchema = new Schema(
     hostComment: {
       type: String
     },
-    numberOfPlayers: {
+    numberOfPersons: {
       type: Number
+    },
+    code: {
+      type: String,
+      description: 'Room code',
+      required: 'Code is required'
     },
     status: {
       type: String,
@@ -44,5 +49,11 @@ export const GameSchema = new Schema(
 GameSchema.virtual('players', {
   ref: 'GamePlayer',
   localField: '_id',
-  foreignField: 'event'
+  foreignField: 'game'
+});
+
+GameSchema.virtual('scriptClues', {
+  ref: 'GameScriptClue',
+  localField: '_id',
+  foreignField: 'game'
 });
