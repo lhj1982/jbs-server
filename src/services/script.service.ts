@@ -5,8 +5,13 @@ import { ResourceNotFoundException } from '../exceptions/custom.exceptions';
 import { nowDate } from '../utils/dateUtil';
 
 class ScriptService {
-  async findById(scriptId: string): Promise<any> {
-    const script = await ScriptsRepo.findById(scriptId);
+  async findById(scriptId: string, fetchExtended = false): Promise<any> {
+    let script;
+    if (fetchExtended) {
+      script = await ScriptsRepo.findById(scriptId, true);
+    } else {
+      script = await ScriptsRepo.findById(scriptId);
+    }
     if (!script) {
       throw new ResourceNotFoundException(`Script`, scriptId);
     }

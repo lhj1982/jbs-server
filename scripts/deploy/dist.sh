@@ -2,7 +2,7 @@
 
 EXPECTED_ARGS=1
 REPO=git@github.com:adelablue/jbs-server.git
-BRANCH=feature/user_credits
+BRANCH=feature/online-game
 
 if [ $# -ne $EXPECTED_ARGS ]
 then

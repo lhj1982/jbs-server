@@ -12,11 +12,6 @@ import {
   ResourceAlreadyExist,
   ResourceNotFoundException,
   AccessDeniedException,
-  EventCannotCreateException,
-  EventCannotUpdateException,
-  EventIsFullBookedException,
-  EventCannotCompleteException,
-  EventCannotCancelException,
   UserIsBlacklistedException,
   CannotJoinGameException,
   CannotLeaveGameException
@@ -55,7 +50,7 @@ class GameService {
     if (!code) {
       throw new InvalidRequestException('AddGame', ['code']);
     }
-    const script = await ScriptsRepo.findById(scriptId);
+    const script = await ScriptsRepo.findById(scriptId, true);
     if (!script) {
       throw new ResourceNotFoundException('Script', scriptId);
     }
@@ -226,15 +221,82 @@ class GameService {
     }
   }
 
-  async getScriptByPlayer(loggedInUser: any, gameId: string, playerId: string) {
+  async getScriptRundownByPlayer(loggedInUser: any, gameId: string, playerId: string) {
     try {
-      const game = await GamesRepo.findById(gameId);
+      const game = await GamesRepo.findById(gameId, ['rundowns']);
       if (!game) {
         throw new ResourceNotFoundException('Game', gameId);
       }
+      const { script } = game;
+      const { rundowns } = script;
+      const scriptRundown = rundowns.find(rundown => {
+        const { playerId: pId } = rundown;
+        return pId === playerId;
+      });
+      return scriptRundown;
     } catch (err) {
       throw err;
     }
+  }
+
+  async getScriptCluesByPlayer(loggedInUser: any, gameId: string, playerId: string) {
+    try {
+      const game = await GamesRepo.findById(gameId, ['rundowns']);
+      if (!game) {
+        throw new ResourceNotFoundException('Game', gameId);
+      }
+      const gameScriptClues = await GameScriptCluesRepo.findGameScriptCluesByPlayerId(gameId, playerId);
+      return gameScriptClues.map(_ => {
+        return _.scriptClue;
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  /**
+   * Update game script clue. It's used when DM try to distribute clues to players.
+   *
+   * @param {any} loggedInUser   [description]
+   * @param {any} game           [description]
+   * @param {any} gameScriptClue [description]
+   */
+  async updateGameScriptClue(loggedInUser: any, game: any, gameScriptClue: any, params: any) {
+    const session = await GamesRepo.getSession();
+    session.startTransaction();
+    try {
+      const opts = { session };
+      const { playerId: playerIdToUpdate, isPublic } = params;
+      const { players } = game;
+      const { owner } = gameScriptClue;
+      const { id: loggedInUserId } = loggedInUser;
+      const player = this.getPlayerByUser(players, loggedInUserId);
+      if (!player) {
+        throw new AccessDeniedException(loggedInUserId, 'You are not in the game.');
+      }
+      const gameScriptClueToUpdate = Object.assign(gameScriptClue.toObject(), {
+        owner: playerIdToUpdate,
+        updatedAt: nowDate()
+      });
+      const newGameScriptClue = await GameScriptCluesRepo.saveOrUpdate(gameScriptClueToUpdate, opts);
+      await session.commitTransaction();
+      await GamesRepo.endSession();
+      return newGameScriptClue;
+    } catch (err) {
+      await session.abortTransaction();
+      await GamesRepo.endSession();
+      throw err;
+    }
+  }
+
+  getPlayerByUser(players, userId: string) {
+    const player = players.find(player => {
+      // console.log(player);
+      const { user: gamePlayerId } = player;
+      // console.log(gamePlayerId + ' , ' + userId);
+      return gamePlayerId && gamePlayerId.toString() === userId;
+    });
+    return player;
   }
 }
 

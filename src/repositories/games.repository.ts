@@ -27,7 +27,6 @@ class GamesRepo extends CommonRepo {
         })
         .populate('shop')
         .populate('hostUser')
-        .populate('scriptClues')
         .exec();
     } else {
       return await Game.findById(mongoose.Types.ObjectId(id))
@@ -37,7 +36,6 @@ class GamesRepo extends CommonRepo {
         })
         .populate('shop')
         .populate('hostUser')
-        .populate('scriptClues')
         .exec();
     }
   }

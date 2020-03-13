@@ -2474,7 +2474,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  games/{gameId}/script/{playerId}:
+  /games/{gameId}/script-rundown/{playerId}:
     get:
       tags:
       - "game"
@@ -2511,7 +2511,92 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  games/{gameId}/join:
+  /games/{gameI}/clues/{playerId}:
+    get:
+      tags:
+      - "game"
+      summary: "Get game script clues by player id"
+      operationId: "getGameScriptCluesByPlayer"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+        - in: path
+          name: playerId
+          required: true
+          description: player id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/ScriptClue'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /games/{gameId/}clues/{scriptClueId}:
+    put:
+      tags:
+      - "game"
+      summary: "Update a game script clue"
+      operationId: "updateGameScriptClue"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+        - in: path
+          name: scriptClueId
+          required: true
+          description: script clue id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: update game script clue request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                playerId:
+                  type: "string"
+                  description: "new owner of clue"
+                isPublic:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameScriptClue'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /games/{gameId}/join:
     post:
       tags:
       - "game"
@@ -2557,7 +2642,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  games/{gameId}/leave:
+  /games/{gameId}/leave:
     post:
       tags:
       - "game"
@@ -3554,6 +3639,54 @@ components:
                 type: "string"
               content:
                 type: "string"
+
+    ScriptClue:
+      type: "object"
+      properties:
+        script:
+          $ref: "#/components/schemas/Script"
+        categories:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ScriptClueCategory"
+        title:
+          type: "string"
+        content:
+          type: "string"
+        public:
+          type: "string"
+        images:
+          type: "array"
+          items:
+            type: "string"
+        round:
+          type: "string"
+
+    ScriptClueCategory:
+      type: "object"
+      properties:
+        script:
+          $ref: "#/components/schemas/Script"
+        key:
+          type: "string"
+        title:
+          type: "string"
+        field:
+          type: "string"
+        value:
+          type: "string"
+
+    GameScriptClue:
+      type: "object"
+      properties:
+        game:
+          $ref: "#/components/schemas/Game"
+        scriptClue:
+          $ref: "#/components/schemas/ScriptClue"
+        owner:
+          type: "string"
+        isPublic:
+          type: "string"
 
     PaginatedDataResponse:
       type: "object"

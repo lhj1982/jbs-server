@@ -14,6 +14,25 @@ class GameScriptCluesRepo extends CommonRepo {
     super.endSession();
   }
 
+  async find(params) {
+    return await GameScriptClue.find(params).exec();
+  }
+
+  async findGameScriptCluesByPlayerId(gameId: string, playerId: string) {
+    return await GameScriptClue.find({
+      game: gameId,
+      $or: [{ owner: playerId }, { isPublic: true }]
+    })
+      .populate('game')
+      .populate({
+        path: 'scriptClue',
+        populate: {
+          path: 'categories'
+        }
+      })
+      .exec();
+  }
+
   async saveOrUpdate(gameScriptClue, opt: object = {}) {
     const options = {
       ...opt,
