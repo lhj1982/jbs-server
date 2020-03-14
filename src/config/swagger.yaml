@@ -241,6 +241,11 @@ paths:
           required: true
           schema:
             type: string
+        - in: query
+          name: extended
+          description: flag that whether to fetch extended script info
+          schema:
+            type: boolean
       responses:
         200:
           description: "Success"
@@ -1670,6 +1675,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /profile/my-games:
+    get:
+      tags:
+      - "user"
+      summary: "Get my games"
+      description: "Get games open by DM or user has joined."
+      operationId: "getMyGames"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          description: status to include, if multiple status, separate by comma
+          schema:
+            type: string
+          example:
+            status: ready,complete
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /profile/wechat-data:
     post:
       tags:
@@ -2581,7 +2619,7 @@ paths:
                   type: "string"
                   description: "new owner of clue"
                 isPublic:
-                  type: "string"
+                  type: "boolean"
       responses:
         200:
           description: "Success"
@@ -3654,7 +3692,7 @@ components:
         content:
           type: "string"
         public:
-          type: "string"
+          type: "boolean"
         images:
           type: "array"
           items:
@@ -3686,7 +3724,7 @@ components:
         owner:
           type: "string"
         isPublic:
-          type: "string"
+          type: "boolean"
 
     PaginatedDataResponse:
       type: "object"

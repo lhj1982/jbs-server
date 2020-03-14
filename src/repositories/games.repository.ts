@@ -15,6 +15,18 @@ class GamesRepo extends CommonRepo {
     super.endSession();
   }
 
+  async findByUser(userId: string) {
+    return await Game.find({ hostUser: userId })
+      .populate('players')
+      .populate({
+        path: 'script'
+      })
+      .populate('shop')
+      .populate('hostUser')
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+
   async findById(id: string, extras = []) {
     if (extras.indexOf('rundowns') != -1) {
       return await Game.findById(mongoose.Types.ObjectId(id))

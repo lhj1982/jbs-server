@@ -9,6 +9,7 @@ import UserEndorsementsRepo from '../repositories/userEndorsements.repository';
 import UserRewardsRepo from '../repositories/userRewards.repository';
 import UserRewardRedemptionsRepo from '../repositories/userRewardRedemptions.repository';
 import WatchListsRepo from '../repositories/watchLists.repository';
+import GamesRepo from '../repositories/games.repository';
 import { ResourceNotFoundException, WrongCredentialException } from '../exceptions/custom.exceptions';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 
@@ -365,6 +366,11 @@ class UserService {
 
   async updateCredit(usersToUpdate): Promise<any> {
     return await UsersRepo.batchUpdateCredits(usersToUpdate);
+  }
+
+  async getUserGames(user: any) {
+    const { _id: userId } = user;
+    return await GamesRepo.findByUser(userId);
   }
 }
 

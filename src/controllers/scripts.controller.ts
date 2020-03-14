@@ -32,23 +32,24 @@ export class ScriptsController extends BaseController {
 
   getScript = async (req: Request, res: Response, next: NextFunction) => {
     const { scriptId } = req.params;
+    const { extended } = req.query;
     try {
-      const script = await ScriptService.findById(scriptId);
+      const script = await ScriptService.findById(scriptId, extended === 'true');
       res.json({ code: 'SUCCESS', data: script });
     } catch (err) {
       next(err);
     }
   };
 
-  getScriptExtended = async (req: Request, res: Response, next: NextFunction) => {
-    const { scriptId } = req.params;
-    try {
-      const script = await ScriptService.findById(scriptId, true);
-      res.json({ code: 'SUCCESS', data: script });
-    } catch (err) {
-      next(err);
-    }
-  };
+  // getScriptExtended = async (req: Request, res: Response, next: NextFunction) => {
+  //   const { scriptId } = req.params;
+  //   try {
+  //     const script = await ScriptService.findById(scriptId, true);
+  //     res.json({ code: 'SUCCESS', data: script });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
 
   getScriptsFeed = async (req: Request, res: Response, next: NextFunction) => {
     const { discountKey } = req.query;

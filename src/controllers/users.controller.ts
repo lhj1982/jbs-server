@@ -361,12 +361,14 @@ export class UsersController {
     }
   };
 
-  // getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
-  //   const { loggedInUser } = res.locals;
-  //   if (!loggedInUser) {
-  //     next(new AccessDeniedException(''));
-  //   }
-  //   const eventUsers = await UsersRepo.getUserEvents(loggedInUser._id);
-  //   res.json({ code: 'SUCCESS', data: eventUsers });
-  // };
+  getMyGames = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { status } = req.query;
+    try {
+      const games = await UserService.getUserGames(loggedInUser);
+      res.json({ code: 'SUCCESS', data: games });
+    } catch (err) {
+      next(err);
+    }
+  };
 }

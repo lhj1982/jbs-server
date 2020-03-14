@@ -36,7 +36,6 @@ export class ScriptsRoutes {
       .post(verifyToken, this.scriptsController.addToWatchList)
       .delete(verifyToken, this.scriptsController.removeFromWatchList);
     app.route('/scripts/:scriptId').get(cacheMiddleware(config.cache.duration), this.scriptsController.getScript);
-    app.route('/scripts/:scriptId/extended').get(verifyToken, this.scriptsController.getScriptExtended);
 
     // app.route('/scripts-rundown/:scriptId/:playerId', verifyToken, this.scriptsController.getScriptRundownByPlayer);
   }
