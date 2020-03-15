@@ -6,9 +6,3232 @@
 	},
 	"item": [
 		{
-			"name": "sendSms",
+			"name": "tag",
+			"item": [
+				{
+					"name": "get tags",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzkwMTQyMjQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc2NDIyMjI0fQ.dHy7lBTsn9O_g94bNgmAxicFOit5IzeixNpgluHkYFs",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/tags",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tags"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "update tags and endorsements",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzkwMTQyMjQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc2NDIyMjI0fQ.dHy7lBTsn9O_g94bNgmAxicFOit5IzeixNpgluHkYFs",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "text/xml",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Version",
+								"value": "1.0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"event_user\",\n\t\"objectId\": \"5e02f005fabc6a25be6d015d\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/update-tags-endorsements",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"update-tags-endorsements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user detail",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1Njk4NjE1NTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5ODU0MzU0fQ.cRucDW1J82CJV6mxCG7eHe9wrjR16ew0X2OCoOMuyh0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/5d944a4af4b8167cc437e0cb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"5d944a4af4b8167cc437e0cb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get my profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get wx profile data",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"encryptedData\": \"stwIj56m5BYjsQ6VMronEBVY3BKeZIPy7sGwbL9JyfY7+TjV1+P5LxioBRfZWM41U7HheGYLy9oYC30CRT6wQu0ddZ5CYWyu4tsgJ9qvQ0DJBo0VrBoHck7GNVpAo6z4uw4O8d39fmMu9pYiaW/p7g15rP3ubB+ijFPNx7VMR2AroQHXYVNQFBHwvc4g+aCpkzobKpN0AmR73Mdp+l75TQ==\",\n\"iv\": \"5Nj/q3D5WLF0SbTYjRtSrQ==\",\n\"sessionKey\": \"Migz+WN9D+v173yptcg0Vg==\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/profile/wechat-data",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"profile",
+								"wechat-data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get my events",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzkwMTQyMjQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc2NDIyMjI0fQ.dHy7lBTsn9O_g94bNgmAxicFOit5IzeixNpgluHkYFs",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/profile/my-events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"profile",
+								"my-events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get my games",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODYyNjI5NTYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTgzNjcwOTU2fQ.C54SNTRKEwID2O4fx0tCs-yms_gaMvQpIyFfuQ1dmWg"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/profile/my-games",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"profile",
+								"my-games"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"description\": \"testNick1\",\n\t\"mobile\": \"13651976276\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/5da581bc9977b25d64504198",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"5da581bc9977b25d64504198"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "block user",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzU5MDY5MDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczMzE0OTA3fQ.d4jaMPRy9Mm5uLxWxSq5h7UG8EdQ6dd3H0PZa-Tm1AU",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/5da581bc9977b25d64504198/block",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"5da581bc9977b25d64504198",
+								"block"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add user tag",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODE2NjE2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc5MDY5NjQ3fQ.hRW2iawqWk-yLc3jmxeFh0WLL_eww3JqHL8uKMY3_gY",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "text/xml",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Version",
+								"value": "1.0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"tagId\": \"5e0336b2fabc6a25be6d016f\",\n\t\"type\": \"event_user\",\n\t\"objectId\": \"5e1b43d1e84d6533942a9cdb\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/5e1b3056ffd92d338cb90c8d/tag",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"5e1b3056ffd92d338cb90c8d",
+								"tag"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "endorse user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODE2NjE2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc5MDY5NjQ3fQ.hRW2iawqWk-yLc3jmxeFh0WLL_eww3JqHL8uKMY3_gY",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "text/xml",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Version",
+								"value": "1.0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"event_user\",\n\t\"objectId\": \"5e1b43d1e84d6533942a9cdb\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/5e1b3056ffd92d338cb90c8d/endorse",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"5e1b3056ffd92d338cb90c8d",
+								"endorse"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unendorse user",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODE2NjE2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc5MDY5NjQ3fQ.hRW2iawqWk-yLc3jmxeFh0WLL_eww3JqHL8uKMY3_gY",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "text/xml",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Version",
+								"value": "1.0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"event_user\",\n\t\"objectId\": \"5e1b43d1e84d6533942a9cdb\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/5e1b3056ffd92d338cb90c8d/endorse",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"5e1b3056ffd92d338cb90c8d",
+								"endorse"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user tags and endorsements",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzkwMTQyMjQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc2NDIyMjI0fQ.dHy7lBTsn9O_g94bNgmAxicFOit5IzeixNpgluHkYFs",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/update-tags-endorsements",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"update-tags-endorsements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user credits",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/users/update-credits",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"update-credits"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "event",
+			"item": [],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "get access token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx1283957182b4e6c1&secret=4eb795feb7cb40a9acb9aea5f6ef4268&code=002n7r3Y14p9AY05WXZX1M4e3Y1n7r3Y&grant_type=authorization_code",
+							"protocol": "https",
+							"host": [
+								"api",
+								"weixin",
+								"qq",
+								"com"
+							],
+							"path": [
+								"sns",
+								"oauth2",
+								"access_token"
+							],
+							"query": [
+								{
+									"key": "appid",
+									"value": "wx1283957182b4e6c1"
+								},
+								{
+									"key": "secret",
+									"value": "4eb795feb7cb40a9acb9aea5f6ef4268"
+								},
+								{
+									"key": "code",
+									"value": "002n7r3Y14p9AY05WXZX1M4e3Y1n7r3Y"
+								},
+								{
+									"key": "grant_type",
+									"value": "authorization_code"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get access token qr code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxf59749a45686779c&secret=2553af7112c7911bc3bea91da887dc8c",
+							"protocol": "https",
+							"host": [
+								"api",
+								"weixin",
+								"qq",
+								"com"
+							],
+							"path": [
+								"cgi-bin",
+								"token"
+							],
+							"query": [
+								{
+									"key": "grant_type",
+									"value": "client_credential"
+								},
+								{
+									"key": "appid",
+									"value": "wxf59749a45686779c"
+								},
+								{
+									"key": "secret",
+									"value": "2553af7112c7911bc3bea91da887dc8c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "generate qrcode",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n      \"page\": \"pages/event_detail\", \n      \"scene\": \"5dbbbc33d7443114009f52d7\",\n      \"width\": \"100\",\n      \"auto_color\": false\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=27_ksTOa4HY0Pwzg88AwO1er6YVArF07h9pol5r7d2dFvqCO7JrWBQISeaQKwufALMNxGumOwvEbruzOv7c5PPb2NR1p0cyj1AtlijCvq_93WWTR7oXsUm5S4jcumMXUTjAEAPML",
+							"protocol": "https",
+							"host": [
+								"api",
+								"weixin",
+								"qq",
+								"com"
+							],
+							"path": [
+								"wxa",
+								"getwxacodeunlimit"
+							],
+							"query": [
+								{
+									"key": "access_token",
+									"value": "27_ksTOa4HY0Pwzg88AwO1er6YVArF07h9pol5r7d2dFvqCO7JrWBQISeaQKwufALMNxGumOwvEbruzOv7c5PPb2NR1p0cyj1AtlijCvq_93WWTR7oXsUm5S4jcumMXUTjAEAPML"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get wx code web",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://open.weixin.qq.com/connect/qrconnect?appid=wx1283957182b4e6c1&redirect_uri=https%3A%2F%2Fapi.boogoogoo.com&response_type=code&scope=snsapi_login&state=1234567",
+							"protocol": "https",
+							"host": [
+								"open",
+								"weixin",
+								"qq",
+								"com"
+							],
+							"path": [
+								"connect",
+								"qrconnect"
+							],
+							"query": [
+								{
+									"key": "appid",
+									"value": "wx1283957182b4e6c1"
+								},
+								{
+									"key": "redirect_uri",
+									"value": "https%3A%2F%2Fapi.boogoogoo.com"
+								},
+								{
+									"key": "response_type",
+									"value": "code"
+								},
+								{
+									"key": "scope",
+									"value": "snsapi_login"
+								},
+								{
+									"key": "state",
+									"value": "1234567"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "auth/login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n   \"code\":\"0026qiCQ0zDNf72S4aEQ0KJ3CQ06qiCt\",\n   \"type\":\"wxapp\",\n   \"nickName\":\"James (李华俊)1\",\n   \"avatarUrl\":\"https://wx.qlogo.cn/mmopen/vi_32/jE8Wic5BqbCW2acNcTtpMlW5CdbR9fkIUbjDiafEKNiaHA40bdOApL91qSZqIQFafNVcEZypZM0m3mn0TagWlQr5Q/132\",\n   \"description\":\"\",\n   \"gender\":\"male\",\n   \"country\":\"Sweden\",\n   \"province\":\"\",\n   \"city\":\"\",\n   \"language\":\"zh_CN\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/oauth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"oauth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login with username and password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n   \"username\": \"james\",\n   \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "code2session",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.weixin.qq.com/sns/jscode2session?appid=wx67080218c81daab6&secret=f714576304cbae30e6976ecc82beb84a&js_code=JSCODE&grant_type=authorization_code\n",
+							"protocol": "https",
+							"host": [
+								"api",
+								"weixin",
+								"qq",
+								"com"
+							],
+							"path": [
+								"sns",
+								"jscode2session"
+							],
+							"query": [
+								{
+									"key": "appid",
+									"value": "wx67080218c81daab6"
+								},
+								{
+									"key": "secret",
+									"value": "f714576304cbae30e6976ecc82beb84a"
+								},
+								{
+									"key": "js_code",
+									"value": "JSCODE"
+								},
+								{
+									"key": "grant_type",
+									"value": "authorization_code\n"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.weixin.qq.com/sns/userinfo?access_token=22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU&openid=onlgJ1iMXxfirUdlsPp4SSX6fvsk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"weixin",
+								"qq",
+								"com"
+							],
+							"path": [
+								"sns",
+								"userinfo"
+							],
+							"query": [
+								{
+									"key": "access_token",
+									"value": "22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU"
+								},
+								{
+									"key": "openid",
+									"value": "onlgJ1iMXxfirUdlsPp4SSX6fvsk"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "script",
+			"item": [
+				{
+					"name": "get scripts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/scripts?offset=0&limit=10&keyword=窗边的女人",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"scripts"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "keyword",
+									"value": "窗边的女人"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get script by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/scripts/5e63bbc6e68a9a148510942a",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"scripts",
+								"5e63bbc6e68a9a148510942a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get scripts feed",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxOTgwODAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTkwODgwfQ.9OvcCCjo_S2i_PviKRJA0RagU6wL5XBFuC71cpbcUS0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/scripts/feed?discountKey=all-9-only-sponsor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"scripts",
+								"feed"
+							],
+							"query": [
+								{
+									"key": "discountKey",
+									"value": "all-9-only-sponsor"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add script",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"key\": \"akamuzhenzhixuesehunli-akkd\",\n\t\"name\": \"阿卡姆镇之血色婚礼\", \n\t\"description\": \"<p class=\\\"more-i\\\"><span>阿卡姆镇是美国东部新英格兰地区马萨诸塞州的一个小镇。</span><span>阿卡姆镇上居住着四千多位居民，大家安居乐业，日子过得悠哉游哉。</span><span>不过人们察觉，总有一股神秘的力量盘桓在阿卡姆镇上空。这里的人热衷于神秘崇拜、黑魔法、古怪的收藏品，但也不乏努力探求宇宙奥秘之士。</span><span>就是在这样一个难以名状的地方，发生了一起诡异的凶杀案。</span><span>在这桩吊诡的案件背后，巨大的秘密若隐若现，请做好心理准备，面对狡猾的凶手。</span></p>\", \n\t\"minNumberOfPersons\": 7, \n\t\"maxNumberOfPersons\": 9, \n\t\"introImage\": \"akamuzhenzhixuesehunli-akkd.jpg\",\n\t\"duration\": 210,\n\t\"tags\": [\"美国\",\"近代\",\"变格\",\"换装\",\"实景\"]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/scripts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"scripts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "script add to watch list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/scripts/5da1f1bfdcf0010e2a363758/watch",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"scripts",
+								"5da1f1bfdcf0010e2a363758",
+								"watch"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove from watch list",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/scripts/5da1f1bfdcf0010e2a363758/watch",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"scripts",
+								"5da1f1bfdcf0010e2a363758",
+								"watch"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "shop",
+			"item": [
+				{
+					"name": "get shops",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/shops?offset=0&limit=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"shops"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add shop",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"test2\",\n\t\"key\": \"key2\",\n\t\"address\": \"test\",\n\t\"mobile\": \"test\",\n\t\"phone\": \"\",\n\t\"contactName\": \"test\",\n\t\"contactMobile\": \"test\",\n\t\"province\": \"\",\n\t\"city\": \"\",\n\t\"district\": \"虹口区\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/shops",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"shops"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add shop script",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkyNTUxNjAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MjQ3OTYwfQ.sdC2tfiar4epA7STT1bO8HynNiEl0dlNKHs5n_UIwJw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/shops/5d8704781730fa0f5ee852d4/script/5d838a115c310d1434993013",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"shops",
+								"5d8704781730fa0f5ee852d4",
+								"script",
+								"5d838a115c310d1434993013"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "event",
+			"item": [
+				{
+					"name": "get events",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events?offset=0&limit=3&keyword=银111&filter=%7B%22status%22%3A%5B%22ready%22%2C%22cancelled%22%5D%7D",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "3"
+								},
+								{
+									"key": "keyword",
+									"value": "银111"
+								},
+								{
+									"key": "filter",
+									"value": "%7B%22status%22%3A%5B%22ready%22%2C%22cancelled%22%5D%7D"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get event price schema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/events/5dc4e2edecf4b3205fbe6662/5dc52234ecf4b3205fbe6669/discount-rules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5dc4e2edecf4b3205fbe6662",
+								"5dc52234ecf4b3205fbe6669",
+								"discount-rules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n   \"shopId\":\"5dc52234ecf4b3205fbe6669\",\n   \"scriptId\":\"5dc4e2edecf4b3205fbe6662\",\n   \"startTime\":\"2020-01-17 09:30\",\n   \"hostUserId\":\"5da594c4a745082f2c5980e1\",\n   \"numberOfOfflinePersons\":\"8\",\n   \"price\":\"150\",\n   \"hostUserMobile\":\"13651976276\",\n   \"hostUserWechatId\":\"13651976276\",\n   \"hostComment\":null,\n   \"isHostJoin\":true\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"startTime\": \"2020-01-24 10:30\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5e231bafa2125f82b1c9f8c1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5e231bafa2125f82b1c9f8c1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get event details",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5ddccbe4a7c2ed698a5721cd",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5ddccbe4a7c2ed698a5721cd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get event details simplified",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzExNTQyNjMsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTcxMTQ3MDYzfQ.s4CzWH3AT4-HK7N9nRLysfej02X0lva3RZCM_FUstqo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5da30d1f82ad2099739ebb36/simplified",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5da30d1f82ad2099739ebb36",
+								"simplified"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get events by date",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk0NTI3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NDQ1NTc2fQ.DXkFfy1UEUrjjCfFeVesj4wLGdWzD7sPiygILTKlcJo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/calendar/2019-03-01?offset=0&limit=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"calendar",
+								"2019-03-01"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get events count by date",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk0NTI3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NDQ1NTc2fQ.DXkFfy1UEUrjjCfFeVesj4wLGdWzD7sPiygILTKlcJo",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/calendar/2019-11/count",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"calendar",
+								"2019-11",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get event by script and shop",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxOTgwODAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTkwODgwfQ.9OvcCCjo_S2i_PviKRJA0RagU6wL5XBFuC71cpbcUS0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5d94427c18a5347ba31a8f8f/5d94483749007da24ffc87af",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5d94427c18a5347ba31a8f8f",
+								"5d94483749007da24ffc87af"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get event discount rules",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyMDUzNTAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTk4MTUwfQ.Kw22hNdMUH5K_tUvjUxWJRGnUdjGlKHyaIHbH9No7GA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5da1f1bfdcf0010e2a3637a6/5da098ac6b4d09057c8743fc/discount-rules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5da1f1bfdcf0010e2a3637a6",
+								"5da098ac6b4d09057c8743fc",
+								"discount-rules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get event available discount rules",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDljYTEyMWYxYTI0NTMyMTMyOTNhOGYiLCJleHAiOjE1NzEwNzE2NDIsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvVlNndzVYU05SeEZRVm9lbFlXYmNKR2pRREJ3XCJ9IiwiaWF0IjoxNTcxMDY0NDQyfQ.cfLRAblfWD3kYcX3IfLX1DEvjENLKN1OZ7R0ikrfiOk",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5da1f1bfdcf0010e2a3637ae/5da098ac6b4d09057c8743ec/available-discount-rules?startTime=2019-10-14%2023%3A06",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5da1f1bfdcf0010e2a3637ae",
+								"5da098ac6b4d09057c8743ec",
+								"available-discount-rules"
+							],
+							"query": [
+								{
+									"key": "startTime",
+									"value": "2019-10-14%2023%3A06"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get event qr code",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDljYTEyMWYxYTI0NTMyMTMyOTNhOGYiLCJleHAiOjE1NzA5ODA4NjYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvVlNndzVYU05SeEZRVm9lbFlXYmNKR2pRREJ3XCJ9IiwiaWF0IjoxNTcwOTczNjY2fQ.HcvGcJQPEfgEnaq2NBwZTqWpPp8SqyGE0bFWeve1qnk",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5dbbbae5d7443114009f526d/qrcode",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5dbbbae5d7443114009f526d",
+								"qrcode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "complete event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODE2NjE2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc5MDY5NjQ3fQ.hRW2iawqWk-yLc3jmxeFh0WLL_eww3JqHL8uKMY3_gY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"completed\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5e1b43d1e84d6533942a9cda/complete",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5e1b43d1e84d6533942a9cda",
+								"complete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"completed\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5dd79fb197cbd43689f10d40/cancel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5dd79fb197cbd43689f10d40",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get event orders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzkwMTQyMjQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc2NDIyMjI0fQ.dHy7lBTsn9O_g94bNgmAxicFOit5IzeixNpgluHkYFs",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5ddbb1d70f0f66664b06d462/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5ddbb1d70f0f66664b06d462",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "join event - offline",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userName\": \"test\",\n\t\"source\": \"offline\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5dce50e44c06aa70151e368b/join",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5dce50e44c06aa70151e368b",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "join event - online",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userId\": \"5da581bc9977b25d64504198\",\n\t\"source\": \"online\",\n\t\"mobile\": \"13651976276\",\n\t\"wechatId\": \"hello\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5deb9d3ae5cfc09b399468d8/join",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5deb9d3ae5cfc09b399468d8",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel join event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userId\": \"5da581bc9977b25d64504198\",\n\t\"status\": \"cancelled\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5de605aec7d5cd654f798c9f/users/cancel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5de605aec7d5cd654f798c9f",
+								"users",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update join event status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userId\": \"5da581bc9977b25d64504198\",\n\t\"status\": \"unpaid\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5dce50e44c06aa70151e368b/users/update-status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5dce50e44c06aa70151e368b",
+								"users",
+								"update-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user event, like",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzkwMTQyMjQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc2NDIyMjI0fQ.dHy7lBTsn9O_g94bNgmAxicFOit5IzeixNpgluHkYFs",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userId\": \"5da581bc9977b25d64504198\",\n\t\"numberOfLikes\": 0\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/5deb9d3ae5cfc09b399468d8/users/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"5deb9d3ae5cfc09b399468d8",
+								"users",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get discount rules",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxOTgwODAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTkwODgwfQ.9OvcCCjo_S2i_PviKRJA0RagU6wL5XBFuC71cpbcUS0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/discount-rules?shopId=5d838bb87bec9d16e274a763&scriptId=5d834bd57e5f59ede8c80762",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"discount-rules"
+							],
+							"query": [
+								{
+									"key": "shopId",
+									"value": "5d838bb87bec9d16e274a763"
+								},
+								{
+									"key": "scriptId",
+									"value": "5d834bd57e5f59ede8c80762"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add discount rule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxMjU4NDQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTE4NjQ0fQ.-r-FGWVxpqOMLHGWYuy0t4-TwtXYxX-RWSMWqCtwBrw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"all-8\",\n  \"timeDescription\": \"工作日晚场，开团“免费”，参团九折\",\n  \"description\": \"工作日晚场，发起者返 0.1*人数*原价，参与者返 0.1*原价\",\n  \"timeSpan\": [\n    {\n      \"from\": \"17:00\",\n      \"to\": \"23:59\"\n    }\n  ],\n  \"days\": [\n    1,\n    2,\n    3,\n    4,\n    5,\n    6,\n    7\n  ],\n  \"discount\": {\n    \"sponsor\": 10,\n    \"participator\": 10\n  }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/discount-rules",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"discount-rules"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "reward",
+			"item": [
+				{
+					"name": "get reward redemption",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/rewards/redemptions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"rewards",
+								"redemptions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "apply reward redemption",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/rewards/redemptions/5e242d160f57f5553ab1665c/apply",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"rewards",
+								"redemptions",
+								"5e242d160f57f5553ab1665c",
+								"apply"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create reward redemption",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODIwMjEwMjcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc5NDI5MDI3fQ.e8HNDyoHLYHaMmD8UM-dppso4u6tzam2m6Ks8QrkDxo",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"externalCustomerId\": \"5e211976bb05ac049ca1c20a\", \n\t\"type\": \"partner_service\", \n\t\"name\":\"积分兑换3\", \n\t\"description\":\"积分兑换3\", \n\t\"points\": 10, \n\t\"quantity\":20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/rewards/redemptions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"rewards",
+								"redemptions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create reward redemption - prod",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODIwMTIwMzcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc5NDIwMDM3fQ.XxRvLaXKvjEgGPIdzJqPPvai2twVcEt45R_FofuxPt8",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"externalCustomerId\": \"5e26ac93b36b456631b2dcf4\", \n\t\"type\": \"partner_service\", \n\t\"name\":\"汉潮文化\", \n\t\"description\":\"上海汉潮文化工作室以“传统in时尚”的思想为基石，将中国传统礼仪文化和现代潮流元素加以结合。形成了独具特色的汉服摄影、微电影、纪录片等拍摄。汉服租赁项目的开设也是为广大传统文化爱好者提供了便捷。\", \n\t\"points\": 150, \n\t\"quantity\":500,\n\t\"scope\": \"汉潮汉服租赁实体店\", \n\t\"validPeriod\": \"2020年01月01日 至 2020年12月31日\", \n\t\"reminder\": \"/\", \n\t\"instruction1\":\"点击个人中心的积分数-点击兑换记录，查看对应兑换码\", \n\t\"instruction2\": \"凭兑换码联系手机15921632513，进行预约购买。\", \n\t\"note\": \"商品兑换流程请仔细参照商品详情页里的『兑换流程』及使用时间，除商品本身不能正常兑换外，商品一经兑换，一律不退还积分。\", \n\t\"imageUrl\": \"hc-logo.jpg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/rewards/redemptions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"rewards",
+								"redemptions"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "game",
+			"item": [
+				{
+					"name": "add game",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODYyNjI5NTYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTgzNjcwOTU2fQ.C54SNTRKEwID2O4fx0tCs-yms_gaMvQpIyFfuQ1dmWg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"scriptId\": \"5e63bbc6e68a9a148510942a\",\n\t\"shopId\": \"5e63b990e68a9a1485109429\",\n\t\"startTime\":\"2020-02-17 09:30\",\n   \"hostUserId\":\"5da594c4a745082f2c5980e1\",\n   \"price\":\"150\",\n   \"code\": \"123456\",\n   \"hostUserMobile\":\"13651976276\",\n   \"hostUserWechatId\":\"13651976276\",\n   \"hostComment\":null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/games",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"games"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "join game",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODYyNjI5NTYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTgzNjcwOTU2fQ.C54SNTRKEwID2O4fx0tCs-yms_gaMvQpIyFfuQ1dmWg",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"playerId\": \"0\",\n\t\"code\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/games/5e6900475e08ecb3331b0ba5/join",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"games",
+								"5e6900475e08ecb3331b0ba5",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "leave game",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODYyNjI5NTYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTgzNjcwOTU2fQ.C54SNTRKEwID2O4fx0tCs-yms_gaMvQpIyFfuQ1dmWg"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"playerId\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/games/5e6900475e08ecb3331b0ba5/leave",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"games",
+								"5e6900475e08ecb3331b0ba5",
+								"leave"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get script rundown by playerId",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODYyNjI5NTYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTgzNjcwOTU2fQ.C54SNTRKEwID2O4fx0tCs-yms_gaMvQpIyFfuQ1dmWg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/games/5e6900475e08ecb3331b0ba5/script-rundown/0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"games",
+								"5e6900475e08ecb3331b0ba5",
+								"script-rundown",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get script clues by playerId",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODYyNjI5NTYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTgzNjcwOTU2fQ.C54SNTRKEwID2O4fx0tCs-yms_gaMvQpIyFfuQ1dmWg"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/games/5e6900475e08ecb3331b0ba5/clues/0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"games",
+								"5e6900475e08ecb3331b0ba5",
+								"clues",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update game script clue",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODYyNjI5NTYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTgzNjcwOTU2fQ.C54SNTRKEwID2O4fx0tCs-yms_gaMvQpIyFfuQ1dmWg"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"playerId\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/games/5e6900475e08ecb3331b0ba5/clues/5e5d27f8c63fe2019203af83",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"games",
+								"5e6900475e08ecb3331b0ba5",
+								"clues",
+								"5e5d27f8c63fe2019203af83"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "price",
+			"item": [
+				{
+					"name": "get price schema",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk3MzMwMTEsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NzI1ODExfQ.r6OJxLrjt0VFU00cQ1h53_FMdu4IJE1wQBFOMQVjTk0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/events/price-schema?shopId=5d94483749007da24ffc87af&scriptId=5d943f6818a5347ba31a8f8e",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"events",
+								"price-schema"
+							],
+							"query": [
+								{
+									"key": "shopId",
+									"value": "5d94483749007da24ffc87af"
+								},
+								{
+									"key": "scriptId",
+									"value": "5d943f6818a5347ba31a8f8e"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add price schema",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAwMzk3NzUsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMDMyNTc1fQ.-UlL6AnGFoJDdenMQIzJ6KeZocW8akwjhebuDnHH-Eg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"scriptId\": \"5d9445ee18a5347ba31a8f9a\",\n\t\"shopId\": \"5d94483749007da24ffc87b4\",\n\t\"priceSchema\": [{\n\t\t\"days\": [1,2,3,4,5],\n\t\t\"timeSpan\": [\"09:00\",\"12:30\",\"16:00\",\"19:30\"],\n\t\t\"price\": 268\n\t},{\n\t\t\"days\": [6,7],\n\t\t\"timeSpan\": [\"09:00\"],\n\t\t\"price\": 268\n\t}, {\n\t\t\"days\": [6,7],\n\t\t\"timeSpan\": [\"14:30\",\"19:00\"],\n\t\t\"price\": 268\n\t},{\n\t\t\"days\": [1,2,3,4,5,6,7],\n\t\t\"timeSpan\": [\"23:30\"],\n\t\t\"price\": 308\n\t}]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/prices/price-schema",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"prices",
+								"price-schema"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "order",
+			"item": [
+				{
+					"name": "pay order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"url": {
+							"raw": "http://localhost:3000/orders/5dd8e79272e79e81d6aedd67/pay",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"orders",
+								"5dd8e79272e79e81d6aedd67",
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check order pay status",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"url": {
+							"raw": "http://localhost:3000/orders/5dd36717583acbde31404df8/pay-status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"orders",
+								"5dd36717583acbde31404df8",
+								"pay-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pay order notify callback",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/xml",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Version",
+								"value": "1.0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<xml>\n  <appid><![CDATA[wx2421b1c4370ec43b]]></appid>\n  <attach><![CDATA[支付测试]]></attach>\n  <bank_type><![CDATA[CFT]]></bank_type>\n  <fee_type><![CDATA[CNY]]></fee_type>\n  <is_subscribe><![CDATA[Y]]></is_subscribe>\n  <mch_id><![CDATA[10000100]]></mch_id>\n  <nonce_str><![CDATA[5d2b6c2a8db53831f7eda20af46e531c]]></nonce_str>\n  <openid><![CDATA[oUpF8uMEb4qRXf22hE3X68TekukE]]></openid>\n  <out_trade_no><![CDATA[qZHNJnk8cuPZprt1Y7cvG4e0zeIJIHYW]]></out_trade_no>\n  <result_code><![CDATA[SUCCESS]]></result_code>\n  <return_code><![CDATA[SUCCESS]]></return_code>\n  <sign><![CDATA[E3D0F5978023A2D08D8142E58AFCE364]]></sign>\n  <time_end><![CDATA[20140903131540]]></time_end>\n  <total_fee>1</total_fee>\n<coupon_fee><![CDATA[10]]></coupon_fee>\n<coupon_count><![CDATA[1]]></coupon_count>\n<coupon_type><![CDATA[CASH]]></coupon_type>\n<coupon_id><![CDATA[10000]]></coupon_id>\n<coupon_fee><![CDATA[100]]></coupon_fee>\n  <trade_type><![CDATA[JSAPI]]></trade_type>\n  <transaction_id><![CDATA[1004400740201409030005092168]]></transaction_id>\n</xml>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/orders/wechat/pay_callback",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"orders",
+								"wechat",
+								"pay_callback"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pay order - prod",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1NzY3NjUyMTUsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc0MTczMjE1fQ.GfM1OTRJgV9GClv8jMMKCwA_cV_xYoxPWvNahh1uDiA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"url": {
+							"raw": "https://api.boogoogoo.com/orders/5dd963825643454d3d3f26a9/pay",
+							"protocol": "https",
+							"host": [
+								"api",
+								"boogoogoo",
+								"com"
+							],
+							"path": [
+								"orders",
+								"5dd963825643454d3d3f26a9",
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refund orders",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"url": {
+							"raw": "http://localhost:3000/orders/refund",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"orders",
+								"refund"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refund notify callback",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/xml",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Version",
+								"value": "1.0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<xml>\n<return_code>SUCCESS</return_code>\n   <appid><![CDATA[wxf59749a45686779c]]></appid>\n   <mch_id><![CDATA[1560901281]]></mch_id>\n   <nonce_str><![CDATA[8010b252d85da496c326787c8aa9920c]]></nonce_str>\n   <req_info><![CDATA[LR3HUI1qW+C5FaIAP/Q44K3R7aIhafRcLRcRfuxZZ9nkM+RKM6k0QeTaJgoH6yZghnQGsHDQUAY9h5GyhZ0/XbZKABO2VhbfI2gMsCuPBffo7NmlNTvcMpqTX1fkAncYVQjk9vlQXZtdA5CBXOtpcw2Em6X36Rp20I16YlbMmVWEzip/JLAYohZMVo0K4Jt6LMofFPfTMn7tdS/VzQ/ezT7YmVAMmm82p3HMTA81gN8tMIW7L/ZmHF67iN6viMTsF+le5V0WG9OVOpRYuj2iHvGy183JK4W8DPkcmVtwTu/j8h7zTWA8H76P1A7Hb/rd31auYE6LkNDz+TgWNAOgNMNsnXaz2YNfJOwag7WYN6pSCTDOA6hk+xnY4X19BcaELA7X3RXJLS4GQiLcVbXSylTMHzZnoHO1M9Sn0jOpQtpV3yjYms/vUXzDRsNafVnfItmaM05mg0FfoW1fGOmhfRL7RjFBIFyLeq8QwptFDAFTTQutwMFHGiXGeN5VJq01Rlfb9UbGpEobwOGALWVSBgN9SVYOpORUuznbscZPhSP5lRjnG64qhLsoapywCBDMAtbi/5V35iinjz5I/2uDpYIkhXoJzJnnrGtAxDVCOZcTjbRvWGFCt+459m4H0kiE1Da1quAlIsBp12WPQtZhAlAmo/FOd5kbKrodn0OWIPieQAlwZs7ZlZ1W0NXEaPedn4MoEoWwyzEmoI4Yu8gXXt9MocvoLSaGRQa9vsIpYKkjJWoR9wqcNLTmM+peNVgDD3aUTxOAxPixejcFuxSjWRZXDtxkHDvcYsJpAK471xYZsUSF2evPhb6Rgc5qn8BPnGIxZOoVotGmJQiFsNPFBRaS91OtaJLymmgOsp+9SBuaa/ChwvHLS1k5WatWsiffbk3IponOtbvgPu+cPLWA5MKiNWl7eMJfdF5CSXOfLVIjMW4ZExaLfEi1BOMqsjNUp1ad2M9XnGeULb+l9RNjErQw4zbVLh8HkeNCEWxzzCMAIgUdv89cxhtpgh9Jbu1mrUmB3S3wjJ8pKRBvwXW+6unEDSaEWRS7Z9DmEsJYhANeW79iPBzYqYgSsCMyogO6S/ISH5r8HvMrljK9n+Q3Qw==]]></req_info>\n</xml>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/orders/wechat/refund_callback",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"orders",
+								"wechat",
+								"refund_callback"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refund orders  - prod",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1NzY3NjUyMTUsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc0MTczMjE1fQ.GfM1OTRJgV9GClv8jMMKCwA_cV_xYoxPWvNahh1uDiA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"url": {
+							"raw": "https://api.boogoogoo.com/orders/refund",
+							"protocol": "https",
+							"host": [
+								"api",
+								"boogoogoo",
+								"com"
+							],
+							"path": [
+								"orders",
+								"refund"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get orders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"url": {
+							"raw": "http://localhost:3000/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update refund",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"approved\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/orders/5dd9346dfccc36f0a02063a2/refund/5dd93533fccc36f0a02063a6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"orders",
+								"5dd9346dfccc36f0a02063a2",
+								"refund",
+								"5dd93533fccc36f0a02063a6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refund notify callback - prod",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept",
+								"value": "text/xml",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Version",
+								"value": "1.0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<xml>\n<return_code>SUCCESS</return_code>\n   <appid><![CDATA[wxf59749a45686779c]]></appid>\n   <mch_id><![CDATA[1560901281]]></mch_id>\n   <nonce_str><![CDATA[8010b252d85da496c326787c8aa9920c]]></nonce_str>\n   <req_info><![CDATA[LR3HUI1qW+C5FaIAP/Q44K3R7aIhafRcLRcRfuxZZ9nkM+RKM6k0QeTaJgoH6yZghnQGsHDQUAY9h5GyhZ0/XbZKABO2VhbfI2gMsCuPBffo7NmlNTvcMpqTX1fkAncYVQjk9vlQXZtdA5CBXOtpcw2Em6X36Rp20I16YlbMmVWEzip/JLAYohZMVo0K4Jt6LMofFPfTMn7tdS/VzQ/ezT7YmVAMmm82p3HMTA81gN8tMIW7L/ZmHF67iN6viMTsF+le5V0WG9OVOpRYuj2iHvGy183JK4W8DPkcmVtwTu/j8h7zTWA8H76P1A7Hb/rd31auYE6LkNDz+TgWNAOgNMNsnXaz2YNfJOwag7WYN6pSCTDOA6hk+xnY4X19BcaELA7X3RXJLS4GQiLcVbXSylTMHzZnoHO1M9Sn0jOpQtpV3yjYms/vUXzDRsNafVnfItmaM05mg0FfoW1fGOmhfRL7RjFBIFyLeq8QwptFDAFTTQutwMFHGiXGeN5VJq01Rlfb9UbGpEobwOGALWVSBgN9SVYOpORUuznbscZPhSP5lRjnG64qhLsoapywCBDMAtbi/5V35iinjz5I/2uDpYIkhXoJzJnnrGtAxDVCOZcTjbRvWGFCt+459m4H0kiE1Da1quAlIsBp12WPQtZhAlAmo/FOd5kbKrodn0OWIPieQAlwZs7ZlZ1W0NXEaPedn4MoEoWwyzEmoI4Yu8gXXt9MocvoLSaGRQa9vsIpYKkjJWoR9wqcNLTmM+peNVgDD3aUTxOAxPixejcFuxSjWRZXDtxkHDvcYsJpAK471xYZsUSF2evPhb6Rgc5qn8BPnGIxZOoVotGmJQiFsNPFBRaS91OtaJLymmgOsp+9SBuaa/ChwvHLS1k5WatWsiffbk3IponOtbvgPu+cPLWA5MKiNWl7eMJfdF5CSXOfLVIjMW4ZExaLfEi1BOMqsjNUp1ad2M9XnGeULb+l9RNjErQw4zbVLh8HkeNCEWxzzCMAIgUdv89cxhtpgh9Jbu1mrUmB3S3wjJ8pKRBvwXW+6unEDSaEWRS7Z9DmEsJYhANeW79iPBzYqYgSsCMyogO6S/ISH5r8HvMrljK9n+Q3Qw==]]></req_info>\n</xml>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.boogoogoo.com/orders/wechat/refund_callback",
+							"protocol": "https",
+							"host": [
+								"api",
+								"boogoogoo",
+								"com"
+							],
+							"path": [
+								"orders",
+								"wechat",
+								"refund_callback"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get wx profile data - prod",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"encryptedData\": \"stwIj56m5BYjsQ6VMronEBVY3BKeZIPy7sGwbL9JyfY7+TjV1+P5LxioBRfZWM41U7HheGYLy9oYC30CRT6wQu0ddZ5CYWyu4tsgJ9qvQ0DJBo0VrBoHck7GNVpAo6z4uw4O8d39fmMu9pYiaW/p7g15rP3ubB+ijFPNx7VMR2AroQHXYVNQFBHwvc4g+aCpkzobKpN0AmR73Mdp+l75TQ==\",\n\"iv\": \"5Nj/q3D5WLF0SbTYjRtSrQ==\",\n\"sessionKey\": \"Migz+WN9D+v173yptcg0Vg==\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/profile/wechat-data",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"profile",
+								"wechat-data"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "report",
+			"item": [
+				{
+					"name": "get orders - report",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzkwMTQyMjQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc2NDIyMjI0fQ.dHy7lBTsn9O_g94bNgmAxicFOit5IzeixNpgluHkYFs",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"url": {
+							"raw": "http://localhost:3000/reports/orders?limit=2shopName=梧桐树&fromDate=2019-12-19&toDate=2019-12-20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"reports",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2shopName=梧桐树"
+								},
+								{
+									"key": "fromDate",
+									"value": "2019-12-19"
+								},
+								{
+									"key": "toDate",
+									"value": "2019-12-20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get events - report",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGFkMWVjMTQ2MzA0ODAzMjJiMWRkOTQiLCJleHAiOjE1ODEzNTQ1OTUsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVCSFZUZkMzN1lFdndnZ0k3NjdRaEY4XCJ9IiwiaWF0IjoxNTc4NzYyNTk1fQ.qhISj8-tCVJNhBJFnMHcUeWStHmQ-XZf-qrNptlqYDI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ }"
+						},
+						"url": {
+							"raw": "http://localhost:3000/reports/events?limit=4&offset=0&shopName=梧桐&fromDate=2020-01-04&toDate=2020-01-15",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"reports",
+								"events"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "4"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "shopName",
+									"value": "梧桐"
+								},
+								{
+									"key": "fromDate",
+									"value": "2020-01-04"
+								},
+								{
+									"key": "toDate",
+									"value": "2020-01-15"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "sendSingleSms",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -17,12 +3240,8 @@
 						"type": "text"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
-					"raw": "http://47.104.243.247:8513/sms/Api/Send.do",
+					"raw": "http://47.104.243.247:8513/sms/Api/Send.do?SpCode=1470&LoginName=dyfhpy&Password=123456&MessageContent=%E3%80%90%E4%B8%8D%E5%92%95%E5%92%95%E3%80%91%E8%B5%B5%E5%B0%8F%E8%B1%86%EF%BC%8C%E4%BD%A0%E5%8F%91%E8%B5%B7%E7%9A%84%E7%BB%88%E7%BB%93%E8%80%85%E6%9C%BA%E5%85%B3%E4%BE%A6%E6%8E%A2%E6%8E%A8%E7%90%86%E5%89%A7%E6%9C%AC%E6%9D%80%E6%BC%94%E7%BB%8E%E9%A6%86%EF%BC%88%E9%9D%99%E5%AE%89%E5%BA%97%EF%BC%89%E3%80%8A%E7%81%B5%E7%A9%B4%E3%80%8B2019-10-16%2018%3A50%E5%B7%B2%E5%8F%91%E5%B8%83%E3%80%82%E2%91%A0TA%E5%AE%B6lovehy849403168%E4%BC%9A%E8%81%94%E7%B3%BB%E4%BD%A0%E5%92%8C%E5%85%B6%E4%BB%96%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%9B%E2%91%A1%E4%BD%A0%E9%9C%80%E8%A6%81%E5%90%8C%E6%AD%A5%E7%8A%B6%E6%80%81%E5%88%B0%E4%B8%8D%E5%92%95%E5%92%95%EF%BC%9B%E2%91%A2%E6%88%90%E5%9B%A2%E5%90%8E%E4%BC%9A%E6%8C%89%E8%A7%84%E5%88%99%E5%A4%84%E7%90%86%E3%80%82%E8%A6%81%E5%8A%A0%E6%B2%B9%E5%88%86%E4%BA%AB%E5%93%A6%EF%BC%81&UserNumber=13651976276&SerialNumber=09423995102390158857",
 					"protocol": "http",
 					"host": [
 						"47",
@@ -35,46 +3254,41 @@
 						"sms",
 						"Api",
 						"Send.do"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get access token",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx1283957182b4e6c1&secret=4eb795feb7cb40a9acb9aea5f6ef4268&code=071n4OVc0D6esB1d4dXc03gvVc0n4OVS&grant_type=authorization_code",
-					"protocol": "https",
-					"host": [
-						"api",
-						"weixin",
-						"qq",
-						"com"
-					],
-					"path": [
-						"sns",
-						"oauth2",
-						"access_token"
 					],
 					"query": [
 						{
-							"key": "appid",
-							"value": "wx1283957182b4e6c1"
+							"key": "SpCode",
+							"value": "1470"
 						},
 						{
-							"key": "secret",
-							"value": "4eb795feb7cb40a9acb9aea5f6ef4268"
+							"key": "LoginName",
+							"value": "dyfhpy"
 						},
 						{
-							"key": "code",
-							"value": "071n4OVc0D6esB1d4dXc03gvVc0n4OVS"
+							"key": "Password",
+							"value": "123456"
 						},
 						{
-							"key": "grant_type",
-							"value": "authorization_code"
+							"key": "ScheduleTime",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "161961",
+							"disabled": true
+						},
+						{
+							"key": "MessageContent",
+							"value": "%E3%80%90%E4%B8%8D%E5%92%95%E5%92%95%E3%80%91%E8%B5%B5%E5%B0%8F%E8%B1%86%EF%BC%8C%E4%BD%A0%E5%8F%91%E8%B5%B7%E7%9A%84%E7%BB%88%E7%BB%93%E8%80%85%E6%9C%BA%E5%85%B3%E4%BE%A6%E6%8E%A2%E6%8E%A8%E7%90%86%E5%89%A7%E6%9C%AC%E6%9D%80%E6%BC%94%E7%BB%8E%E9%A6%86%EF%BC%88%E9%9D%99%E5%AE%89%E5%BA%97%EF%BC%89%E3%80%8A%E7%81%B5%E7%A9%B4%E3%80%8B2019-10-16%2018%3A50%E5%B7%B2%E5%8F%91%E5%B8%83%E3%80%82%E2%91%A0TA%E5%AE%B6lovehy849403168%E4%BC%9A%E8%81%94%E7%B3%BB%E4%BD%A0%E5%92%8C%E5%85%B6%E4%BB%96%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%9B%E2%91%A1%E4%BD%A0%E9%9C%80%E8%A6%81%E5%90%8C%E6%AD%A5%E7%8A%B6%E6%80%81%E5%88%B0%E4%B8%8D%E5%92%95%E5%92%95%EF%BC%9B%E2%91%A2%E6%88%90%E5%9B%A2%E5%90%8E%E4%BC%9A%E6%8C%89%E8%A7%84%E5%88%99%E5%A4%84%E7%90%86%E3%80%82%E8%A6%81%E5%8A%A0%E6%B2%B9%E5%88%86%E4%BA%AB%E5%93%A6%EF%BC%81"
+						},
+						{
+							"key": "UserNumber",
+							"value": "13651976276"
+						},
+						{
+							"key": "SerialNumber",
+							"value": "09423995102390158857"
 						}
 					]
 				}
@@ -82,9 +3296,9 @@
 			"response": []
 		},
 		{
-			"name": "auth/login",
+			"name": "sendSms",
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -93,59 +3307,45 @@
 						"type": "text"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"code\": \"002AD2TM1z3Wo61uckRM1o1LSM1AD2Te\",\n\t\"nickName\": \"test1\",\n\t\"type\": \"wxapp\"\n}"
-				},
 				"url": {
-					"raw": "http://localhost:3000/oauth/login",
+					"raw": "http://47.104.243.247:8513/sms/Api/Send.do?SpCode=1470&LoginName=dyfhpy&Password=123456&SerialNumber=18953105042461598082&MessageContent=%E3%80%90%E4%B8%8D%E5%92%95%E5%92%95%E3%80%91%E6%9C%88%E7%90%83%E5%89%A7%E6%9C%AC%E6%9D%80%E5%AF%86%E5%AE%A4%E6%8E%A8%E7%90%86%E5%89%A7%E6%BC%94%E7%BB%8E%E9%A6%86%EF%BC%88%E7%81%AB%E8%BD%A6%E7%AB%99%E5%BA%97%EF%BC%89%EF%BC%8C%E6%9C%89%E4%BA%BA%E5%8F%91%E8%B5%B7%E3%80%8A%E6%B0%B8%E7%94%9F%E3%80%8B2019-12-30%2022%3A00%E6%8B%BC%E5%9B%A2%EF%BC%8C%E8%AF%B7%E4%B8%8ETA%E5%B0%BD%E6%97%A9%E7%A1%AE%E8%AE%A4%E6%97%B6%E9%97%B4%EF%BC%8C%E6%9F%A5%E7%9C%8Bhttps%3A%2F%2Fdetail.boogoogoo.com%3F5ddbe2f50f0f66664b06d6f4&UserNumber=13651976276",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"47",
+						"104",
+						"243",
+						"247"
 					],
-					"port": "3000",
+					"port": "8513",
 					"path": [
-						"oauth",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "code2session",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://api.weixin.qq.com/sns/jscode2session?appid=wx67080218c81daab6&secret=f714576304cbae30e6976ecc82beb84a&js_code=JSCODE&grant_type=authorization_code\n",
-					"protocol": "https",
-					"host": [
-						"api",
-						"weixin",
-						"qq",
-						"com"
-					],
-					"path": [
-						"sns",
-						"jscode2session"
+						"sms",
+						"Api",
+						"Send.do"
 					],
 					"query": [
 						{
-							"key": "appid",
-							"value": "wx67080218c81daab6"
+							"key": "SpCode",
+							"value": "1470"
 						},
 						{
-							"key": "secret",
-							"value": "f714576304cbae30e6976ecc82beb84a"
+							"key": "LoginName",
+							"value": "dyfhpy"
 						},
 						{
-							"key": "js_code",
-							"value": "JSCODE"
+							"key": "Password",
+							"value": "123456"
 						},
 						{
-							"key": "grant_type",
-							"value": "authorization_code\n"
+							"key": "SerialNumber",
+							"value": "18953105042461598082"
+						},
+						{
+							"key": "MessageContent",
+							"value": "%E3%80%90%E4%B8%8D%E5%92%95%E5%92%95%E3%80%91%E6%9C%88%E7%90%83%E5%89%A7%E6%9C%AC%E6%9D%80%E5%AF%86%E5%AE%A4%E6%8E%A8%E7%90%86%E5%89%A7%E6%BC%94%E7%BB%8E%E9%A6%86%EF%BC%88%E7%81%AB%E8%BD%A6%E7%AB%99%E5%BA%97%EF%BC%89%EF%BC%8C%E6%9C%89%E4%BA%BA%E5%8F%91%E8%B5%B7%E3%80%8A%E6%B0%B8%E7%94%9F%E3%80%8B2019-12-30%2022%3A00%E6%8B%BC%E5%9B%A2%EF%BC%8C%E8%AF%B7%E4%B8%8ETA%E5%B0%BD%E6%97%A9%E7%A1%AE%E8%AE%A4%E6%97%B6%E9%97%B4%EF%BC%8C%E6%9F%A5%E7%9C%8Bhttps%3A%2F%2Fdetail.boogoogoo.com%3F5ddbe2f50f0f66664b06d6f4"
+						},
+						{
+							"key": "UserNumber",
+							"value": "13651976276"
 						}
 					]
 				}
@@ -153,31 +3353,64 @@
 			"response": []
 		},
 		{
-			"name": "get user info",
+			"name": "sms receipt",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "https://api.weixin.qq.com/sns/userinfo?access_token=22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU&openid=onlgJ1iMXxfirUdlsPp4SSX6fvsk",
-					"protocol": "https",
+					"raw": "http://47.104.243.247:8513/sms/Api/report.do?SpCode=1470&LoginName=dyfhpy&Password=123456",
+					"protocol": "http",
 					"host": [
-						"api",
-						"weixin",
-						"qq",
-						"com"
+						"47",
+						"104",
+						"243",
+						"247"
 					],
+					"port": "8513",
 					"path": [
-						"sns",
-						"userinfo"
+						"sms",
+						"Api",
+						"report.do"
 					],
 					"query": [
 						{
-							"key": "access_token",
-							"value": "22_DuCdK2MFJGzNOqQXWRhlj6IDyEpR8P9Rr3DiJcviqTNrgFjpaqNLmi7WwUpfAdzobgiXnGQYu-YMNXMu-HW2a19Dq3AT5RnU6o6xF68rYHU"
+							"key": "SpCode",
+							"value": "1470"
 						},
 						{
-							"key": "openid",
-							"value": "onlgJ1iMXxfirUdlsPp4SSX6fvsk"
+							"key": "LoginName",
+							"value": "dyfhpy"
+						},
+						{
+							"key": "Password",
+							"value": "123456"
+						},
+						{
+							"key": "Content",
+							"value": "%25E3%2580%2590%25E4%25B8%258D%25E5%2592%2595%25E5%2592%2595%25E3%2580%2591%25E6%258B%25BC%25E5%259B%25A2%25E6%2588%2590%25E5%258A%259F%25EF%25BC%2581%255B13651976276%255D%25E6%2582%25A8%25E5%25A5%25BD%25EF%25BC%258C%255B%25E5%258D%2581%25E4%25B8%2589%25E5%2585%2588%25E7%2594%259F%25E5%2589%25A7%25E6%2583%2585%25E6%258E%25A8%25E7%2590%2586%25E5%25AE%259E%25E6%2599%25AF%25E6%25BC%2594%25E7%25BB%258E%255D%25E7%259A%2584%255B2019-10-07%252014%253A00%255D%25E3%2580%258A%25E6%2596%25B0%25E5%258F%25B0%25E5%258D%2597%25E4%25B8%2583%25E5%258F%25B7%25E5%2585%25AC%25E5%25AF%2593%25E3%2580%258B%25E6%258B%25BC%25E5%259B%25A2%25E6%2588%2590%25E5%258A%259F%25EF%25BC%2581%25E6%25A0%25B9%25E6%258D%25AE%25E5%258F%2591%25E8%25B5%25B7%25E4%25BA%25BA%255B13651976276%255D%25EF%25BC%2588%25E5%25BE%25AE%25E4%25BF%25A1%25E6%2590%259C%25E7%25B4%25A2%25E5%258F%25B7%25EF%25BC%259A%255B13651976276%255D%25EF%25BC%2589%25E7%259A%2584%25E8%25AE%25B0%25E5%25BD%2595%25E4%25BB%25A5%25E5%258F%258A%25E4%25B8%258D%25E5%2592%2595%25E5%2592%2595%25E8%25BF%2594%25E7%258E%25B0%25E8%25A7%2584%25E5%2588%2599%25EF%25BC%258C%25E5%2595%2586%25E5%25AE%25B6%25E5%25B0%2586%25E8%25BF%2594%25E5%259B%259E%25E7%25BB%2599%25E6%2582%25A8%252020%2520%25E5%2585%2583%25EF%25BC%258C%25E8%258B%25A5%25E5%2587%25BA%25E7%258E%25B0%25E4%25BB%25BB%25E4%25BD%2595%25E9%2597%25AE%25E9%25A2%2598%25EF%25BC%258C%25E8%25AF%25B7%25E4%25B8%258E%25E4%25B8%258D%25E5%2592%2595%25E5%2592%2595%25E5%25AE%2598%25E6%2596%25B9%25E5%25AE%25A2%25E6%259C%258D%25E5%258F%25B7%25E5%25B0%258Fboo%25EF%25BC%2588%25E5%25BE%25AE%25E4%25BF%25A1%25E6%2590%259C%25E7%25B4%25A2%25E5%258F%25B7%25EF%25BC%259Abooboy%25EF%25BC%2589%25E8%2581%2594%25E7%25B3%25BB%25EF%25BC%2581",
+							"disabled": true
+						},
+						{
+							"key": "DesMobile",
+							"value": "13651976276",
+							"disabled": true
+						},
+						{
+							"key": "ValidTime",
+							"value": "20990101235959",
+							"disabled": true
+						},
+						{
+							"key": "SendTime",
+							"value": null,
+							"disabled": true
 						}
 					]
 				}
@@ -185,47 +3418,49 @@
 			"response": []
 		},
 		{
-			"name": "get scripts",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
+			"name": "getRemainingQuota",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
+						"value": "application/json",
 						"type": "text"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
-					"raw": "http://localhost:3000/scripts?offset=0&limit=5",
+					"raw": "http://47.104.243.247:8513/sms/Api/searchNumber.do?SpCode=1470&LoginName=dyfhpy&Password=123456",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"47",
+						"104",
+						"243",
+						"247"
 					],
-					"port": "3000",
+					"port": "8513",
 					"path": [
-						"scripts"
+						"sms",
+						"Api",
+						"searchNumber.do"
 					],
 					"query": [
 						{
-							"key": "offset",
-							"value": "0"
+							"key": "SpCode",
+							"value": "1470"
 						},
 						{
-							"key": "limit",
-							"value": "5"
+							"key": "LoginName",
+							"value": "dyfhpy"
+						},
+						{
+							"key": "Password",
+							"value": "123456"
+						},
+						{
+							"key": "ScheduleTime",
+							"value": null,
+							"disabled": true
 						}
 					]
 				}
@@ -233,7 +3468,7 @@
 			"response": []
 		},
 		{
-			"name": "get script by id",
+			"name": "get token status",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -248,656 +3483,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3000/scripts/5d943f6818a5347ba31a8f8e",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"scripts",
-						"5d943f6818a5347ba31a8f8e"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add script",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NzAwMDMyNTgsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5OTk2MDU4fQ.xjckSYai854x7Si5cf769XffXUC97EgmebKPkrBSb-4",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"key\": \"jinzhiyunie-feiguyu\",\n\t\"name\": \"金枝欲孽\", \n\t\"description\": \"<p class=\\\"more-i\\\"><span>大江东去浪淘尽，千古风流人物。</span><span>故垒西边，人道是，三国周郎赤壁。</span><span>遥想公瑾当年，小乔初嫁了，雄姿英发。</span><span>羽扇纶巾，谈笑间樯橹灰飞烟灭!</span><span>......</span><span>确认过眼神，我遇上对的人。</span><span>我挥剑转身，而鲜血如红唇。</span><span>前朝记忆渡红尘，伤人的不是刀刃，</span><span>是你转世而来的魂!</span><span>......</span><span>赤手空拳心机里攻防，铁臂铜墙也敢碰撞!</span><span>今生不枉这一趟，烈火烧出凤凰!</span><span>......</span><span>可这江东的风，能否助这赤壁的火?</span><span>这一仗，心的战场!</span></p></div>\", \n\t\"minNumberOfPersons\": 9, \n\t\"maxNumberOfPersons\": 10, \n\t\"introImage\": \"jinzhiyunie-feiguyu\",\n\t\"duration\": 180,\n\t\"tags\": [\"中国\",\"古装\",\"清朝\"]\n}"
-				},
-				"url": {
-					"raw": "http://jbs.weijinglong.com:3000/scripts",
-					"protocol": "http",
-					"host": [
-						"jbs",
-						"weijinglong",
-						"com"
-					],
-					"port": "3000",
-					"path": [
-						"scripts"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get shops",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkwNjg2NDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MDYxNDQ3fQ.oyERKOsTQ1a-OsLtiCmpgcERQgQO4Zg1-wQB5CbxOKY",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3000/shops?offset=0&limit=10",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"shops"
-					],
-					"query": [
-						{
-							"key": "offset",
-							"value": "0"
-						},
-						{
-							"key": "limit",
-							"value": "10"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add shop",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1NjkxMzM3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTI2NTc2fQ._0ftKOXAeGh0P_zuWkWkl7O2vZ63VmGmeeTVdMtzvdA",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"name\": \"test2\",\n\t\"key\": \"key2\",\n\t\"address\": \"test\",\n\t\"mobile\": \"test\",\n\t\"phone\": \"\",\n\t\"contactName\": \"test\",\n\t\"contactMobile\": \"test\",\n\t\"province\": \"\",\n\t\"city\": \"\",\n\t\"district\": \"虹口区\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/shops",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"shops"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add shop script",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkyNTUxNjAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MjQ3OTYwfQ.sdC2tfiar4epA7STT1bO8HynNiEl0dlNKHs5n_UIwJw",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/shops/5d8704781730fa0f5ee852d4/script/5d838a115c310d1434993013",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"shops",
-						"5d8704781730fa0f5ee852d4",
-						"script",
-						"5d838a115c310d1434993013"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get events",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkzMzQ3MTMsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MzI3NTEzfQ.E5nKSaN--fJTbJV5qm0V4VNWxr47DCCP5b3i2p827WQ",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3000/events?offset=0&limit=10",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events"
-					],
-					"query": [
-						{
-							"key": "offset",
-							"value": "0"
-						},
-						{
-							"key": "limit",
-							"value": "10"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add event",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyOTQzMzksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjg3MTM5fQ.Bd2iVIW7d7xwZYxdRZTJE61c8ZlHBJF1SQGZLh-Oxi4",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"shopId\": \"5d94483749007da24ffc87af\",\n\t  \"scriptId\": \"5d943f6818a5347ba31a8f8e\",\n\t  \"startTime\": \"2019-10-04 12:00:00\",\n\t  \"endTime\": \"2019-10-04 12:00:00\",\n\t  \"hostUserId\": \"5d89da1d89f4bf67f957828b\",\n\t  \"hostUserMobile\": \"test\",\n\t  \"hostUserWechatId\": \"test\",\n\t  \"numberOfOfflinePersons\": 0,\n\t  \"price\": 100,\n\t  \"hostComment\": \"test\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/events",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "update event",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1Njk5NDM2MDcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5OTM2NDA3fQ.IyPp_KQgeZbJIwAJmQTnudOj_iDsm_BisWADi_yEWXI",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"numberOfOfflinePersons\": 2\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/5d93546a9470b5b633375d3d",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"5d93546a9470b5b633375d3d"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get event details",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAzNDk5MTksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMzQyNzE5fQ.ra1mGMaS1cckeko5g5kPKiLIvL8PJIBIa5viZSFVr4c",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://jbs.weijinglong.com:3000/events/5d998791b5c1c627bb7c524b",
-					"protocol": "http",
-					"host": [
-						"jbs",
-						"weijinglong",
-						"com"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"5d998791b5c1c627bb7c524b"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get events by date",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk0NTI3NzYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NDQ1NTc2fQ.DXkFfy1UEUrjjCfFeVesj4wLGdWzD7sPiygILTKlcJo",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/calendar/2019-03-01?offset=0&limit=10",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"calendar",
-						"2019-03-01"
-					],
-					"query": [
-						{
-							"key": "offset",
-							"value": "0"
-						},
-						{
-							"key": "limit",
-							"value": "10"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get event by script and shop",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxOTgwODAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTkwODgwfQ.9OvcCCjo_S2i_PviKRJA0RagU6wL5XBFuC71cpbcUS0",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/5d94427c18a5347ba31a8f8f/5d94483749007da24ffc87af",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"5d94427c18a5347ba31a8f8f",
-						"5d94483749007da24ffc87af"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get event available discount rules",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyMDUzNTAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTk4MTUwfQ.Kw22hNdMUH5K_tUvjUxWJRGnUdjGlKHyaIHbH9No7GA",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/available-discount-rules?shopId=5d94483749007da24ffc87af&scriptId=5d943f6818a5347ba31a8f8e&starTime=2019-10-04 07:00",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"available-discount-rules"
-					],
-					"query": [
-						{
-							"key": "shopId",
-							"value": "5d94483749007da24ffc87af"
-						},
-						{
-							"key": "scriptId",
-							"value": "5d943f6818a5347ba31a8f8e"
-						},
-						{
-							"key": "starTime",
-							"value": "2019-10-04 07:00"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "complete event",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyNTAzOTMsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjQzMTkzfQ.eDCJynCBvrGz55hPttmlCtKc0OknIaDfxp_WEVxAqDA",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"status\": \"completed\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/5d95d689717955a1af03027e/complete",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"5d95d689717955a1af03027e",
-						"complete"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "join event - offline",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1NjkxMjIzOTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5MTE1MTk0fQ.2Peh62ocN4poCOdjeIluHqYZAOBw8GBAsSosjlMvMMg",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"userName\": \"test\",\n\t\"source\": \"offline\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/5d860384b625286c983cd26a/join",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"5d860384b625286c983cd26a",
-						"join"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "join event - online",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyOTQzMzksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjg3MTM5fQ.Bd2iVIW7d7xwZYxdRZTJE61c8ZlHBJF1SQGZLh-Oxi4",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"userId\": \"5d944a4af4b8167cc437e0cb\",\n\t\"source\": \"online\",\n\t\"mobile\": \"testmobile\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/5d98aea6d9027783b3e2617c/join",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"5d98aea6d9027783b3e2617c",
-						"join"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "cancel join event",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyMTI3NjYsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjA1NTY2fQ.yLML3qnnQcazAeg18q4SbKu2c6TEXUxB7fa-Y6wogBg",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"userId\": \"5d944a4af4b8167cc437e0cb\",\n\t\"status\": \"cancelled\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/5d95d689717955a1af03027e/users/cancel",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"5d95d689717955a1af03027e",
-						"users",
-						"cancel"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get my profile",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDgwZjllNzA1ZWUxZjFlZmEzYzUyMzAiLCJleHAiOjE1Njk4NjE1NTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5ODU0MzU0fQ.cRucDW1J82CJV6mxCG7eHe9wrjR16ew0X2OCoOMuyh0",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
 						"type": "text"
 					}
 				],
@@ -906,45 +3492,7 @@
 					"raw": "{\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/profile",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"profile"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get my events",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAyNzU0MDgsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMjY4MjA4fQ.9-YE5RYmStEQykWHVafUwuuFCsNzOx3SL5yJtm3Dvgw",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/profile/my-events",
+					"raw": "http://localhost:3000/profile/token-status",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -952,185 +3500,14 @@
 					"port": "3000",
 					"path": [
 						"profile",
-						"my-events"
+						"token-status"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "update user",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk1MTU0OTMsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NTA4MjkzfQ.M4JXw2e6Uof6HxpnweqqNijfXsehFuRb24aF4pzZY2A",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"description\": \"testNick1\",\n\t\"mobile\": \"13651976276\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/users/5d80f9e705ee1f1efa3c5230",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"users",
-						"5d80f9e705ee1f1efa3c5230"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get price schema",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDg1ZWE5YzEzZjQ4ODU4OGY0MDExZTgiLCJleHAiOjE1Njk3MzMwMTEsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTY5NzI1ODExfQ.r6OJxLrjt0VFU00cQ1h53_FMdu4IJE1wQBFOMQVjTk0",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/price-schema?shopId=5d94483749007da24ffc87af&scriptId=5d943f6818a5347ba31a8f8e",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"price-schema"
-					],
-					"query": [
-						{
-							"key": "shopId",
-							"value": "5d94483749007da24ffc87af"
-						},
-						{
-							"key": "scriptId",
-							"value": "5d943f6818a5347ba31a8f8e"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add price schema",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAwMzk3NzUsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMDMyNTc1fQ.-UlL6AnGFoJDdenMQIzJ6KeZocW8akwjhebuDnHH-Eg",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"scriptId\": \"5d9445ee18a5347ba31a8f9a\",\n\t\"shopId\": \"5d94483749007da24ffc87b4\",\n\t\"priceSchema\": [{\n\t\t\"days\": [1,2,3,4,5],\n\t\t\"timeSpan\": [\"09:00\",\"12:30\",\"16:00\",\"19:30\"],\n\t\t\"price\": 268\n\t},{\n\t\t\"days\": [6,7],\n\t\t\"timeSpan\": [\"09:00\"],\n\t\t\"price\": 268\n\t}, {\n\t\t\"days\": [6,7],\n\t\t\"timeSpan\": [\"14:30\",\"19:00\"],\n\t\t\"price\": 268\n\t},{\n\t\t\"days\": [1,2,3,4,5,6,7],\n\t\t\"timeSpan\": [\"23:30\"],\n\t\t\"price\": 308\n\t}]\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/prices/price-schema",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"prices",
-						"price-schema"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get discount rules",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxOTgwODAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTkwODgwfQ.9OvcCCjo_S2i_PviKRJA0RagU6wL5XBFuC71cpbcUS0",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/events/discount-rules?shopId=5d838bb87bec9d16e274a763&scriptId=5d834bd57e5f59ede8c80762",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"events",
-						"discount-rules"
-					],
-					"query": [
-						{
-							"key": "shopId",
-							"value": "5d838bb87bec9d16e274a763"
-						},
-						{
-							"key": "scriptId",
-							"value": "5d834bd57e5f59ede8c80762"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add discount rule",
+			"name": "get message callback",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -1143,22 +3520,491 @@
 					{
 						"key": "Authorization",
 						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxMjU4NDQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTE4NjQ0fQ.-r-FGWVxpqOMLHGWYuy0t4-TwtXYxX-RWSMWqCtwBrw",
-						"type": "text"
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"key\": \"all-8\",\n  \"timeDescription\": \"工作日晚场，开团“免费”，参团九折\",\n  \"description\": \"工作日晚场，发起者返 0.1*人数*原价，参与者返 0.1*原价\",\n  \"timeSpan\": [\n    {\n      \"from\": \"17:00\",\n      \"to\": \"23:59\"\n    }\n  ],\n  \"days\": [\n    1,\n    2,\n    3,\n    4,\n    5,\n    6,\n    7\n  ],\n  \"discount\": {\n    \"sponsor\": 10,\n    \"participator\": 10\n  }\n}"
+					"raw": "{\n\t\"reports\": \"191018154949087950,18116469554,0,DELIVRD,57696533867290851907,20191113005858;191018154949087950,18116469554,0,DELIVRD,57696533867290851907,20191113005858\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/discount-rules",
+					"raw": "http://localhost:3000/notifications/sms-send-callback",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"discount-rules"
+						"notifications",
+						"sms-send-callback"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update event status - batch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxMjU4NDQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTE4NjQ0fQ.-r-FGWVxpqOMLHGWYuy0t4-TwtXYxX-RWSMWqCtwBrw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/update-status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"update-status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get notifications",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/notifications?limit=20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"notifications"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update notification by serialNumber",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYyNDc2MDEsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczNjU1NjAxfQ.W79QsgRKsAtBdSFoRvSPcByFKFMWiwVSFxvil5VkMxk",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"read\": true\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/notifications/72560061113750817859",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"notifications",
+						"72560061113750817859"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "archive events",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODA0NTg4MTQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc3ODY2ODE0fQ.vcZLgVG8ApEupCv4j0cVt61cdR_HACcVfRTipo-vCL8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/events/archive-events",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"events",
+						"archive-events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sms notification callback",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZDk0NGE0YWY0YjgxNjdjYzQzN2UwY2IiLCJleHAiOjE1NzAxOTgwODAsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvcGNmXzBFbl91a3hGLU5WVDY3Y2VBeUZXZkp3XCJ9IiwiaWF0IjoxNTcwMTkwODgwfQ.9OvcCCjo_S2i_PviKRJA0RagU6wL5XBFuC71cpbcUS0",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "reports",
+							"value": "191018154949087950,13912345678,0, DELIVRD, 00000020140805135416, 20181125112640; 191018154949087950,13912345678,0, DELIVRD, 00000020140805135416, 20181125112640",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "text"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/notifications/sms-send-callback",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"notifications",
+						"sms-send-callback"
+					],
+					"query": [
+						{
+							"key": "reports",
+							"value": "191105210443027895,18116469554,4,submitFail:99,55560781249326239496,20191105210602;",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login with username and password - admin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n   \"username\": \"james\",\n   \"password\": \"password\"\n}"
+				},
+				"url": {
+					"raw": "https://admin.boogoogoo.com/api/auth/login",
+					"protocol": "https",
+					"host": [
+						"admin",
+						"boogoogoo",
+						"com"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update notification by serialNumber - admin",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGFkMWVjMTQ2MzA0ODAzMjJiMWRkOTQiLCJleHAiOjE1NzYzMDY1MTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVCSFZUZkMzN1lFdndnZ0k3NjdRaEY4XCJ9IiwiaWF0IjoxNTczNzE0NTE3fQ.FW9ukuasLpLBcPnKm_mIXhiXvBKEkkSf4E5xZRshIJg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"read\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://admin.boogoogoo.com/api/notifications/23058589767408137884",
+					"protocol": "https",
+					"host": [
+						"admin",
+						"boogoogoo",
+						"com"
+					],
+					"path": [
+						"api",
+						"notifications",
+						"23058589767408137884"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "root ",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ }"
+				},
+				"url": {
+					"raw": "https://api.boogoogoo.com",
+					"protocol": "https",
+					"host": [
+						"api",
+						"boogoogoo",
+						"com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "root  Copy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzYzOTM3MDksImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTczODAxNzA5fQ.ees7QpEWyRUV8TVvzCpe_HO-hDB1ouhyI5Z4vYFCr0c",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ }"
+				},
+				"url": {
+					"raw": "https://api.boogoogoo.com",
+					"protocol": "https",
+					"host": [
+						"api",
+						"boogoogoo",
+						"com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "code2session",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n   \"code\":\"012bV05c2h8ZGL0T2T5c2uGj5c2bV05W\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/oauth/code2session",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"oauth",
+						"code2session"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update leading board",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1OTRjNGE3NDUwODJmMmM1OTgwZTEiLCJleHAiOjE1ODEwNTQxNTcsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc4NDYyMTU3fQ.-0vwFYvOS9xLzHtujc6Zp-z2gkOtrC348Wg_wBlmUhA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/leading-board",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"leading-board"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get leading board",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhZGVtZXMiLCJzdWIiOiI1ZGE1ODFiYzk5NzdiMjVkNjQ1MDQxOTgiLCJleHAiOjE1NzkwMTQyMjQsImRhdGEiOiJ7XCJ0eXBlXCI6XCJ3eGFwcFwiLFwib3BlbklkXCI6XCJvZlFHMjVQN3ludm5Sc0Qxako1aEJsYlB1TXpnXCJ9IiwiaWF0IjoxNTc2NDIyMjI0fQ.dHy7lBTsn9O_g94bNgmAxicFOit5IzeixNpgluHkYFs",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/leading-board",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"leading-board"
 					]
 				}
 			},

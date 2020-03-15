@@ -75,6 +75,16 @@ class GameService {
       const dtEndTime = add(startTime, duration, 'm');
 
       const opts = { session };
+      const game = await GamesRepo.findUnique({
+        shop: shopId,
+        script: scriptId,
+        startTime: dtStartTime,
+        status: 'ready',
+        hostUser: hostUserId
+      });
+      if (game) {
+        throw new ResourceAlreadyExist('Game', ['shop', 'script', 'startTime', 'status', 'hostUser']);
+      }
       // create a new game
       const newGame = await GamesRepo.saveOrUpdate(
         {
@@ -87,6 +97,7 @@ class GameService {
           hostUserWechatId,
           hostComment,
           numberOfPersons: minNumberOfPersons,
+          roomId: getRandomString(8),
           code,
           price,
           status: 'ready',
@@ -135,21 +146,26 @@ class GameService {
     }
   }
 
-  async joinGame(user: any, gameId: string, playerId: string, code: string) {
+  async joinGame(user: any, game: any, playerId: string) {
     const { _id: userId } = user;
-    if (!gameId) {
-      throw new InvalidRequestException('JoinGame', ['gameId']);
-    }
-    const game = await GamesRepo.findById(gameId);
-    if (!game) {
-      throw new ResourceNotFoundException('Game', gameId);
-    }
+    const { _id: gameId, code } = game;
     const session = await GamesRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
       const { players, code: roomCode } = game;
-      const matchedPlayer = players.find(player => {
+
+      let matchedPlayer = players.find(player => {
+        const { user: srcUserId } = player;
+        return srcUserId && srcUserId.toString() === userId.toString();
+      });
+      //  If found logged in user already in players but as another playerId, throw an error
+      // same user can only take one player in one game
+      if (matchedPlayer && matchedPlayer.playerId !== playerId) {
+        throw new CannotJoinGameException(gameId, `${userId} has already taken another player`);
+      }
+
+      matchedPlayer = players.find(player => {
         const { playerId: srcPlayerId } = player;
         return srcPlayerId === playerId;
       });
@@ -163,6 +179,7 @@ class GameService {
       if (user) {
         throw new CannotJoinGameException(gameId, `${playerId} is already taken`);
       }
+
       const gamePlayerToUpdate = Object.assign(matchedPlayer.toObject(), {
         user: userId,
         updatedAt: nowDate()
@@ -178,20 +195,13 @@ class GameService {
     }
   }
 
-  async leaveGame(user: any, gameId: string, playerId: string) {
+  async leaveGame(user: any, game: any, playerId: string) {
     const { _id: userId } = user;
-    if (!gameId) {
-      throw new InvalidRequestException('LeaveGame', ['gameId']);
-    }
-    const game = await GamesRepo.findById(gameId);
-    if (!game) {
-      throw new ResourceNotFoundException('Game', gameId);
-    }
     const session = await GamesRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
-      const { players } = game;
+      const { _id: gameId, players } = game;
       const matchedPlayer = players.find(player => {
         const { user: srcUserId } = player;
         return srcUserId && userId.toString() === srcUserId.toString();
@@ -297,6 +307,22 @@ class GameService {
       return gamePlayerId && gamePlayerId.toString() === userId;
     });
     return player;
+  }
+
+  async getGameScriptByRoomAndCode(roomId: string, code: string) {
+    const games = await GamesRepo.findByParams({
+      roomId,
+      code,
+      status: 'ready'
+    });
+    if (games.length === 0) {
+      return null;
+    }
+    if (games.length > 1) {
+      logger.warn(`More than one game is found`);
+      throw new InvalidRequestException('Game', ['roomId', 'code']);
+    }
+    return games[0];
   }
 }
 

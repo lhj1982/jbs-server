@@ -23,6 +23,7 @@ export class ShopsRoutes {
       )
 
       .post(verifyToken, this.shopsController.addShop);
+    app.route('/shops/:shopId').get(this.shopsController.getShop);
     app.route('/shops/:shopId/script/:scriptId').post(verifyToken, this.shopsController.addScript);
   }
 }

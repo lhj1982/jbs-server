@@ -24,6 +24,10 @@ export const GameSchema = new Schema(
     numberOfPersons: {
       type: Number
     },
+    roomId: {
+      type: String,
+      description: 'Game room id'
+    },
     code: {
       type: String,
       description: 'Room code',

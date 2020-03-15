@@ -28,6 +28,19 @@ export class ShopsController extends BaseController {
     }
   };
 
+  getShop = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { shopId } = req.params;
+      const shop = await ShopsRepo.findById(shopId);
+      if (!shop) {
+        throw new ResourceNotFoundException('Shop', shopId);
+      }
+      res.json({ code: 'SUCCESS', data: shop });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   addShop = async (req: Request, res: Response, next: NextFunction) => {
     const { key, name, address, mobile, phone, contactName, contactMobile, province, city, district, wechatId, wechatName } = req.body;
     if (!key) {

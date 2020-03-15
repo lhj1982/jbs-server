@@ -11,7 +11,9 @@ class ShopsRepo {
 
   async findById(id: string) {
     // console.log(mongoose.Types.ObjectId.isValid(id));
-    return await Shop.findById(mongoose.Types.ObjectId(id)).exec();
+    return await Shop.findById(mongoose.Types.ObjectId(id))
+      .populate('scripts')
+      .exec();
   }
 
   async find(params) {

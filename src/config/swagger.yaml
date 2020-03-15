@@ -2512,6 +2512,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /games/{roomId}/code/{code}:
+    get:
+      tags:
+      - "game"
+      summary: "Get game script summary by room id and code, it's used for get brief description of a games and its players, details information such as rundowns and clues, should be fetched separately using other apis"
+      operationId: "getGameScriptByRoomAndCode"
+      parameters:
+        - in: path
+          name: roomId
+          required: true
+          description: room id
+          schema:
+            type: string
+        - in: path
+          name: code
+          required: true
+          description: room code
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /games/{gameId}/script-rundown/{playerId}:
     get:
       tags:
@@ -2586,7 +2621,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /games/{gameId/}clues/{scriptClueId}:
+  /games/{roomId/}clues/{scriptClueId}:
     put:
       tags:
       - "game"
@@ -2596,9 +2631,9 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: gameId
+          name: roomId
           required: true
-          description: game id
+          description: room id
           schema:
             type: string
         - in: path
@@ -2634,7 +2669,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /games/{gameId}/join:
+  /games/join:
     post:
       tags:
       - "game"
@@ -2642,13 +2677,6 @@ paths:
       operationId: "joinGame"
       security:
         - bearerAuth: []
-      parameters:
-        - in: path
-          name: gameId
-          required: true
-          description: game id
-          schema:
-            type: string
       requestBody:
         required: true
         description: join game request body
@@ -2657,9 +2685,12 @@ paths:
             schema:
               type: "object"
               required:
+                - roomId
                 - playerId
                 - code
               properties:
+                roomId:
+                  type: "string"
                 playerId:
                   type: "string"
                 code:
@@ -2680,7 +2711,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /games/{gameId}/leave:
+  /games/leave:
     post:
       tags:
       - "game"
@@ -2688,13 +2719,6 @@ paths:
       operationId: "leaveGame"
       security:
         - bearerAuth: []
-      parameters:
-        - in: path
-          name: gameId
-          required: true
-          description: game id
-          schema:
-            type: string
       requestBody:
         required: true
         description: leave game request body
@@ -2703,8 +2727,11 @@ paths:
             schema:
               type: "object"
               required:
+                - roomId
                 - playerId
               properties:
+                roomId:
+                  type: "string"
                 playerId:
                   type: "string"
       responses:
