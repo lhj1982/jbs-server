@@ -38,6 +38,7 @@ export class UsersRoutes {
     app.route('/profile/my-games').get(verifyToken, this.usersController.getMyGames);
     app.route('/profile/token-status').get(verifyToken, this.usersController.getTokenStatus);
     app.route('/profile/wechat-data').post(verifyToken, this.usersController.getWechatEncryptedData);
+    app.route('/profile/my-online-scripts').get(verifyToken, permit({ domain: 'game', operations: ['getMyOnlineScripts'] }), this.usersController.getMyOnlineScripts);
 
     app.route('/users/update-tags-endorsements').post(
       verifyToken,

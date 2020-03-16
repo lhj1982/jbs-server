@@ -371,4 +371,21 @@ export class UsersController {
       next(err);
     }
   };
+
+  getMyOnlineScripts = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { dmShop } = loggedInUser;
+
+    try {
+      let scripts = [];
+      console.log(dmShop);
+      if (dmShop) {
+        const { onlineScripts } = dmShop;
+        scripts = onlineScripts;
+      }
+      res.json({ code: 'SUCCESS', data: scripts });
+    } catch (err) {
+      next(err);
+    }
+  };
 }

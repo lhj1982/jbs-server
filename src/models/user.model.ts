@@ -88,6 +88,11 @@ export const UserSchema = new Schema(
       type: Date,
       default: Date.now
     },
+    dmShop: {
+      type: Schema.Types.ObjectId,
+      ref: 'Shop',
+      description: 'shop that DM belong to'
+    },
     roles: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
     status: {
       type: String,

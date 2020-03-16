@@ -69,6 +69,12 @@ class UsersRepo extends CommonRepo {
           }
         }
       })
+      .populate({
+        path: 'dmShop',
+        populate: {
+          path: 'onlineScripts'
+        }
+      })
       .select('-password')
       .exec();
   }

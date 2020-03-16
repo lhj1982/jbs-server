@@ -1743,10 +1743,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /profile/my-online-scripts:
+    get:
+      tags:
+      - "user"
+      summary: "Get online script of logged in user"
+      description: "This is only available for dm users, One user can be dm of ONE and ONLY ONE shop"
+      operationId: "getMyOnlineScripts"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Script'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /profile/wechat-data:
     post:
       tags:
-      - "profile"
+      - "user"
       summary: "Get wechat encrypted data"
       description: "Get wechat encrypted data, such as phoneNumber"
       operationId: "getWeChatData"
