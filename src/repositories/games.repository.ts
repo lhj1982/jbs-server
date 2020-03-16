@@ -93,10 +93,15 @@ class GamesRepo extends CommonRepo {
       .populate('players')
       .populate({
         path: 'script',
-        populate: {
-          path: 'rundowns',
-          select: '-rundown'
-        }
+        populate: [
+          {
+            path: 'rundowns',
+            select: '-rundown'
+          },
+          {
+            path: 'clueFilters'
+          }
+        ]
       })
       .populate('shop')
       .populate('hostUser')

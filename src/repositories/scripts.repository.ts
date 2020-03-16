@@ -38,10 +38,8 @@ class ScriptsRepo {
         })
         .populate('discountRuleMap')
         .populate('rundowns')
-        .populate({
-          path: 'clues',
-          populate: 'categories'
-        })
+        .populate('clues')
+        .populate('clueFilters')
         .exec();
     }
   }

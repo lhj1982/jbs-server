@@ -4,12 +4,6 @@ const Schema = mongoose.Schema;
 export const ScriptClueSchema = new Schema(
   {
     script: { type: Schema.Types.ObjectId, ref: 'Script' },
-    categories: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'ScriptClueCategory'
-      }
-    ],
     title: {
       type: String
     },
@@ -18,6 +12,13 @@ export const ScriptClueSchema = new Schema(
     },
     round: {
       type: String
+    },
+    about: {
+      type: String
+    },
+    public: {
+      type: Boolean,
+      default: false
     },
     images: [
       {

@@ -52,6 +52,12 @@ ScriptSchema.virtual('rundowns', {
   foreignField: 'script'
 });
 
+ScriptSchema.virtual('clueFilters', {
+  ref: 'ScriptClueFilter',
+  localField: '_id',
+  foreignField: 'script'
+});
+
 ScriptSchema.virtual('clues', {
   ref: 'ScriptClue',
   localField: '_id',

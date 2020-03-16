@@ -71,6 +71,41 @@ paths:
                 $ref: '#/components/schemas/OauthResponse'
         default:
           description: "Invalid input"
+  /oauth/phonenumber:
+    post:
+      tags:
+      - "auth"
+      summary: "Get user phonenumber and update user object"
+      description: "Get user phonenumber and update user object"
+      operationId: "updatePhoneNumber"
+      requestBody: 
+        description: Request content
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                openId:
+                  type: "string"
+                encryptedData:
+                  type: "string"
+                iv:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:    
+              schema:
+                type: "object"
+                $ref: '#/components/schemas/User' 
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
   /oauth/code2session:
     post:
       tags:
@@ -2516,7 +2551,8 @@ paths:
     get:
       tags:
       - "game"
-      summary: "Get game script summary by room id and code, it's used for get brief description of a games and its players, details information such as rundowns and clues, should be fetched separately using other apis"
+      summary: "Get game script summary by room id and code"
+      description: "Get game script summary by room id and code, it's used for get brief description of a games and its players, details information such as rundowns and clues, should be fetched separately using other apis"
       operationId: "getGameScriptByRoomAndCode"
       parameters:
         - in: path
@@ -2584,7 +2620,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
-  /games/{gameI}/clues/{playerId}:
+  /games/{gameId}/clues/{playerId}:
     get:
       tags:
       - "game"

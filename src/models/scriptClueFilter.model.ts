@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
-export const ScriptClueCategorySchema = new Schema(
+export const ScriptClueFilterSchema = new Schema(
   {
     script: { type: Schema.Types.ObjectId, ref: 'Script' },
     key: {
