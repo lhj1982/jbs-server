@@ -5,7 +5,7 @@ import GamesRepo from '../repositories/games.repository';
 import GamePlayersRepo from '../repositories/gamePlayers.repository';
 import GameScriptCluesRepo from '../repositories/gameScriptClues.repository';
 import { nowDate, string2Date, formatDate, addDays, add, getDate } from '../utils/dateUtil';
-import { getRandomString } from '../utils/stringUtil';
+import { randomSerialNumber } from '../utils/stringUtil';
 import config from '../config';
 import {
   InvalidRequestException,
@@ -97,7 +97,7 @@ class GameService {
           hostUserWechatId,
           hostComment,
           numberOfPersons: minNumberOfPersons,
-          roomId: getRandomString(8),
+          roomId: randomSerialNumber(8),
           code,
           price,
           status: 'ready',

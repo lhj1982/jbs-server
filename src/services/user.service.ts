@@ -107,6 +107,7 @@ class UserService {
       // await UsersRepo.endSession();
       return result;
     } catch (err) {
+      throw err;
       // await session.abortTransaction();
       // await UsersRepo.endSession();
     }

@@ -3,7 +3,7 @@ import AuthApi from '../api/auth';
 import UsersRepo from '../repositories/users.repository';
 import RolesRepo from '../repositories/roles.repository';
 import UserService from '../services/user.service';
-import { InvalidRequestException, WrongCredentialException } from '../exceptions/custom.exceptions';
+import { InvalidRequestException, WrongCredentialException, ResourceNotFoundException } from '../exceptions/custom.exceptions';
 import * as moment from 'moment';
 import * as jwt from 'jsonwebtoken';
 import config from '../config';
@@ -27,7 +27,6 @@ export class AuthController {
         // prettier-ignore
         // const response = { code: 'SUCCESS', openId: '1234', sessionKey: 'test1', unionId: undefined, errorCode: undefined, errorMsg: undefined };
         const { code, openId, unionId, sessionKey, errorCode, errorMsg } = response;
-
         // console.log(response);
         if (code === 'SUCCESS') {
           // const user = await AuthApi.getUserInfo(sessionKey);
@@ -121,6 +120,31 @@ export class AuthController {
       res.json({ token, user });
     } catch (err) {
       res.send(err);
+    }
+  };
+
+  updatePhoneNumber = async (req: Request, res: Response, next: NextFunction) => {
+    const { openId, iv, encryptedData } = req.body;
+    try {
+      // console.log(body);
+      const user = await UserService.findOneByParams({ openId });
+      if (!user) {
+        throw new ResourceNotFoundException('User', openId);
+      }
+      const { sessionKey } = user;
+      const result = await UserService.getWechatEncryptedData({
+        iv,
+        encryptedData,
+        sessionKey
+      });
+      const { phoneNumber } = result;
+      const userToUpdate = Object.assign(user, {
+        mobile: phoneNumber
+      });
+      const newUser = await UsersRepo.saveOrUpdateUser(userToUpdate);
+      res.json({ code: 'SUCCESS', data: newUser });
+    } catch (err) {
+      next(err);
     }
   };
 

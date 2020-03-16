@@ -15,6 +15,7 @@ export class AuthRoutes {
 
     app.route('/auth/login').post(this.authController.loginWithUserNameAndPassword);
 
+    app.route('/auth/phonenumber').post(this.authController.updatePhoneNumber);
     app.route('/oauth/code2session').post(this.authController.code2session);
   }
 }
