@@ -1,8 +1,8 @@
 import { Request } from 'express';
-// import * as redis from 'redis';
+import * as redis from 'redis';
 import logger from '../utils/logger';
 import config from '../config';
-// const client = redis.createClient();
+const client = redis.createClient();
 
 class CacheService {
   keyPrefix = '__expIress__';
@@ -30,6 +30,19 @@ class CacheService {
     }
     // await this.purgeCacheByKey(myEventsKey);
     // // await this.purgeCacheBySearch(eventsKey);
+  }
+
+  async purgeGameScriptClueCache(gameId: string, fromPlayerId: string, toPlayerId: string, loggedInUser: any) {
+    // __expIress__/games/5e6f7cd9da88d848dba957f4/clues/0|5da594c4a745082f2c5980e1
+    let key1 = `__expIress__/games/${gameId}/clues/${fromPlayerId}`;
+    let key2 = `__expIress__/games/${gameId}/clues/${toPlayerId}`;
+    if (loggedInUser) {
+      const { id } = loggedInUser;
+      key1 = key1 + '|' + id;
+      key2 = key2 + '|' + id;
+    }
+    await this.purgeCacheByKey(key1);
+    await this.purgeCacheByKey(key2);
   }
 
   // async purgeCacheBySearch(searchKey: string): Promise<any> {
@@ -71,18 +84,18 @@ class CacheService {
   //   });
   // }
 
-  // async purgeCacheByKey(key: string): Promise<any> {
-  //   logger.debug(`Purge cache, ${key}`);
-  //   return new Promise((resolve, reject) => {
-  //     client.del(key, (err, reply) => {
-  //       if (err) {
-  //         reject(err);
-  //       } else {
-  //         resolve(reply);
-  //       }
-  //     });
-  //   });
-  // }
+  async purgeCacheByKey(key: string): Promise<any> {
+    logger.debug(`Purge cache, ${key}`);
+    return new Promise((resolve, reject) => {
+      client.del(key, (err, reply) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(reply);
+        }
+      });
+    });
+  }
 }
 
 export default new CacheService();

@@ -4,6 +4,7 @@ import ShopsRepo from '../repositories/shops.repository';
 import GamesRepo from '../repositories/games.repository';
 import GamePlayersRepo from '../repositories/gamePlayers.repository';
 import GameScriptCluesRepo from '../repositories/gameScriptClues.repository';
+import CacheService from './cache.service';
 import { nowDate, string2Date, formatDate, addDays, add, getDate } from '../utils/dateUtil';
 import { randomSerialNumber } from '../utils/stringUtil';
 import config from '../config';
@@ -278,24 +279,30 @@ class GameService {
     try {
       const opts = { session };
       const { playerId: playerIdToUpdate, isPublic } = params;
-      const { players } = game;
+      const { id: gameId, players } = game;
       const { owner } = gameScriptClue;
       const { id: loggedInUserId } = loggedInUser;
-      const player = this.getPlayerByUser(players, loggedInUserId);
-      if (!player) {
-        throw new AccessDeniedException(loggedInUserId, 'You are not in the game.');
+      let gameScriptClueToUpdate = gameScriptClue.toObject();
+      if (typeof playerIdToUpdate !== 'undefined') {
+        const player = this.getPlayerByUser(players, loggedInUserId);
+        if (!player) {
+          throw new AccessDeniedException(loggedInUserId, 'You are not in the game.');
+        }
+        gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
+          owner: playerIdToUpdate,
+          updatedAt: nowDate()
+        });
       }
-      let gameScriptClueToUpdate = Object.assign(gameScriptClue.toObject(), {
-        owner: playerIdToUpdate,
-        updatedAt: nowDate()
-      });
 
       if (typeof isPublic !== 'undefined') {
         gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
-          isPublic
+          isPublic,
+          updatedAt: nowDate()
         });
       }
       const newGameScriptClue = await GameScriptCluesRepo.saveOrUpdate(gameScriptClueToUpdate, opts);
+      // flush cache
+      await CacheService.purgeGameScriptClueCache(gameId, owner, playerIdToUpdate, loggedInUser);
       await session.commitTransaction();
       await GamesRepo.endSession();
       return newGameScriptClue;
