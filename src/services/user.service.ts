@@ -10,6 +10,7 @@ import UserRewardsRepo from '../repositories/userRewards.repository';
 import UserRewardRedemptionsRepo from '../repositories/userRewardRedemptions.repository';
 import WatchListsRepo from '../repositories/watchLists.repository';
 import GamesRepo from '../repositories/games.repository';
+import GamePlayersRepo from '../repositories/gamePlayers.repository';
 import { ResourceNotFoundException, WrongCredentialException } from '../exceptions/custom.exceptions';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 

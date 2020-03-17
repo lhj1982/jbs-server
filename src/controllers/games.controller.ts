@@ -123,11 +123,11 @@ export class GamesController extends BaseController {
     }
   };
 
-  getScriptCluesByPlayer = async (req: Request, res: Response, next: NextFunction) => {
+  getGameScriptCluesByPlayer = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedInUser } = res.locals;
     const { gameId, playerId } = req.params;
     try {
-      const gameScriptClues = await GameService.getScriptCluesByPlayer(loggedInUser, gameId, playerId);
+      const gameScriptClues = await GameService.getGameScriptCluesByPlayer(loggedInUser, gameId, playerId);
       res.json({ code: 'SUCCESS', data: gameScriptClues });
     } catch (err) {
       next(err);
@@ -147,10 +147,10 @@ export class GamesController extends BaseController {
         scriptClue: scriptClueId
       });
       if (!gameScriptClues || gameScriptClues.length === 0) {
-        throw new ResourceNotFoundException('GameScriptClue', scriptClueId);
+        throw new ResourceNotFoundException('GameScriptClue', `${gameId}|${scriptClueId}`);
       }
       if (gameScriptClues.length > 1) {
-        logger.warn(`Found more than one scriptClue for game #{gameId}, scriptClue ${scriptClueId}, pick the first one`);
+        logger.warn(`Found more than one scriptClue for game ${gameId}, scriptClue ${scriptClueId}, pick the first one`);
       }
       const gameScriptClue = gameScriptClues[0];
       const newGameScriptClue = await GameService.updateGameScriptClue(loggedInUser, game, gameScriptClue, req.body);

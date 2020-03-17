@@ -19,7 +19,7 @@ export class GamesRoutes {
 
     app.route('/games/:roomId/code/:code').get(this.gamesController.getGameScriptByRoomAndCode);
     app.route('/games/:gameId/script-rundown/:playerId').get(verifyToken, this.gamesController.getScriptRundownByPlayer);
-    app.route('/games/:gameId/clues/:playerId').get(verifyToken, this.gamesController.getScriptCluesByPlayer);
+    app.route('/games/:gameId/clues/:playerId').get(verifyToken, this.gamesController.getGameScriptCluesByPlayer);
 
     app.route('/games/:gameId/clues/:scriptClueId').put(verifyToken, this.gamesController.updateGameScriptClue);
   }

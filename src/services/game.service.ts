@@ -249,7 +249,7 @@ class GameService {
     }
   }
 
-  async getScriptCluesByPlayer(loggedInUser: any, gameId: string, playerId: string) {
+  async getGameScriptCluesByPlayer(loggedInUser: any, gameId: string, playerId: string) {
     try {
       const game = await GamesRepo.findById(gameId, ['rundowns']);
       if (!game) {
@@ -257,7 +257,8 @@ class GameService {
       }
       const gameScriptClues = await GameScriptCluesRepo.findGameScriptCluesByPlayerId(gameId, playerId);
       return gameScriptClues.map(_ => {
-        return _.scriptClue;
+        const { scriptClue, isPublic, owner, id, _id } = _;
+        return { scriptClue, isPublic, owner, id, _id };
       });
     } catch (err) {
       throw err;
@@ -284,10 +285,16 @@ class GameService {
       if (!player) {
         throw new AccessDeniedException(loggedInUserId, 'You are not in the game.');
       }
-      const gameScriptClueToUpdate = Object.assign(gameScriptClue.toObject(), {
+      let gameScriptClueToUpdate = Object.assign(gameScriptClue.toObject(), {
         owner: playerIdToUpdate,
         updatedAt: nowDate()
       });
+
+      if (typeof isPublic !== 'undefined') {
+        gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
+          isPublic
+        });
+      }
       const newGameScriptClue = await GameScriptCluesRepo.saveOrUpdate(gameScriptClueToUpdate, opts);
       await session.commitTransaction();
       await GamesRepo.endSession();
