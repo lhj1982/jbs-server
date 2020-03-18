@@ -9,7 +9,12 @@ export const GameScriptClueSchema = new Schema(
       type: String
     },
     isPublic: {
-      type: Boolean
+      type: Boolean,
+      default: false
+    },
+    read: {
+      type: Boolean,
+      default: false
     }
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }

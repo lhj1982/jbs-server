@@ -278,7 +278,7 @@ class GameService {
     session.startTransaction();
     try {
       const opts = { session };
-      const { playerId: playerIdToUpdate, isPublic } = params;
+      const { playerId: playerIdToUpdate, isPublic, read } = params;
       const { id: gameId, players } = game;
       const { owner } = gameScriptClue;
       const { id: loggedInUserId } = loggedInUser;
@@ -297,6 +297,12 @@ class GameService {
       if (typeof isPublic !== 'undefined') {
         gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
           isPublic,
+          updatedAt: nowDate()
+        });
+      }
+      if (typeof read !== 'undefined') {
+        gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
+          read,
           updatedAt: nowDate()
         });
       }
