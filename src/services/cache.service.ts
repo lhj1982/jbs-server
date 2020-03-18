@@ -3,6 +3,7 @@ import * as redis from 'redis';
 import logger from '../utils/logger';
 import config from '../config';
 const client = redis.createClient();
+client.auth(config.cache.password);
 
 class CacheService {
   keyPrefix = '__expIress__';

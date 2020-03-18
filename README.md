@@ -71,7 +71,21 @@ https://serverfault.com/questions/836198/how-to-install-docker-on-aws-ec2-instan
 Redis is used for server side cache.
 
 ```
-docker run -p 6379:6379 --name jbs-api-redis -d redis redis-server --appendonly yes
+docker volume create redis-data
+
+docker run -d \
+  -h redis \
+  -e REDIS_PASSWORD=redis \
+  -v redis-data:/data \
+  -p 6379:6379 \
+  --name jbs-api-redis \
+  --restart always \
+  redis:5.0.5-alpine3.9 /bin/sh -c 'redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}'
+
+
+remove
+docker rm -f jbs-api-redis
+docker volume rm redis-data
 ```
 
 # Certificate

@@ -4,6 +4,7 @@ module.exports = {
     entrypoint: `https://api.boogoogoo.com`
   },
   cache: {
+    password: 'password',
     duration: 2 * 60 * 60 // cache in second
   },
   appId: 'wxf59749a45686779c',
