@@ -2,6 +2,7 @@ import { Request } from 'express';
 import * as redis from 'redis';
 import logger from '../utils/logger';
 import config from '../config';
+import GamePlayersRepo from '../repositories/gamePlayers.repository';
 const client = redis.createClient();
 client.auth(config.cache.password);
 
@@ -40,7 +41,14 @@ class CacheService {
     if (loggedInUser) {
       const { id } = loggedInUser;
       key1 = key1 + '|' + id;
-      key2 = key2 + '|' + id;
+    }
+    const gamePlayer = await GamePlayersRepo.findByGameAndPlayerId(gameId, toPlayerId);
+    if (gamePlayer) {
+      // console.log(gamePlayer);
+      const { user: toPlayerUserId } = gamePlayer;
+      if (toPlayerUserId) {
+        key2 = key2 + '|' + toPlayerUserId;
+      }
     }
     await this.purgeCacheByKey(key1);
     await this.purgeCacheByKey(key2);
