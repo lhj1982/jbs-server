@@ -2716,7 +2716,7 @@ paths:
                   description: "new owner of clue"
                 isPublic:
                   type: "boolean"
-                read:
+                hasRead:
                   type: "boolean"
       responses:
         200:
@@ -3815,7 +3815,7 @@ components:
           type: "string"
         isPublic:
           type: "boolean"
-        read:
+        hasRead:
           type: "boolean"
 
     PaginatedDataResponse:

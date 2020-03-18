@@ -1,5 +1,5 @@
 // admin > shopstaff > user
-const getTopRole = roles => {
+const getTopRole = (roles): string => {
   const topRole = undefined;
   if (roles) {
     for (let i = 0; i < roles.length; i++) {

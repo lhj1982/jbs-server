@@ -131,7 +131,8 @@ class GameService {
           game: gameId,
           scriptClue: scriptClueId,
           owner: '0', // default all clues are owned by DM
-          isPublic: false
+          isPublic: false,
+          hasRead: false
         };
         return await GameScriptCluesRepo.saveOrUpdate(gameScriptClueToAdd, opts);
       });
@@ -258,8 +259,15 @@ class GameService {
       }
       const gameScriptClues = await GameScriptCluesRepo.findGameScriptCluesByPlayerId(gameId, playerId);
       return gameScriptClues.map(_ => {
-        const { scriptClue, isPublic, owner, id, _id } = _;
-        return { scriptClue, isPublic, owner, id, _id };
+        const { scriptClue, isPublic, owner, hasRead, id, _id } = _;
+        return {
+          scriptClue,
+          isPublic,
+          owner,
+          hasRead: hasRead ? hasRead : false,
+          id,
+          _id
+        };
       });
     } catch (err) {
       throw err;
@@ -278,7 +286,7 @@ class GameService {
     session.startTransaction();
     try {
       const opts = { session };
-      const { playerId: playerIdToUpdate, isPublic, read } = params;
+      const { playerId: playerIdToUpdate, isPublic, hasRead } = params;
       const { id: gameId, players } = game;
       const { owner } = gameScriptClue;
       const { id: loggedInUserId } = loggedInUser;
@@ -290,6 +298,7 @@ class GameService {
         }
         gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
           owner: playerIdToUpdate,
+          hasRead: false,
           updatedAt: nowDate()
         });
       }
@@ -297,12 +306,13 @@ class GameService {
       if (typeof isPublic !== 'undefined') {
         gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
           isPublic,
+          hasRead: false,
           updatedAt: nowDate()
         });
       }
-      if (typeof read !== 'undefined') {
+      if (typeof hasRead !== 'undefined') {
         gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
-          read,
+          hasRead,
           updatedAt: nowDate()
         });
       }

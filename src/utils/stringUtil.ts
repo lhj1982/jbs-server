@@ -2,29 +2,29 @@ const crypto = require('crypto');
 const algorithm = 'aes-256-ctr';
 const password = '>aXjR>&ht,Du5w^Z';
 
-const pp = string => {
+const pp = (string): string => {
   return JSON.stringify(string);
 };
 
-const encrypt = text => {
-  const cipher = crypto.createCipher(algorithm, password);
-  let crypted = cipher.update(text, 'utf8', 'hex');
-  crypted += cipher.final('hex');
-  return crypted;
-};
+// const encrypt = (text): string => {
+//   const cipher = crypto.createCipher(algorithm, password);
+//   let crypted = cipher.update(text, 'utf8', 'hex');
+//   crypted += cipher.final('hex');
+//   return crypted;
+// };
 
-const decrypt = text => {
-  const decipher = crypto.createDecipher(algorithm, password);
-  let dec = decipher.update(text, 'hex', 'utf8');
-  dec += decipher.final('utf8');
-  return dec;
-};
+// const decrypt = (text): string => {
+//   const decipher = crypto.createDecipher(algorithm, password);
+//   let dec = decipher.update(text, 'hex', 'utf8');
+//   dec += decipher.final('utf8');
+//   return dec;
+// };
 
-const escapeRegex = text => {
+const escapeRegex = (text): string => {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 };
 
-const randomSerialNumber = (serialLength = 20) => {
+const randomSerialNumber = (serialLength = 20): string => {
   const chars = '1234567890';
 
   let randomSerial = '';
@@ -38,7 +38,7 @@ const randomSerialNumber = (serialLength = 20) => {
   return randomSerial;
 };
 
-const getRandomString = (serialLength = 16) => {
+const getRandomString = (serialLength = 16): string => {
   const chars = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   let randomSerial = '';
@@ -52,12 +52,12 @@ const getRandomString = (serialLength = 16) => {
   return randomSerial;
 };
 
-const getRandomInt = max => {
+const getRandomInt = (max): number => {
   return Math.floor(Math.random() * Math.floor(max));
 };
 
 // result=0&description=发送短信成功&taskid=191011202300085909
-const queryStringToJSON = data => {
+const queryStringToJSON = (data): any => {
   const pairs = data.split('&');
 
   const result = {};
@@ -69,7 +69,7 @@ const queryStringToJSON = data => {
   return JSON.parse(JSON.stringify(result));
 };
 
-const replacePlacehoder = (message, placeholder, replacement) => {
+const replacePlacehoder = (message, placeholder, replacement): string => {
   const replace = `<${placeholder}>`;
   const re = new RegExp(replace, 'gi');
   return message.replace(re, replacement);
@@ -111,7 +111,7 @@ const normalizePaymentData = (data): any => {
   return response;
 };
 
-const md5 = (str: string) => {
+const md5 = (str: string): string => {
   const hash = crypto
     .createHash('md5')
     .update(str, 'utf8')
@@ -119,7 +119,7 @@ const md5 = (str: string) => {
   return hash;
 };
 
-const decryption = (data, key, iv) => {
+const decryption = (data, key, iv): any => {
   if (!data) {
     return '';
   }
@@ -135,7 +135,7 @@ const decryption = (data, key, iv) => {
   return cipherChunks.join('');
 };
 
-const isMobileNumber = phone => {
+const isMobileNumber = (phone): any => {
   let flag = false;
   let message = '';
   const myreg = /^(((13[0-9]{1})|(14[0-9]{1})|(17[0-9]{1})|(15[0-3]{1})|(15[4-9]{1})|(18[0-9]{1})|(199))+\d{8})$/;

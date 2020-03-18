@@ -12,7 +12,7 @@ export const GameScriptClueSchema = new Schema(
       type: Boolean,
       default: false
     },
-    read: {
+    hasRead: {
       type: Boolean,
       default: false
     }

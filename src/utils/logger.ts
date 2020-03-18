@@ -1,8 +1,8 @@
 import { createLogger, format, transports } from 'winston';
 import config from '../config';
 const DailyRotateFile = require('winston-daily-rotate-file');
-const { label, combine, timestamp, prettyPrint } = format;
-const env = process.env.NODE_ENV || 'development';
+// const { label, combine, timestamp, prettyPrint } = format;
+// const env = process.env.NODE_ENV || 'development';
 
 const logger = createLogger({
   // format: combine(timestamp(), prettyPrint()),
