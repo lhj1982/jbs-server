@@ -302,7 +302,7 @@ class GameService {
       }
       const newGameScriptClue = await GameScriptCluesRepo.saveOrUpdate(gameScriptClueToUpdate, opts);
       // flush cache
-      await CacheService.purgeGameScriptClueCache(gameId, owner, playerIdToUpdate, loggedInUser);
+      await CacheService.purgeGameScriptClueCache(game, owner, playerIdToUpdate, loggedInUser);
       await session.commitTransaction();
       await GamesRepo.endSession();
       return newGameScriptClue;

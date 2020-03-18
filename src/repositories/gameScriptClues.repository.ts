@@ -25,10 +25,7 @@ class GameScriptCluesRepo extends CommonRepo {
     })
       .populate('game')
       .populate({
-        path: 'scriptClue',
-        populate: {
-          path: 'categories'
-        }
+        path: 'scriptClue'
       })
       .exec();
   }

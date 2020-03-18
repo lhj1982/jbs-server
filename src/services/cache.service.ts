@@ -2,6 +2,7 @@ import { Request } from 'express';
 import * as redis from 'redis';
 import logger from '../utils/logger';
 import config from '../config';
+import GamesRepo from '../repositories/games.repository';
 import GamePlayersRepo from '../repositories/gamePlayers.repository';
 const client = redis.createClient();
 client.auth(config.cache.password);
@@ -34,24 +35,45 @@ class CacheService {
     // // await this.purgeCacheBySearch(eventsKey);
   }
 
-  async purgeGameScriptClueCache(gameId: string, fromPlayerId: string, toPlayerId: string, loggedInUser: any) {
+  async purgeGameScriptClueCache(game: any, fromPlayerId: string, toPlayerId: string, loggedInUser: any) {
     // __expIress__/games/5e6f7cd9da88d848dba957f4/clues/0|5da594c4a745082f2c5980e1
-    let key1 = `__expIress__/games/${gameId}/clues/${fromPlayerId}`;
-    let key2 = `__expIress__/games/${gameId}/clues/${toPlayerId}`;
-    if (loggedInUser) {
-      const { id } = loggedInUser;
-      key1 = key1 + '|' + id;
-    }
-    const gamePlayer = await GamePlayersRepo.findByGameAndPlayerId(gameId, toPlayerId);
-    if (gamePlayer) {
-      // console.log(gamePlayer);
-      const { user: toPlayerUserId } = gamePlayer;
-      if (toPlayerUserId) {
-        key2 = key2 + '|' + toPlayerUserId;
+    if (toPlayerId) {
+      const { id: gameId } = game;
+      let key1 = `__expIress__/games/${gameId}/clues/${fromPlayerId}`;
+      let key2 = `__expIress__/games/${gameId}/clues/${toPlayerId}`;
+      if (loggedInUser) {
+        const { id } = loggedInUser;
+        key1 = key1 + '|' + id;
       }
+
+      const gamePlayer = await GamePlayersRepo.findByGameAndPlayerId(gameId, toPlayerId);
+      if (gamePlayer) {
+        // console.log(gamePlayer);
+        const { user: toPlayerUserId } = gamePlayer;
+        if (toPlayerUserId) {
+          key2 = key2 + '|' + toPlayerUserId;
+        }
+      }
+      await this.purgeCacheByKey(key1);
+      await this.purgeCacheByKey(key2);
+    } else {
+      // else purge cache for all players
+      const { id: gameId, players } = game;
+      const promises = players.map(async player => {
+        const { playerId } = player;
+        let key = `__expIress__/games/${gameId}/clues/${playerId}`;
+        const gamePlayer = await GamePlayersRepo.findByGameAndPlayerId(gameId, playerId);
+        if (gamePlayer) {
+          // console.log(gamePlayer);
+          const { user: toPlayerUserId } = gamePlayer;
+          if (toPlayerUserId) {
+            key = key + '|' + toPlayerUserId;
+          }
+        }
+        await this.purgeCacheByKey(key);
+      });
+      await Promise.all(promises);
     }
-    await this.purgeCacheByKey(key1);
-    await this.purgeCacheByKey(key2);
   }
 
   // async purgeCacheBySearch(searchKey: string): Promise<any> {
