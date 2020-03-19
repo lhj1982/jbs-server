@@ -18,7 +18,7 @@ export class GamesRoutes {
     app.route('/games/leave').post(verifyToken, this.gamesController.leave);
 
     app.route('/games/:roomId/code/:code').get(this.gamesController.getGameScriptByRoomAndCode);
-    app.route('/games/:gameId/script-rundown/:playerId').get(verifyToken, this.gamesController.getScriptRundownByPlayer);
+    app.route('/games/:gameId/script-rundown/:playerId').get(verifyToken, cacheMiddleware(config.cache.duration), this.gamesController.getScriptRundownByPlayer);
     app.route('/games/:gameId/clues/:playerId').get(verifyToken, cacheMiddleware(config.cache.duration), this.gamesController.getGameScriptCluesByPlayer);
 
     app.route('/games/:gameId/clues/:scriptClueId').put(verifyToken, this.gamesController.updateGameScriptClue);

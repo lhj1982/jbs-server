@@ -18,10 +18,18 @@ class GameScriptCluesRepo extends CommonRepo {
     return await GameScriptClue.find(params).exec();
   }
 
+  // async findByGameAndScriptClue(gameId: string, scriptClueId: string, playerId: string) {
+  //   return await GameScriptClue.findOne({
+  //     game: gameId,
+  //     scriptClue: scriptClueId,
+  //     owner: playerId
+  //   }).exec();
+  // }
+
   async findGameScriptCluesByPlayerId(gameId: string, playerId: string) {
     return await GameScriptClue.find({
       game: gameId,
-      $or: [{ owner: playerId }, { isPublic: true }]
+      owner: playerId
     })
       .populate('game')
       .populate({
@@ -38,8 +46,12 @@ class GameScriptCluesRepo extends CommonRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    const { scriptClue, game } = gameScriptClue;
-    return await GameScriptClue.findOneAndUpdate({ scriptClue, game }, gameScriptClue, options).exec();
+    const { _id, scriptClue, game, owner } = gameScriptClue;
+    if (_id) {
+      return await GameScriptClue.findOneAndUpdate({ _id }, gameScriptClue, options).exec();
+    } else {
+      return await GameScriptClue.findOneAndUpdate({ scriptClue, game, owner }, gameScriptClue, options).exec();
+    }
   }
 }
 

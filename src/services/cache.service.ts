@@ -43,46 +43,49 @@ class CacheService {
 
   async purgeGameScriptClueCache(game: any, fromPlayerId: string, toPlayerId: string, loggedInUser: any) {
     // __expIress__/games/5e6f7cd9da88d848dba957f4/clues/0|5da594c4a745082f2c5980e1
-    if (toPlayerId) {
-      const { id: gameId } = game;
-      const key1 = `__expIress__/games/${gameId}/clues/${fromPlayerId}`;
-      const key2 = `__expIress__/games/${gameId}/clues/${toPlayerId}`;
-      // if (loggedInUser) {
-      //   const { id } = loggedInUser;
-      //   key1 = key1 + '|' + id;
-      // }
+    // if (toPlayerId) {
+    //   const { id: gameId } = game;
+    //   const key1 = `__expIress__/games/${gameId}/clues/${fromPlayerId}`;
+    //   const key2 = `__expIress__/games/${gameId}/clues/${toPlayerId}`;
+    //   // if (loggedInUser) {
+    //   //   const { id } = loggedInUser;
+    //   //   key1 = key1 + '|' + id;
+    //   // }
 
-      // const gamePlayer = await GamePlayersRepo.findByGameAndPlayerId(gameId, toPlayerId);
-      // if (gamePlayer) {
-      //   // console.log(gamePlayer);
-      //   const { user: toPlayerUserId } = gamePlayer;
-      //   if (toPlayerUserId) {
-      //     key2 = key2 + '|' + toPlayerUserId;
-      //   }
-      // }
-      // await this.purgeCacheByKey(key1);
-      // await this.purgeCacheByKey(key2);
-      await this.deleteKeysByPattern(`${key1}*`);
-      await this.deleteKeysByPattern(`${key2}*`);
-    } else {
-      // else purge cache for all players
-      const { id: gameId, players } = game;
-      await this.deleteKeysByPattern(`__expIress__/games/${gameId}/clues/*`);
-      // const promises = players.map(async player => {
-      //   const { playerId } = player;
-      //   let key = `__expIress__/games/${gameId}/clues/${playerId}`;
-      //   const gamePlayer = await GamePlayersRepo.findByGameAndPlayerId(gameId, playerId);
-      //   if (gamePlayer) {
-      //     // console.log(gamePlayer);
-      //     const { user: toPlayerUserId } = gamePlayer;
-      //     if (toPlayerUserId) {
-      //       key = key + '|' + toPlayerUserId;
-      //     }
-      //   }
-      //   await this.purgeCacheByKey(key);
-      // });
-      // await Promise.all(promises);
-    }
+    //   // const gamePlayer = await GamePlayersRepo.findByGameAndPlayerId(gameId, toPlayerId);
+    //   // if (gamePlayer) {
+    //   //   // console.log(gamePlayer);
+    //   //   const { user: toPlayerUserId } = gamePlayer;
+    //   //   if (toPlayerUserId) {
+    //   //     key2 = key2 + '|' + toPlayerUserId;
+    //   //   }
+    //   // }
+    //   // await this.purgeCacheByKey(key1);
+    //   // await this.purgeCacheByKey(key2);
+    //   await this.deleteKeysByPattern(`${key1}*`);
+    //   await this.deleteKeysByPattern(`${key2}*`);
+    // } else {
+    //   // else purge cache for all players
+    //   const { id: gameId, players } = game;
+    //   await this.deleteKeysByPattern(`__expIress__/games/${gameId}/clues/*`);
+    //   // const promises = players.map(async player => {
+    //   //   const { playerId } = player;
+    //   //   let key = `__expIress__/games/${gameId}/clues/${playerId}`;
+    //   //   const gamePlayer = await GamePlayersRepo.findByGameAndPlayerId(gameId, playerId);
+    //   //   if (gamePlayer) {
+    //   //     // console.log(gamePlayer);
+    //   //     const { user: toPlayerUserId } = gamePlayer;
+    //   //     if (toPlayerUserId) {
+    //   //       key = key + '|' + toPlayerUserId;
+    //   //     }
+    //   //   }
+    //   //   await this.purgeCacheByKey(key);
+    //   // });
+    //   // await Promise.all(promises);
+    // }
+
+    const { id: gameId, players } = game;
+    await this.deleteKeysByPattern(`__expIress__/games/${gameId}/clues/*`);
   }
 
   //key example "prefix*"
@@ -127,7 +130,9 @@ class CacheService {
     });
     stream.on('end', function() {
       logger.info(`${keys.length} cache entries has purged`);
-      client.unlink(keys);
+      if (keys.length > 0) {
+        client.unlink(keys);
+      }
     });
   }
 }

@@ -281,21 +281,36 @@ class GameService {
    * @param {any} game           [description]
    * @param {any} gameScriptClue [description]
    */
-  async updateGameScriptClue(loggedInUser: any, game: any, gameScriptClue: any, params: any) {
+  async updateGameScriptClue(loggedInUser: any, game: any, scriptClueId: string, params: any) {
     const session = await GamesRepo.getSession();
     session.startTransaction();
     try {
       const opts = { session };
       const { playerId: playerIdToUpdate, isPublic, hasRead } = params;
       const { id: gameId, players } = game;
-      const { owner } = gameScriptClue;
       const { id: loggedInUserId } = loggedInUser;
+
+      const player = this.getPlayerByUser(players, loggedInUserId);
+      if (!player) {
+        throw new AccessDeniedException(loggedInUserId, 'You are not in the game.');
+      }
+      const { playerId: ownerPlayerId } = player;
+      const gameScriptClues = await GameScriptCluesRepo.find({
+        game: gameId,
+        scriptClue: scriptClueId,
+        owner: ownerPlayerId
+      });
+      if (!gameScriptClues || gameScriptClues.length === 0) {
+        throw new ResourceNotFoundException('GameScriptClue', `${gameId}|${scriptClueId}|${loggedInUserId}`);
+      }
+      if (gameScriptClues.length > 1) {
+        logger.warn(`Found more than one scriptClue for game ${gameId}, scriptClue ${scriptClueId}, pick the first one`);
+      }
+      const gameScriptClue = gameScriptClues[0];
+      const { owner } = gameScriptClue;
+
       let gameScriptClueToUpdate = gameScriptClue.toObject();
       if (typeof playerIdToUpdate !== 'undefined') {
-        const player = this.getPlayerByUser(players, loggedInUserId);
-        if (!player) {
-          throw new AccessDeniedException(loggedInUserId, 'You are not in the game.');
-        }
         gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
           owner: playerIdToUpdate,
           hasRead: false,
@@ -303,12 +318,14 @@ class GameService {
         });
       }
 
-      if (typeof isPublic !== 'undefined') {
-        gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
+      // if mark a clue to be public, copy this clue to all players of this game, and mark isPublic flag of owner to be true.
+      if (typeof isPublic !== 'undefined' && isPublic) {
+        const dataToUpdate = Object.assign(gameScriptClueToUpdate, {
           isPublic,
-          hasRead: false,
           updatedAt: nowDate()
         });
+        await GameScriptCluesRepo.saveOrUpdate(dataToUpdate, opts);
+        const newClues = await this.createPublicClues(game, gameScriptClue, opts);
       }
       if (typeof hasRead !== 'undefined') {
         gameScriptClueToUpdate = Object.assign(gameScriptClueToUpdate, {
@@ -327,6 +344,42 @@ class GameService {
       await GamesRepo.endSession();
       throw err;
     }
+  }
+
+  async createPublicClues(game: any, gameScriptClue: any, opts: any): Promise<any> {
+    const { id: gameId, players } = game;
+    const { scriptClue: scriptClueId } = gameScriptClue;
+    const responses = [];
+    for (let i = 0; i < players.length; i++) {
+      const player = players[i];
+      const { playerId } = player;
+      const gameScriptClues = await GameScriptCluesRepo.find({
+        game: gameId,
+        scriptClue: scriptClueId,
+        owner: playerId
+      });
+      let gameScriptClue = undefined;
+      if (gameScriptClues && gameScriptClues.length > 0) {
+        gameScriptClue = gameScriptClues[0];
+      }
+      logger.info(`Created/Update game script clues from game ${gameId}, scriptClue ${scriptClueId}, playerId: ${playerId}`);
+      if (!gameScriptClue) {
+        // create new public, unread clue for playerId
+        const gameScriptClueToAdd = {
+          game: gameId,
+          scriptClue: scriptClueId,
+          isPublic: true,
+          owner: playerId,
+          hasRead: false
+        };
+        responses.push(await GameScriptCluesRepo.saveOrUpdate(gameScriptClueToAdd, opts));
+      } else {
+        // entry is already exists
+        const gameScriptClueToUpdate = Object.assign(gameScriptClue.toObject(), { isPublic: true });
+        responses.push(await GameScriptCluesRepo.saveOrUpdate(gameScriptClueToUpdate, opts));
+      }
+    }
+    return responses;
   }
 
   getPlayerByUser(players, userId: string) {

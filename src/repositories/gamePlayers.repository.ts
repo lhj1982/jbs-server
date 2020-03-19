@@ -15,6 +15,23 @@ class GamePlayersRepo extends CommonRepo {
     super.endSession();
   }
 
+  async findByUser(userId: string) {
+    return await GamePlayer.find({ user: userId })
+      .populate({
+        path: 'game',
+        populate: [
+          {
+            path: 'players'
+          },
+          { path: 'script' },
+          { path: 'shop' },
+          { path: 'hostUser' }
+        ]
+      })
+      .sort({ createdAt: -1 })
+      .exec();
+  }
+
   async findByGameAndPlayerId(gameId: string, playerId: string) {
     return await GamePlayer.findOne({ game: gameId, playerId }).exec();
   }
