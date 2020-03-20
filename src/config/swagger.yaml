@@ -2608,6 +2608,78 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /games/{gameId}:
+    put:
+      tags:
+      - "game"
+      summary: "Update a game"
+      operationId: "updateGame"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: update game request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                startTime:
+                  type: "string"
+                hostComment:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    delete:
+      tags:
+      - "game"
+      summary: "Delete a game"
+      operationId: "deleteGame"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /games/{gameId}/script-rundown/{playerId}:
     get:
       tags:

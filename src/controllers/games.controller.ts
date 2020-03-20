@@ -4,6 +4,7 @@ import GamesRepo from '../repositories/games.repository';
 import GameScriptCLuesRepo from '../repositories/gameScriptClues.repository';
 import GameService from '../services/game.service';
 import config from '../config';
+import { formatDate, add } from '../utils/dateUtil';
 import {
   InvalidRequestException,
   ResourceAlreadyExist,
@@ -146,6 +147,37 @@ export class GamesController extends BaseController {
 
       const newGameScriptClue = await GameService.updateGameScriptClue(loggedInUser, game, scriptClueId, req.body);
       res.json({ code: 'SUCCESS', data: newGameScriptClue });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  updateGame = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    try {
+      const { startTime, hostComment, status } = req.body;
+      const { gameId } = req.params;
+      const game = await GamesRepo.findById(gameId);
+      if (!game) {
+        throw new ResourceNotFoundException('Game', gameId);
+      }
+
+      const updateData = {};
+      if (startTime) {
+        updateData['startTime'] = formatDate(startTime, config.eventDateFormatParse);
+        const {
+          script: { duration }
+        } = game;
+        const endTime = add(startTime, duration, 'm');
+        if (endTime) {
+          updateData['endTime'] = endTime;
+        }
+        if (hostComment) {
+          updateData['hostComment'] = hostComment;
+        }
+      }
+      const newGame = await GameService.updateGame(game);
+      res.json({ code: 'SUCCESS', data: newGame });
     } catch (err) {
       next(err);
     }

@@ -407,6 +407,10 @@ class GameService {
     }
     return games[0];
   }
+
+  async updateGame(game: any): Promise<any> {
+    return await GamesRepo.saveOrUpdate(game);
+  }
 }
 
 export default new GameService();
