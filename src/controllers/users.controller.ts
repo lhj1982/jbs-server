@@ -143,7 +143,7 @@ export class UsersController {
     }
   };
 
-  getWechatEncryptedData = async (req: Request, res: Response, next: NextFunction) => {
+  getPhoneEncryptedData = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedInUser } = res.locals;
     if (!loggedInUser) {
       next(new AccessDeniedException(''));
@@ -153,6 +153,10 @@ export class UsersController {
     try {
       // console.log(body);
       const response = await UserService.getWechatEncryptedData(body);
+      const result = {
+        phoneNumber: response.phoneNumber,
+        countryCode: response.countryCode
+      };
       res.json({ code: 'SUCCESS', data: response });
     } catch (err) {
       next(err);

@@ -12,7 +12,8 @@ import {
   AccessDeniedException,
   UserIsBlacklistedException,
   CannotJoinGameException,
-  CannotLeaveGameException
+  CannotLeaveGameException,
+  GameCannotCancelException
 } from '../exceptions/custom.exceptions';
 import logger from '../utils/logger';
 
@@ -177,6 +178,29 @@ export class GamesController extends BaseController {
         }
       }
       const newGame = await GameService.updateGame(game);
+      res.json({ code: 'SUCCESS', data: newGame });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  deleteGame = async (req: Request, res: Response, next: NextFunction) => {
+    const { gameId } = req.params;
+    const game = await GamesRepo.findById(gameId);
+    if (!game) {
+      next(new ResourceNotFoundException('Game', gameId));
+      return;
+    }
+    const { status: currentStatus } = game;
+    if (currentStatus !== 'ready') {
+      next(new GameCannotCancelException(gameId));
+      return;
+    }
+    try {
+      const gameToUpdate = Object.assign(game.toObject(), {
+        status: 'cancelled'
+      });
+      const newGame = await GamesRepo.saveOrUpdate(gameToUpdate);
       res.json({ code: 'SUCCESS', data: newGame });
     } catch (err) {
       next(err);

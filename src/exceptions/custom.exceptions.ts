@@ -130,6 +130,12 @@ class CannotLeaveGameException extends HttpException {
   }
 }
 
+class GameCannotCancelException extends HttpException {
+  constructor(id: string) {
+    super(500, 'game_cannot_cancel', `Game ${id} cannot cancel`);
+  }
+}
+
 export {
   AuthorizationException,
   WrongCredentialException,
@@ -151,5 +157,6 @@ export {
   InsufficientCreditsException,
   InsufficientRedemptionsException,
   CannotJoinGameException,
-  CannotLeaveGameException
+  CannotLeaveGameException,
+  GameCannotCancelException
 };

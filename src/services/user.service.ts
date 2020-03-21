@@ -98,14 +98,10 @@ class UserService {
       const { appId } = config;
       const newWBDC = new WXBizDataCrypt(appId, sessionKey);
 
-      const resultPhone = newWBDC.decryptData(encryptedData, iv);
-      const result = {
-        phoneNumber: resultPhone.phoneNumber,
-        countryCode: resultPhone.countryCode
-      };
+      const decryptedData = newWBDC.decryptData(encryptedData, iv);
       // await session.commitTransaction();
       // await UsersRepo.endSession();
-      return result;
+      return decryptedData;
     } catch (err) {
       throw err;
       // await session.abortTransaction();

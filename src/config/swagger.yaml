@@ -2901,6 +2901,8 @@ components:
         - nickName
         - avatarUrl
         - gender
+        - encryptedData
+        - iv
       properties:
         code:
           type: "string"
@@ -2924,6 +2926,10 @@ components:
         city:
           type: "string"
         language:
+          type: "string"
+        encryptedData:
+          type: "string"
+        iv:
           type: "string"
       example:
         code: '1234'

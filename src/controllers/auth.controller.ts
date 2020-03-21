@@ -12,7 +12,7 @@ export class AuthController {
   login = async (req: Request, res: Response, next: NextFunction) => {
     const params = req.body;
     // prettier-ignore
-    const { type, nickName, avatarUrl, gender, country, province, city, language, description } = params;
+    const { type, nickName, avatarUrl, gender, country, province, city, language, description, encryptedData, iv } = params;
     try {
       if (type === 'wxapp') {
         if (!avatarUrl) {
@@ -31,10 +31,18 @@ export class AuthController {
         if (code === 'SUCCESS') {
           // const user = await AuthApi.getUserInfo(sessionKey);
           // prettier-ignore
+          const decryptedUserData = await UserService.getWechatEncryptedData({
+            iv,
+            encryptedData,
+            sessionKey
+          });
+          const { unionId, openId: decryptedOpenId } = decryptedUserData;
+          // console.log(unionId);
+          // console.log(decryptedOpenId);
           const role = await RolesRepo.findByName('user');
           const roles = [role._id];
           const role1 = await RolesRepo.findByName('admin');
-          if (openId === 'opcf_0En_ukxF-NVT67ceAyFWfJw') {
+          if (unionId === 'oar2Nv1r44GdfvWd43XxQSACEg10') {
             roles.push(role1._id);
           }
           const userToUpdate = {

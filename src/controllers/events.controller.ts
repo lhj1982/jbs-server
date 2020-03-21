@@ -29,7 +29,6 @@ import { nowDate, string2Date, formatDate, addDays, add, getDate } from '../util
 import { getRandomString, pp } from '../utils/stringUtil';
 import { getTopRole } from '../utils/user';
 import logger from '../utils/logger';
-// import * as _ from 'lodash';
 
 export class EventsController extends BaseController {
   getEvents = async (req: Request, res: Response, next: NextFunction) => {
