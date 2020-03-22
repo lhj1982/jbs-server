@@ -136,6 +136,12 @@ class GameCannotCancelException extends HttpException {
   }
 }
 
+class GenericServerErrorException extends HttpException {
+  constructor(message: string) {
+    super(500, 'generic_server_error', `$message`);
+  }
+}
+
 export {
   AuthorizationException,
   WrongCredentialException,
@@ -158,5 +164,6 @@ export {
   InsufficientRedemptionsException,
   CannotJoinGameException,
   CannotLeaveGameException,
-  GameCannotCancelException
+  GameCannotCancelException,
+  GenericServerErrorException
 };

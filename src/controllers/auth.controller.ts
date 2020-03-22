@@ -3,10 +3,12 @@ import AuthApi from '../api/auth';
 import UsersRepo from '../repositories/users.repository';
 import RolesRepo from '../repositories/roles.repository';
 import UserService from '../services/user.service';
-import { InvalidRequestException, WrongCredentialException, ResourceNotFoundException } from '../exceptions/custom.exceptions';
+import CacheService from '../services/cache.service';
+import { InvalidRequestException, WrongCredentialException, ResourceNotFoundException, GenericServerErrorException } from '../exceptions/custom.exceptions';
 import * as moment from 'moment';
 import * as jwt from 'jsonwebtoken';
 import config from '../config';
+import logger from '../utils/logger';
 
 export class AuthController {
   login = async (req: Request, res: Response, next: NextFunction) => {
@@ -37,6 +39,10 @@ export class AuthController {
             sessionKey
           });
           const { unionId, openId: decryptedOpenId } = decryptedUserData;
+          if (!unionId) {
+            logger.error(`User ${openId} does not have unionId`);
+            throw new GenericServerErrorException(`Cannot login`);
+          }
           // console.log(unionId);
           // console.log(decryptedOpenId);
           const role = await RolesRepo.findByName('user');
@@ -92,12 +98,13 @@ export class AuthController {
             }
           }
           await UsersRepo.saveOrUpdateUser(userToUpdate);
-          const newUser = await UserService.findOneByParams({ openId });
+          const newUser = await UserService.findOneByParams({ unionId });
           // create a token string
           // console.log(this.getTokenPayload);
           // console.log(user._id);
           const token = jwt.sign(this.getTokenPayload(newUser), config.jwt.secret);
           // console.log(token);
+          await CacheService.purgeUserCache(newUser);
           res.json({ openId, token, newUser });
         } else {
           next(new Error(`Cannot get sessionKey, errorCode: ${errorCode}`));
@@ -177,9 +184,11 @@ export class AuthController {
         .toDate()
         .getTime() / 1000
     );
+    const { openId, unionId } = user;
     const data = {
       type: 'wxapp',
-      openId: user.openId
+      openId: openId,
+      unionId: unionId
     };
     // console.log(expiredAt);
     return {

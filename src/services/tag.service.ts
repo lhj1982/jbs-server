@@ -1,7 +1,7 @@
 import TagsRepo from '../repositories/tags.repository';
 
 class TagService {
-  async getTags() {
+  async getTags(): Promise<any> {
     return await TagsRepo.find({});
   }
 }
