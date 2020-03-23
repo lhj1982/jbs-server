@@ -4,6 +4,7 @@ module.exports = {
     entrypoint: `http://localhost:3000`
   },
   cache: {
+    password: 'password',
     duration: 2 * 60 * 60 // cache in second
   },
   appId: 'wxf59749a45686779c',

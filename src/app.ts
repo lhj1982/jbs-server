@@ -6,6 +6,9 @@ import config from './config';
 import { RoleSchema } from './models/role.model';
 import { ShopSchema } from './models/shop.model';
 import { ScriptSchema } from './models/script.model';
+import { ScriptClueSchema } from './models/scriptClue.model';
+import { ScriptClueFilterSchema } from './models/scriptClueFilter.model';
+import { ScriptRundownSchema } from './models/scriptRundown.model';
 import { DiscountRuleSchema } from './models/discountRule.model';
 import { UserSchema } from './models/user.model';
 import { EventSchema } from './models/event.model';
@@ -23,6 +26,9 @@ import { ShopStaffSchema } from './models/shopStaff.model';
 import { ExternalCustomerSchema } from './models/externalCustomer.model';
 import { RewardRedemptionSchema } from './models/rewardRedemption.model';
 import { UserRewardRedemptionSchema } from './models/userRewardRedemption.model';
+import { GameSchema } from './models/game.model';
+import { GamePlayerSchema } from './models/gamePlayer.model';
+import { GameScriptClueSchema } from './models/gameScriptClue.model';
 
 const Role = mongoose.model('Role', RoleSchema, 'roles');
 const Event = mongoose.model('Event', EventSchema, 'events');
@@ -30,6 +36,9 @@ const User = mongoose.model('User', UserSchema, 'users');
 const EventUser = mongoose.model('EventUser', EventUserSchema, 'eventUsers');
 const Shop = mongoose.model('Shop', ShopSchema, 'shops');
 const Script = mongoose.model('Script', ScriptSchema, 'scripts');
+const ScriptClue = mongoose.model('ScriptClue', ScriptClueSchema, 'scriptClues');
+const ScriptClueFilter = mongoose.model('ScriptClueFilter', ScriptClueFilterSchema, 'scriptClueFilters');
+const ScriptRundown = mongoose.model('ScriptRundown', ScriptRundownSchema, 'scriptRundowns');
 const DiscountRule = mongoose.model('DiscountRule', DiscountRuleSchema, 'discountRules');
 const EventCommission = mongoose.model('EventCommission', EventCommissionSchema, 'eventCommissions');
 const Notification = mongoose.model('Notification', NotificationSchema, 'notifications');
@@ -43,6 +52,9 @@ const ShopStaff = mongoose.model('ShopStaff', ShopStaffSchema, 'shopStaffs');
 const ExternalCustomer = mongoose.model('ExternalCustomer', ExternalCustomerSchema, 'externalCustomers');
 const RewardRedemption = mongoose.model('RewardRedemption', RewardRedemptionSchema, 'rewardRedemptions');
 const UserRewardRedemption = mongoose.model('UserRewardRedemption', UserRewardRedemptionSchema, 'userRewardRedemptions');
+const Game = mongoose.model('Game', GameSchema, 'games');
+const GamePlayer = mongoose.model('GamePlayer', GamePlayerSchema, 'gamePlayers');
+const GameScriptClue = mongoose.model('GameScriptClue', GameScriptClueSchema, 'gameScriptClues');
 
 import { UsersRoutes } from './routes/users.routes';
 import { ShopsRoutes } from './routes/shops.routes';
@@ -56,6 +68,7 @@ import { LeadingBoardRoutes } from './routes/leadingBoard.routes';
 import { ReportsRoutes } from './routes/reports.routes';
 import { TagsRoutes } from './routes/tags.routes';
 import { RewardsRoutes } from './routes/rewards.routes';
+import { GamesRoutes } from './routes/games.routes';
 import errorMiddleware from './middleware/error.middleare';
 const compression = require('compression');
 const path = require('path');
@@ -80,6 +93,7 @@ class App {
   reportsRoutes: ReportsRoutes = new ReportsRoutes();
   tagsRoutes: TagsRoutes = new TagsRoutes();
   rewardsRoutes: RewardsRoutes = new RewardsRoutes();
+  gamesRoutes: GamesRoutes = new GamesRoutes();
   // mongoUrl: string = 'mongodb://localhost/CRMdb';
   mongoUrl: string = config.dbUri;
 
@@ -101,6 +115,7 @@ class App {
     this.reportsRoutes.routes(this.app);
     this.tagsRoutes.routes(this.app);
     this.rewardsRoutes.routes(this.app);
+    this.gamesRoutes.routes(this.app);
     this.app.use(errorMiddleware);
   }
 

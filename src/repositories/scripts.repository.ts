@@ -8,21 +8,40 @@ const DiscountRuleMap = mongoose.model('DiscountRuleMap', DiscountRuleMapSchema,
 mongoose.set('useFindAndModify', false);
 
 class ScriptsRepo {
-  async findById(id: string) {
+  async findById(id: string, fetchExtended = false) {
     // console.log('script ' + mongoose.Types.ObjectId.isValid(id));
-    return await Script.findById(mongoose.Types.ObjectId(id))
-      .populate('shops')
-      .populate({
-        path: 'events',
-        match: { status: { $in: ['ready'] } },
-        populate: {
-          path: 'hostUser',
-          select: 'nickName avatarUrl gender country province city language mobile wechatId ageTag'
-        },
-        options: { sort: { startTime: -1 } }
-      })
-      .populate('discountRuleMap')
-      .exec();
+    if (!fetchExtended) {
+      return await Script.findById(mongoose.Types.ObjectId(id))
+        .populate('shops')
+        .populate({
+          path: 'events',
+          match: { status: { $in: ['ready'] } },
+          populate: {
+            path: 'hostUser',
+            select: 'nickName avatarUrl gender country province city language mobile wechatId ageTag'
+          },
+          options: { sort: { startTime: -1 } }
+        })
+        .populate('discountRuleMap')
+        .exec();
+    } else {
+      return await Script.findById(mongoose.Types.ObjectId(id))
+        .populate('shops')
+        .populate({
+          path: 'events',
+          match: { status: { $in: ['ready'] } },
+          populate: {
+            path: 'hostUser',
+            select: 'nickName avatarUrl gender country province city language mobile wechatId ageTag'
+          },
+          options: { sort: { startTime: -1 } }
+        })
+        .populate('discountRuleMap')
+        .populate('rundowns')
+        .populate('clues')
+        .populate('clueFilters')
+        .exec();
+    }
   }
 
   async find(params) {

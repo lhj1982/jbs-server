@@ -1,7 +1,7 @@
 import config from '../config';
 import logger from '../utils/logger';
 import { pp } from '../utils/stringUtil';
-import { nowDate, addDays2, date2String } from '../utils/dateUtil';
+import { nowDate } from '../utils/dateUtil';
 import UsersRepo from '../repositories/users.repository';
 import EventUsersRepo from '../repositories/eventUsers.repository';
 import UserTagsRepo from '../repositories/userTags.repository';
@@ -9,11 +9,12 @@ import UserEndorsementsRepo from '../repositories/userEndorsements.repository';
 import UserRewardsRepo from '../repositories/userRewards.repository';
 import UserRewardRedemptionsRepo from '../repositories/userRewardRedemptions.repository';
 import WatchListsRepo from '../repositories/watchLists.repository';
+import GamePlayersRepo from '../repositories/gamePlayers.repository';
 import { ResourceNotFoundException, WrongCredentialException } from '../exceptions/custom.exceptions';
 const WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 
 class UserService {
-  async findById(id: string) {
+  async findById(id: string): Promise<any> {
     try {
       const user = await UsersRepo.findById(id);
       if (!user) {
@@ -40,7 +41,7 @@ class UserService {
     }
   }
 
-  async findOneByParams(params) {
+  async findOneByParams(params): Promise<any> {
     try {
       const user = await UsersRepo.findOne(params);
       if (user) {
@@ -60,7 +61,7 @@ class UserService {
     }
   }
 
-  async findByUserNameAndPassword(username: string, password: string) {
+  async findByUserNameAndPassword(username: string, password: string): Promise<any> {
     try {
       const user = await UsersRepo.findByUserNameAndPassword(username, password);
       if (!user) {
@@ -97,15 +98,12 @@ class UserService {
       const { appId } = config;
       const newWBDC = new WXBizDataCrypt(appId, sessionKey);
 
-      const resultPhone = newWBDC.decryptData(encryptedData, iv);
-      const result = {
-        phoneNumber: resultPhone.phoneNumber,
-        countryCode: resultPhone.countryCode
-      };
+      const decryptedData = newWBDC.decryptData(encryptedData, iv);
       // await session.commitTransaction();
       // await UsersRepo.endSession();
-      return result;
+      return decryptedData;
     } catch (err) {
+      throw err;
       // await session.abortTransaction();
       // await UsersRepo.endSession();
     }
@@ -365,6 +363,16 @@ class UserService {
 
   async updateCredit(usersToUpdate): Promise<any> {
     return await UsersRepo.batchUpdateCredits(usersToUpdate);
+  }
+
+  async getUserGames(user: any): Promise<any> {
+    const { _id: userId } = user;
+    const gamePlayers = await GamePlayersRepo.findByUser(userId);
+    const games = gamePlayers.map(_ => {
+      const { game } = _;
+      return game;
+    });
+    return games;
   }
 }
 

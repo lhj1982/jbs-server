@@ -3,16 +3,18 @@ import AuthApi from '../api/auth';
 import UsersRepo from '../repositories/users.repository';
 import RolesRepo from '../repositories/roles.repository';
 import UserService from '../services/user.service';
-import { InvalidRequestException, WrongCredentialException } from '../exceptions/custom.exceptions';
+import CacheService from '../services/cache.service';
+import { InvalidRequestException, WrongCredentialException, ResourceNotFoundException, GenericServerErrorException } from '../exceptions/custom.exceptions';
 import * as moment from 'moment';
 import * as jwt from 'jsonwebtoken';
 import config from '../config';
+import logger from '../utils/logger';
 
 export class AuthController {
   login = async (req: Request, res: Response, next: NextFunction) => {
     const params = req.body;
     // prettier-ignore
-    const { type, nickName, avatarUrl, gender, country, province, city, language, description } = params;
+    const { type, nickName, avatarUrl, gender, country, province, city, language, description, encryptedData, iv } = params;
     try {
       if (type === 'wxapp') {
         if (!avatarUrl) {
@@ -27,15 +29,26 @@ export class AuthController {
         // prettier-ignore
         // const response = { code: 'SUCCESS', openId: '1234', sessionKey: 'test1', unionId: undefined, errorCode: undefined, errorMsg: undefined };
         const { code, openId, unionId, sessionKey, errorCode, errorMsg } = response;
-
         // console.log(response);
         if (code === 'SUCCESS') {
           // const user = await AuthApi.getUserInfo(sessionKey);
           // prettier-ignore
+          const decryptedUserData = await UserService.getWechatEncryptedData({
+            iv,
+            encryptedData,
+            sessionKey
+          });
+          const { unionId, openId: decryptedOpenId } = decryptedUserData;
+          if (!unionId) {
+            logger.error(`User ${openId} does not have unionId`);
+            throw new GenericServerErrorException(`Cannot login`);
+          }
+          // console.log(unionId);
+          // console.log(decryptedOpenId);
           const role = await RolesRepo.findByName('user');
           const roles = [role._id];
           const role1 = await RolesRepo.findByName('admin');
-          if (openId === 'opcf_0En_ukxF-NVT67ceAyFWfJw') {
+          if (unionId === 'oar2Nv1r44GdfvWd43XxQSACEg10') {
             roles.push(role1._id);
           }
           const userToUpdate = {
@@ -85,12 +98,13 @@ export class AuthController {
             }
           }
           await UsersRepo.saveOrUpdateUser(userToUpdate);
-          const newUser = await UserService.findOneByParams({ openId });
+          const newUser = await UserService.findOneByParams({ unionId });
           // create a token string
           // console.log(this.getTokenPayload);
           // console.log(user._id);
           const token = jwt.sign(this.getTokenPayload(newUser), config.jwt.secret);
           // console.log(token);
+          await CacheService.purgeUserCache(newUser);
           res.json({ openId, token, newUser });
         } else {
           next(new Error(`Cannot get sessionKey, errorCode: ${errorCode}`));
@@ -124,6 +138,31 @@ export class AuthController {
     }
   };
 
+  updatePhoneNumber = async (req: Request, res: Response, next: NextFunction) => {
+    const { openId, iv, encryptedData } = req.body;
+    try {
+      // console.log(body);
+      const user = await UserService.findOneByParams({ openId });
+      if (!user) {
+        throw new ResourceNotFoundException('User', openId);
+      }
+      const { sessionKey } = user;
+      const result = await UserService.getWechatEncryptedData({
+        iv,
+        encryptedData,
+        sessionKey
+      });
+      const { phoneNumber } = result;
+      const userToUpdate = Object.assign(user, {
+        mobile: phoneNumber
+      });
+      const newUser = await UsersRepo.saveOrUpdateUser(userToUpdate);
+      res.json({ code: 'SUCCESS', data: newUser });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   code2session = async (req: Request, res: Response, next: NextFunction) => {
     const {
       body: { code }
@@ -145,9 +184,11 @@ export class AuthController {
         .toDate()
         .getTime() / 1000
     );
+    const { openId, unionId } = user;
     const data = {
       type: 'wxapp',
-      openId: user.openId
+      openId: openId,
+      unionId: unionId
     };
     // console.log(expiredAt);
     return {

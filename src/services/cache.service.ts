@@ -1,23 +1,35 @@
 import { Request } from 'express';
-// import * as redis from 'redis';
 import logger from '../utils/logger';
 import config from '../config';
-// const client = redis.createClient();
+import GamesRepo from '../repositories/games.repository';
+import GamePlayersRepo from '../repositories/gamePlayers.repository';
+const Redis = require('ioredis');
+const client = new Redis({
+  port: 6379, // Redis port
+  host: '127.0.0.1', // Redis host
+  family: 4, // 4 (IPv4) or 6 (IPv6)
+  password: config.cache.password,
+  db: 0
+});
+// client.auth(config.cache.password);
 
 class CacheService {
   keyPrefix = '__expIress__';
 
-  async purgeUserCache(user: any, req: Request) {
-    const token = req.headers.authorization.split(' ')[1];
+  async purgeUserCache(user: any) {
     const { id } = user;
-    let userKey = `${this.keyPrefix}/users/${id}`;
-    let profileKey = `${this.keyPrefix}/profile/my-events`;
-    if (token) {
-      userKey = userKey + '|' + token;
-      profileKey = profileKey + '|' + token;
-    }
-    // await this.purgeCacheByKey(userKey);
-    // await this.purgeCacheByKey(profileKey);
+    await this.deleteKeysByPattern(`__expIress__/profile/*`);
+    await this.deleteKeysByPattern(`__expIress__/users/${id}/*`);
+    // const token = req.headers.authorization.split(' ')[1];
+    // const { id } = user;
+    // let userKey = `${this.keyPrefix}/users/${id}`;
+    // let profileKey = `${this.keyPrefix}/profile/my-events`;
+    // if (token) {
+    //   userKey = userKey + '|' + token;
+    //   profileKey = profileKey + '|' + token;
+    // }
+    // // await this.purgeCacheByKey(userKey);
+    // // await this.purgeCacheByKey(profileKey);
   }
 
   async purgeEventCache(event: any, req: Request) {
@@ -32,57 +44,58 @@ class CacheService {
     // // await this.purgeCacheBySearch(eventsKey);
   }
 
-  // async purgeCacheBySearch(searchKey: string): Promise<any> {
-  //   const cursor = '0';
-  //   const resp = await this.scan(cursor, searchKey);
-  //   const { cursor: newCursor, data: keys } = resp;
-  //   console.log(keys);
+  async purgeGameScriptClueCache(game: any, fromPlayerId: string, toPlayerId: string, loggedInUser: any) {
+    const { id: gameId, players } = game;
+    await this.deleteKeysByPattern(`__expIress__/games/${gameId}/clues/*`);
+  }
 
-  //   // return new Promise(async (resolve, reject) => {
-  //   const promises = keys.map(key => {
-  //     return new Promise((resolve1, reject1) => {
-  //       logger.debug(`Purge cache, ${key}`);
-  //       // resolve1([]);
-  //       client.del(key, (err, data) => {
-  //         if (err) {
-  //           logger.error(`Error when deleting cache key ${key}`);
-  //           resolve1(err);
-  //         } else {
-  //           resolve1(data);
-  //         }
-  //       });
-  //     });
-  //   });
-  //   await Promise.all(promises);
-  // }
+  //key example "prefix*"
+  getKeysByPattern(key) {
+    return new Promise((resolve, reject) => {
+      const stream = client.scanStream({
+        // only returns keys following the pattern of "key"
+        match: key,
+        // returns approximately 100 elements per call
+        count: 100
+      });
 
-  // async scan(cursor: string, key: string): Promise<any> {
-  //   return new Promise((resolve, reject) => {
-  //     client.scan(cursor, 'MATCH', key, 'COUNT', '100', async (err, reply) => {
-  //       if (err) {
-  //         logger.error(`Error when search cache key ${key}`);
-  //         resolve({ cursor: '0', data: [] });
-  //       } else {
-  //         cursor = reply[0];
-  //         const keys = reply[1];
-  //         resolve({ cursor, data: keys });
-  //       }
-  //     });
-  //   });
-  // }
+      const keys = [];
+      stream.on('data', function(resultKeys) {
+        // `resultKeys` is an array of strings representing key names
+        for (let i = 0; i < resultKeys.length; i++) {
+          keys.push(resultKeys[i]);
+        }
+      });
+      stream.on('end', function() {
+        resolve(keys);
+      });
+    });
+  }
 
-  // async purgeCacheByKey(key: string): Promise<any> {
-  //   logger.debug(`Purge cache, ${key}`);
-  //   return new Promise((resolve, reject) => {
-  //     client.del(key, (err, reply) => {
-  //       if (err) {
-  //         reject(err);
-  //       } else {
-  //         resolve(reply);
-  //       }
-  //     });
-  //   });
-  // }
+  //key example "prefix*"
+  deleteKeysByPattern(key) {
+    const stream = client.scanStream({
+      // only returns keys following the pattern of "key"
+      match: key,
+      // returns approximately 100 elements per call
+      count: 100
+    });
+
+    const keys = [];
+    stream.on('data', function(resultKeys) {
+      // `resultKeys` is an array of strings representing key names
+      for (let i = 0; i < resultKeys.length; i++) {
+        logger.debug(`Purge cache key ${resultKeys[i]}`);
+        keys.push(resultKeys[i]);
+      }
+    });
+    stream.on('end', function() {
+      logger.info(`${keys.length} cache entries has purged`);
+      if (keys.length > 0) {
+        client.unlink(keys);
+      }
+    });
+  }
 }
 
 export default new CacheService();

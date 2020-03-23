@@ -37,6 +37,8 @@ tags:
   description: "Operations about tags"
 - name: "reward"
   description: "Operations about user rewards"
+- name: "game"
+  description: "Operations about user games"
 
 servers:
   - url: http://localhost:3000
@@ -69,6 +71,41 @@ paths:
                 $ref: '#/components/schemas/OauthResponse'
         default:
           description: "Invalid input"
+  /oauth/phonenumber:
+    post:
+      tags:
+      - "auth"
+      summary: "Get user phonenumber and update user object"
+      description: "Get user phonenumber and update user object"
+      operationId: "updatePhoneNumber"
+      requestBody: 
+        description: Request content
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                openId:
+                  type: "string"
+                encryptedData:
+                  type: "string"
+                iv:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:    
+              schema:
+                type: "object"
+                $ref: '#/components/schemas/User' 
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
   /oauth/code2session:
     post:
       tags:
@@ -239,6 +276,11 @@ paths:
           required: true
           schema:
             type: string
+        - in: query
+          name: extended
+          description: flag that whether to fetch extended script info
+          schema:
+            type: boolean
       responses:
         200:
           description: "Success"
@@ -1668,10 +1710,68 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /profile/my-games:
+    get:
+      tags:
+      - "user"
+      summary: "Get my games"
+      description: "Get games open by DM or user has joined."
+      operationId: "getMyGames"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          description: status to include, if multiple status, separate by comma
+          schema:
+            type: string
+          example:
+            status: ready,complete
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /profile/my-online-scripts:
+    get:
+      tags:
+      - "user"
+      summary: "Get online script of logged in user"
+      description: "This is only available for dm users, One user can be dm of ONE and ONLY ONE shop"
+      operationId: "getMyOnlineScripts"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Script'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
   /profile/wechat-data:
     post:
       tags:
-      - "profile"
+      - "user"
       summary: "Get wechat encrypted data"
       description: "Get wechat encrypted data, such as phoneNumber"
       operationId: "getWeChatData"
@@ -2413,6 +2513,379 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
 
+  /games:
+    post:
+      tags:
+      - "game"
+      summary: "Add new game"
+      operationId: "addGame"
+      security:
+        - bearerAuth: []
+      requestBody: 
+        required: true
+        description: add new game request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - scriptId
+                - shopId
+                - startTime
+                - hostUserId
+                - price
+                - code
+              properties:
+                scriptId:
+                  type: "string"
+                shopId:
+                  type: "string"
+                startTime:
+                  type: "string"
+                  format: "date-time"
+                hostUserId:
+                  type: "string"
+                price:
+                  type: "integer"
+                  format: "int32"
+                code:
+                  type: "string"
+                hostUserMobile:
+                  type: "string"
+                hostUserWechatId:
+                  type: "string"
+                hostComment: 
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /games/{roomId}/code/{code}:
+    get:
+      tags:
+      - "game"
+      summary: "Get game script summary by room id and code"
+      description: "Get game script summary by room id and code, it's used for get brief description of a games and its players, details information such as rundowns and clues, should be fetched separately using other apis"
+      operationId: "getGameScriptByRoomAndCode"
+      parameters:
+        - in: path
+          name: roomId
+          required: true
+          description: room id
+          schema:
+            type: string
+        - in: path
+          name: code
+          required: true
+          description: room code
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /games/{gameId}:
+    put:
+      tags:
+      - "game"
+      summary: "Update a game"
+      operationId: "updateGame"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: update game request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                startTime:
+                  type: "string"
+                hostComment:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    delete:
+      tags:
+      - "game"
+      summary: "Delete a game"
+      operationId: "deleteGame"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/Game'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /games/{gameId}/script-rundown/{playerId}:
+    get:
+      tags:
+      - "game"
+      summary: "Get game script rundown by player id"
+      operationId: "getGameScriptRundownByPlayer"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+        - in: path
+          name: playerId
+          required: true
+          description: player id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/ScriptRundown'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /games/{gameId}/clues/{playerId}:
+    get:
+      tags:
+      - "game"
+      summary: "Get game script clues by player id"
+      operationId: "getGameScriptCluesByPlayer"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          description: game id
+          schema:
+            type: string
+        - in: path
+          name: playerId
+          required: true
+          description: player id
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/ScriptClue'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /games/{roomId/}clues/{scriptClueId}:
+    put:
+      tags:
+      - "game"
+      summary: "Update a game script clue"
+      operationId: "updateGameScriptClue"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: roomId
+          required: true
+          description: room id
+          schema:
+            type: string
+        - in: path
+          name: scriptClueId
+          required: true
+          description: script clue id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: update game script clue request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                playerId:
+                  type: "string"
+                  description: "new owner of clue"
+                isPublic:
+                  type: "boolean"
+                hasRead:
+                  type: "boolean"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameScriptClue'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /games/join:
+    post:
+      tags:
+      - "game"
+      summary: "Join a game"
+      operationId: "joinGame"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: join game request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - roomId
+                - playerId
+                - code
+              properties:
+                roomId:
+                  type: "string"
+                playerId:
+                  type: "string"
+                code:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/GamePlayer'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /games/leave:
+    post:
+      tags:
+      - "game"
+      summary: "Leave a game"
+      operationId: "leaveGame"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: leave game request body
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - roomId
+                - playerId
+              properties:
+                roomId:
+                  type: "string"
+                playerId:
+                  type: "string"
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: '#/components/schemas/GamePlayer'
+        default:
+          description: "Invalid input"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
@@ -2428,6 +2901,8 @@ components:
         - nickName
         - avatarUrl
         - gender
+        - encryptedData
+        - iv
       properties:
         code:
           type: "string"
@@ -2451,6 +2926,10 @@ components:
         city:
           type: "string"
         language:
+          type: "string"
+        encryptedData:
+          type: "string"
+        iv:
           type: "string"
       example:
         code: '1234'
@@ -3305,6 +3784,117 @@ components:
           type: "string"
         imageUrl:
           type: "string"
+
+    Game:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        hostUser:
+          $ref: "#/components/schemas/User"
+        script:
+          $ref: "#/components/schemas/Script"
+        shop:
+          $ref: "#/components/schemas/Shop"
+        startTime:
+          type: "string"
+        endTime:
+          type: "string"
+        code:
+          type: "string"
+        hostComment:
+          type: "string"
+        createdAt:
+          type: "string"
+        updatedAt:
+          type: "string"
+    
+    GamePlayer:
+      type: "object"
+      properties:
+        game:
+          $ref: "#/components/schemas/Game"
+        playerId:
+          type: "string"
+        createdAt:
+          type: "string"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+
+    ScriptRundown:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        script:
+          $ref: "#/components/schemas/Script"
+        playerId:
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        rundowns:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+              content:
+                type: "string"
+
+    ScriptClue:
+      type: "object"
+      properties:
+        script:
+          $ref: "#/components/schemas/Script"
+        categories:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ScriptClueCategory"
+        title:
+          type: "string"
+        content:
+          type: "string"
+        public:
+          type: "boolean"
+        images:
+          type: "array"
+          items:
+            type: "string"
+        round:
+          type: "string"
+
+    ScriptClueCategory:
+      type: "object"
+      properties:
+        script:
+          $ref: "#/components/schemas/Script"
+        key:
+          type: "string"
+        title:
+          type: "string"
+        field:
+          type: "string"
+        value:
+          type: "string"
+
+    GameScriptClue:
+      type: "object"
+      properties:
+        game:
+          $ref: "#/components/schemas/Game"
+        scriptClue:
+          $ref: "#/components/schemas/ScriptClue"
+        owner:
+          type: "string"
+        isPublic:
+          type: "boolean"
+        hasRead:
+          type: "boolean"
 
     PaginatedDataResponse:
       type: "object"

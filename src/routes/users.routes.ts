@@ -35,8 +35,10 @@ export class UsersRoutes {
       .delete(verifyToken, this.usersController.unendorseUser);
     app.route('/profile').get(cacheMiddleware(config.cache.duration), verifyToken, permit({ domain: 'user', operations: ['getProfile'] }), this.usersController.getMyProfile);
     app.route('/profile/my-events').get(cacheMiddleware(config.cache.duration), verifyToken, permit({ domain: 'user', operations: ['getMyEvents'] }), this.usersController.getMyEvents);
+    app.route('/profile/my-games').get(verifyToken, this.usersController.getMyGames);
     app.route('/profile/token-status').get(verifyToken, this.usersController.getTokenStatus);
-    app.route('/profile/wechat-data').post(verifyToken, this.usersController.getWechatEncryptedData);
+    app.route('/profile/wechat-data').post(verifyToken, this.usersController.getPhoneEncryptedData);
+    app.route('/profile/my-online-scripts').get(verifyToken, permit({ domain: 'game', operations: ['getMyOnlineScripts'] }), this.usersController.getMyOnlineScripts);
 
     app.route('/users/update-tags-endorsements').post(
       verifyToken,

@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-const nowDate = (convertToUTC = true) => {
+const nowDate = (convertToUTC = true): moment.Moment => {
   if (convertToUTC) {
     return moment(new Date()).utc();
   } else {
@@ -8,7 +8,7 @@ const nowDate = (convertToUTC = true) => {
   }
 };
 
-const string2Date = (dateStr: string, convertToUTC = true, pattern = 'YYYY-MM-DD') => {
+const string2Date = (dateStr: string, convertToUTC = true, pattern = 'YYYY-MM-DD'): moment.Moment => {
   if (convertToUTC) {
     return moment(dateStr, pattern).utc();
   } else {
@@ -16,7 +16,7 @@ const string2Date = (dateStr: string, convertToUTC = true, pattern = 'YYYY-MM-DD
   }
 };
 
-const formatDate = (dateStr: string, convertToUTC = true) => {
+const formatDate = (dateStr: string, convertToUTC = true): moment.Moment => {
   if (convertToUTC) {
     return moment(dateStr).utc();
   } else {
@@ -24,24 +24,24 @@ const formatDate = (dateStr: string, convertToUTC = true) => {
   }
 };
 
-const date2String = (date: Date, pattern = 'YYYY-MM-DD HH:mm') => {
+const date2String = (date: Date, pattern = 'YYYY-MM-DD HH:mm'): string => {
   return moment(date).format(pattern);
 };
 
-const addDays2 = (date: moment.Moment, daysToAdd: number) => {
+const addDays2 = (date: moment.Moment, daysToAdd: number): moment.Moment => {
   const clone = moment(date);
   return clone.add(daysToAdd, 'days');
 };
 
-const addDays = (fromDate: string, daysToAdd: number) => {
+const addDays = (fromDate: string, daysToAdd: number): moment.Moment => {
   return formatDate(fromDate).add(daysToAdd, 'days');
 };
 
-const add = (fromDate: string, unitsToAdd: number, unit: moment.unitOfTime.DurationConstructor = 'days') => {
+const add = (fromDate: string, unitsToAdd: number, unit: moment.unitOfTime.DurationConstructor = 'days'): moment.Moment => {
   return formatDate(fromDate).add(unitsToAdd, unit);
 };
 
-const getDay = (dateStr: string) => {
+const getDay = (dateStr: string): number => {
   const date = moment(dateStr);
   const weekDay = date.day();
   if (weekDay == 0) {
@@ -51,12 +51,12 @@ const getDay = (dateStr: string) => {
   }
 };
 
-const getTime = (dateStr: string) => {
+const getTime = (dateStr: string): string => {
   const date = moment(dateStr);
   return date.format('HH:mm');
 };
 
-const getDate = (dateStr: string) => {
+const getDate = (dateStr: string): string => {
   const date = moment(dateStr);
   return date.format('MM-DD');
 };

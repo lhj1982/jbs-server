@@ -69,6 +69,12 @@ class UsersRepo extends CommonRepo {
           }
         }
       })
+      .populate({
+        path: 'dmShop',
+        populate: {
+          path: 'onlineScripts'
+        }
+      })
       .select('-password')
       .exec();
   }
@@ -228,7 +234,14 @@ class UsersRepo extends CommonRepo {
       setDefaultsOnInsert: true,
       returnNewDocument: true
     };
-    return await User.findOneAndUpdate({ openId: user.openId }, user, options).exec();
+    const { openId, unionId } = user;
+    if (unionId) {
+      return await User.findOneAndUpdate({ unionId }, user, options).exec();
+    } else if (openId) {
+      return await User.findOneAndUpdate({ openId }, user, options).exec();
+    } else {
+      throw new Error(`Neither openId nor unionId is found`);
+    }
   }
 
   // async getUserEvents(userId: string) {

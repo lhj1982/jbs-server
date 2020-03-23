@@ -118,6 +118,30 @@ class InsufficientRedemptionsException extends HttpException {
   }
 }
 
+class CannotJoinGameException extends HttpException {
+  constructor(id: string, message: string) {
+    super(500, 'cannot_join_game', `Cannot join game ${id}, ${message}`);
+  }
+}
+
+class CannotLeaveGameException extends HttpException {
+  constructor(id: string, message: string) {
+    super(500, 'cannot_leave_game', `Cannot leave game ${id}, ${message}`);
+  }
+}
+
+class GameCannotCancelException extends HttpException {
+  constructor(id: string) {
+    super(500, 'game_cannot_cancel', `Game ${id} cannot cancel`);
+  }
+}
+
+class GenericServerErrorException extends HttpException {
+  constructor(message: string) {
+    super(500, 'generic_server_error', `$message`);
+  }
+}
+
 export {
   AuthorizationException,
   WrongCredentialException,
@@ -137,5 +161,9 @@ export {
   InvalidPaymentSignatureException,
   CannotRefundException,
   InsufficientCreditsException,
-  InsufficientRedemptionsException
+  InsufficientRedemptionsException,
+  CannotJoinGameException,
+  CannotLeaveGameException,
+  GameCannotCancelException,
+  GenericServerErrorException
 };

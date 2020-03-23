@@ -50,7 +50,8 @@ export const ShopSchema = new Schema(
       type: Date,
       default: Date.now
     },
-    scripts: [{ type: Schema.Types.ObjectId, ref: 'Script' }]
+    scripts: [{ type: Schema.Types.ObjectId, ref: 'Script' }],
+    onlineScripts: [{ type: Schema.Types.ObjectId, ref: 'Script' }]
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

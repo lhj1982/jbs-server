@@ -46,6 +46,24 @@ export const ScriptSchema = new Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+ScriptSchema.virtual('rundowns', {
+  ref: 'ScriptRundown',
+  localField: '_id',
+  foreignField: 'script'
+});
+
+ScriptSchema.virtual('clueFilters', {
+  ref: 'ScriptClueFilter',
+  localField: '_id',
+  foreignField: 'script'
+});
+
+ScriptSchema.virtual('clues', {
+  ref: 'ScriptClue',
+  localField: '_id',
+  foreignField: 'script'
+});
+
 ScriptSchema.virtual('shops', {
   ref: 'Shop',
   localField: '_id',

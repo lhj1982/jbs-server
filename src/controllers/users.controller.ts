@@ -82,7 +82,7 @@ export class UsersController {
         ageTag
       });
       const updatedUser = await UsersRepo.saveOrUpdateUser(user);
-      await CacheService.purgeUserCache(user, req);
+      await CacheService.purgeUserCache(user);
       res.json({ code: 'SUCCESS', data: updatedUser });
     } catch (err) {
       res.send(err);
@@ -143,7 +143,7 @@ export class UsersController {
     }
   };
 
-  getWechatEncryptedData = async (req: Request, res: Response, next: NextFunction) => {
+  getPhoneEncryptedData = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedInUser } = res.locals;
     if (!loggedInUser) {
       next(new AccessDeniedException(''));
@@ -153,6 +153,10 @@ export class UsersController {
     try {
       // console.log(body);
       const response = await UserService.getWechatEncryptedData(body);
+      const result = {
+        phoneNumber: response.phoneNumber,
+        countryCode: response.countryCode
+      };
       res.json({ code: 'SUCCESS', data: response });
     } catch (err) {
       next(err);
@@ -361,12 +365,31 @@ export class UsersController {
     }
   };
 
-  // getUserEvents = async (req: Request, res: Response, next: NextFunction) => {
-  //   const { loggedInUser } = res.locals;
-  //   if (!loggedInUser) {
-  //     next(new AccessDeniedException(''));
-  //   }
-  //   const eventUsers = await UsersRepo.getUserEvents(loggedInUser._id);
-  //   res.json({ code: 'SUCCESS', data: eventUsers });
-  // };
+  getMyGames = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { status } = req.query;
+    try {
+      const games = await UserService.getUserGames(loggedInUser);
+      res.json({ code: 'SUCCESS', data: games });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getMyOnlineScripts = async (req: Request, res: Response, next: NextFunction) => {
+    const { loggedInUser } = res.locals;
+    const { dmShop } = loggedInUser;
+
+    try {
+      let scripts = [];
+      console.log(dmShop);
+      if (dmShop) {
+        const { onlineScripts } = dmShop;
+        scripts = onlineScripts;
+      }
+      res.json({ code: 'SUCCESS', data: scripts });
+    } catch (err) {
+      next(err);
+    }
+  };
 }

@@ -22,7 +22,7 @@ WXBizDataCrypt.prototype.decryptData = function(encryptedData, iv) {
     decoded += decipher.final('utf8');
 
     result = JSON.parse(decoded);
-    logger.info(result);
+    // logger.info(result);
   } catch (err) {
     logger.error(err);
     throw new Error('Illegal Buffer');
