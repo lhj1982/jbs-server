@@ -152,13 +152,54 @@ class App {
     this.app.use(compression());
   }
 
-  mongoSetup(): void {
-    mongoose.Promise = global.Promise;
-    mongoose.connect(this.mongoUrl, {
-      useNewUrlParser: true,
-      replicaSet: 'rs0'
-    });
+  async mongoSetup(): Promise<void> {
+    try {
+      // mongoose.Promise = global.Promise;
+
+      await mongoose.connect(this.mongoUrl, {
+        useNewUrlParser: true,
+        replicaSet: 'rs0',
+        keepAlive: 1,
+        useUnifiedTopology: true,
+        // autoReconnect: true,
+        // socketTimeoutMS: 45000,
+        // reconnectTries: 30,
+        useCreateIndex: true,
+        useFindAndModify: false,
+        autoIndex: false, // Don't build indexes
+        poolSize: 10, // Maintain up to 10 socket connections
+        connectTimeoutMS: 45000,
+        promiseLibrary: global.Promise
+        // dbName: 'priceinventory',
+        // authSource: 'admin',
+        // user: 'admin',
+        // password: 'admin'
+      });
+    } catch (err) {
+      console.error(err, err.stack);
+      logger.error(`Error when initialize db, ${err}`);
+    }
   }
 }
+
+mongoose.connection.on('connected', () => {
+  logger.info('Connection Established');
+});
+
+mongoose.connection.on('reconnected', () => {
+  logger.warn('Connection Reestablished');
+});
+
+mongoose.connection.on('disconnected', () => {
+  logger.warn('Connection Disconnected');
+});
+
+mongoose.connection.on('close', () => {
+  logger.warn('Connection Closed');
+});
+
+mongoose.connection.on('error', error => {
+  logger.error('ERROR: ' + error);
+});
 
 export default new App().app;

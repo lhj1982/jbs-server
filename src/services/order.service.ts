@@ -383,7 +383,9 @@ class OrderService {
   }
 
   async refund(order, amount): Promise<any> {
-    return new Promise((resolve, reject) => {});
+    return new Promise((resolve, reject) => {
+      resolve();
+    });
   }
 
   async createCommissionRefunds(eventCommissions, options): Promise<any> {
